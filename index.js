@@ -38,7 +38,7 @@ const player = new Player(client, {
 
 client.player = player;
 module.exports.player = player
-require('dotenv').config('./.env')
+// require('dotenv').config('./.env')
 
 /**
  * 
