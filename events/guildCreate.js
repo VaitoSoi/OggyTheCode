@@ -4,6 +4,7 @@ const ms = require('ms')
 module.exports = {
     name: 'guildCreate',
     run(guild) {
+        return
         const blacklistguild = require('./models/blacklist-guild')
         blacklistguild.findOne({ guildid: guild.id }, async (err, data) => {
             if (err) throw err;
