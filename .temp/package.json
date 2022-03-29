@@ -41,7 +41,8 @@
   },
   "scripts": {
     "start": "nodemon index.js",
-    "test": "node test.js"
+    "test": "node test.js",
+    "dev": "env-cmd ./config/dev.env node index.js"
   },
   "keywords": [],
   "author": "VaitoSoi#2220",
@@ -56,5 +57,8 @@
   "homepage": "https://github.com/VaitoSoi/OggyTheBot#readme",
   "engines": {
     "node": "16"
+  },
+  "devDependencies": {
+    "env-cmd": "^10.1.0"
   }
 }
