@@ -156,7 +156,7 @@ module.exports = {
                                     inline: true
                                 })
                             .setAuthor({ name: `${client.user.tag}`, iconURL: client.user.avatarURL() })
-                            .setFooter({ text: `${message.auhtor.tag} • Lệnh: ${cmd}` })
+                            .setFooter({ text: `${message.author.tag} • Lệnh: ${cmd}` })
                             .setColor('RANDOM')
                         ]
                     })
