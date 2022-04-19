@@ -1,8 +1,8 @@
-const { readdirSync } = require('fs');
-const ascii = require('ascii-table');
-const { Client } = require('discord.js')
-const { REST } = require('@discordjs/rest')
-const { Routes } = require('discord-api-types/v9')
+const { readdirSync } = require('fs')
+    , ascii = require('ascii-table')
+    , { Client, MessageEmbed } = require('discord.js')
+    , { REST } = require('@discordjs/rest')
+    , { Routes } = require('discord-api-types/v9')
 
 let table = new ascii('Slash Command');
 table.setHeading("Name", "Status", "Loaded");
@@ -11,11 +11,11 @@ table.setHeading("Name", "Status", "Loaded");
  * 
  * @param {Client} client 
  */
-module.exports = (client) => {
-    const guild = client.guilds.cache.get(process.env.GUILD_ID)
-
-    let command
-    let rcommand = []
+module.exports = async(client) => {
+    let guild = client.guilds.cache.get(process.env.GUILD_ID)
+        , num = 0
+        , command
+        , rcommand = []
 
     if (guild) {
         command = guild.commands
@@ -23,21 +23,21 @@ module.exports = (client) => {
         command = client.application.commands
     }
     const commands = readdirSync(`./commands-interaction/`).filter(file => file.endsWith(".js"));
-
     for (let file of commands) {
         let pull = require(`../commands-interaction/${file}`);
 
         if (pull.data) {
+            num++
             client.interactions.set(pull.data.name, pull);
             rcommand.push(pull.data.toJSON())
-            table.addRow(file, '✔ Ready', '✔ Loaded');
+            table.addRow(file, '✔ Ready');
         } else {
-            table.addRow(file, '✖ Not ready', '✖ Not loaded');
+            table.addRow(file, '✖ Not ready');
             continue;
         }
     }
 
-    console.log(table.toString());
+    console.log(`Đã load ${num} SLASH_COMMANDS!\n` + table.toString());
 
     const rest = new REST({
         version: '9'
@@ -55,4 +55,5 @@ module.exports = (client) => {
     }
 
     register()
+
 }

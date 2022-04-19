@@ -75,6 +75,6 @@ module.exports = {
                     .setThumbnail('https://cdn.discordapp.com/attachments/936994104884224020/956369715192795246/2Q.png')
                     .setDescription('🛑 | Phát hiện lỗi khi tìm server: `' + ip + '`\n ```' + error + '```\nCách khác phục:\n> Kiểm tra lại IP.\n> Kiểm tra lại Port')
             })
-        interaction.reply({ embeds: [embed] })
+        interaction.editReply({ embeds: [embed] })
     }
 } 

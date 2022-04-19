@@ -10,15 +10,16 @@ module.exports = {
     * @param {CommandInteraction} interaction 
     */ 
     run: async(interaction) => {
+        if (interaction.deferred === false) await interaction.deferReply()
         const client = interaction.client
         require('../models/setchannel').findOne({ guildid: interaction.guild.id }, async (err, data) => {
             if (err) throw err;
             if (data) {
                 await require('../models/setchannel').findOneAndDelete({ guildid: interaction.guild.id })
-                interaction.reply({ content: 'Đã xóa các data về channel.', ephemeral: true })
+                interaction.editReply({ content: 'Đã xóa các data về channel.', ephemeral: true })
                 data.save()
             } else {
-                interaction.reply({ content: 'Không tìm thấy data.', ephemeral: true })
+                interaction.editReply({ content: 'Không tìm thấy data.', ephemeral: true })
             }
         })
     }

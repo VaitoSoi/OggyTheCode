@@ -10,13 +10,14 @@ module.exports = {
     * @param {CommandInteraction} interaction 
     */ 
     run: async(interaction) => {
+        if (interaction.deferred === false) await interaction.deferReply()
         const client = interaction.client
         
         const highway = require('../models/highway')
         highway.findOne({ which: 'straight' }, async (err, data) => {
             if (err) throw err;
             if (!data) {
-                interaction.reply('Đang khởi tạo dữ liệu Highway')
+                interaction.editReply('Đang khởi tạo dữ liệu Highway')
                 data = new highway({
                     what: 'straight',
                     xplus: '0',
@@ -226,7 +227,7 @@ module.exports = {
                     .setColor('#029202')
                     .setFooter({ text: `${interaction.user.tag} • ${interaction.guild.name}`, iconURL: `${interaction.user.displayAvatarURL()}` })
                     .setTimestamp()
-                interaction.reply({ embeds: [embed] })
+                interaction.editReply({ embeds: [embed] })
             }
         })
     }

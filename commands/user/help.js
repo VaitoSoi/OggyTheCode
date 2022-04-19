@@ -31,7 +31,7 @@ module.exports = {
         if (!args[0]) {
 
             let categories = [];
-            
+
             readdirSync("./commands/").forEach((dir) => {
                 const commands = readdirSync(`./commands/${dir}/`).filter((file) =>
                     file.endsWith(".js")
@@ -79,24 +79,9 @@ module.exports = {
                                 value: 'user'
                             },
                             {
-                                label: '🎧 Music',
-                                description: 'Là các lệnh liên quan tới nhạc.',
-                                value: 'music'
-                            },
-                            {
-                                label: '👨‍⚖️ Moderation',
-                                description: 'Là các lệnh mà các Admin hay Mod mới có thể dùng.',
-                                value: 'moderation'
-                            },
-                            {
                                 label: '⛏ Ingame',
                                 description: 'Là các lệnh liên quan đến server 2y2c.org',
                                 value: 'server'
-                            },
-                            {
-                                label: '⚙ Config',
-                                description: 'Là các lệnh cho phép chỉnh sửa Data trên cơ sở dữ liệu thuộc guild',
-                                value: 'config'
                             }
                         ])
                 )

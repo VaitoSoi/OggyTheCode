@@ -49,7 +49,7 @@ module.exports = {
                 .setColor('#029202')
                 .setFooter({ text: `${interaction.user.tag} • ${interaction.guild.name}`, iconURL: `${interaction.user.displayAvatarURL()}` })
                 .setTimestamp()
-            interaction.reply({ embeds: [embed] })
+            interaction.editReply({ embeds: [embed] })
         })
     }
 } 

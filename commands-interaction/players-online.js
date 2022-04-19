@@ -10,6 +10,7 @@ module.exports = {
     * @param {CommandInteraction} interaction 
     */ 
     run: async(interaction) => {
+        if (interaction.deferred === false) await interaction.deferReply()
         const client = interaction.client
         return
     }

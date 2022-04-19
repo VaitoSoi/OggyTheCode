@@ -12,6 +12,7 @@ module.exports = {
      * @returns 
      */
     async run(message) {
+        // console.log(message.content)
         const client = message.client
         if (message.author.bot || !message.guild) return;
 
@@ -74,13 +75,6 @@ module.exports = {
                                 .setTimestamp()
                         ]
                     })
-                    if (command.permissions) {
-                        command.permissions.forEach((p) => {
-                            if (!message.member.permissions.has(p)) {
-                                return message.channel.send(`Bạn thiếu quyền \`${p}\``)
-                            }
-                        })
-                    }
 
                     const data2 = await dcommand.findOne({ guildid: message.guildId })
                     if (data2) {
@@ -156,7 +150,7 @@ module.exports = {
                                     inline: true
                                 })
                             .setAuthor({ name: `${client.user.tag}`, iconURL: client.user.avatarURL() })
-                            .setFooter({ text: `${message.author.tag} • Lệnh: ${cmd}` })
+                            .setFooter({ text: `${message.auhtor.tag} • Lệnh: ${cmd}` })
                             .setColor('RANDOM')
                         ]
                     })

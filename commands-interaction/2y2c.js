@@ -10,6 +10,7 @@ module.exports = {
     * @param {CommandInteraction} interaction 
     */ 
     run: async(interaction) => {
+        if (interaction.deferred === false) await interaction.deferReply()
         const client = interaction.client
         const embed1 = new MessageEmbed()
             .setAuthor({
@@ -24,7 +25,7 @@ module.exports = {
             })
             .setTimestamp()
             .setColor('RANDOM')
-        await interaction.reply({
+        await interaction.editReply({
             embeds: [
                 embed1,
             ]

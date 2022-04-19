@@ -15,12 +15,13 @@ module.exports = {
     * @param {CommandInteraction} interaction 
     */ 
     run: async(interaction) => {
+        if (interaction.deferred === false) await interaction.deferReply()
         const client = interaction.client
         const URL = interaction.options.getUser('user').avatarURL({ format: 'jpg', dynamic: true, size: 1024 })
         const embed = new MessageEmbed()
             .setImage(URL)
             .setURL(URL)
             .setTitle('Nguồn của avatar')
-        interaction.reply({ embeds: [embed] })
+        interaction.editReply({ embeds: [embed] })
     }
 } 

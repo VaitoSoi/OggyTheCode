@@ -78,34 +78,19 @@ module.exports = {
                         .addOptions([
                             {
                                 label: '🤵 User',
-                                description: 'Là các lệnh mà mọi User có thể dùng.',
+                                description: 'Là các lệnh mà User có thể dùng.',
                                 value: 'user'
-                            },
-                            {
-                                label: '🎧 Music',
-                                description: 'Là các lệnh liên quan tới nhạc.',
-                                value: 'music'
-                            },
-                            {
-                                label: '👨‍⚖️ Moderation',
-                                description: 'Là các lệnh mà các Admin hay Mod mới có thể dùng.',
-                                value: 'moderation'
                             },
                             {
                                 label: '⛏ Ingame',
                                 description: 'Là các lệnh liên quan đến server 2y2c.org',
                                 value: 'server'
                             },
-                            {
-                                label: '⚙ Config',
-                                description: 'Là các lệnh cho phép chỉnh sửa Data trên cơ sở dữ liệu thuộc guild',
-                                value: 'config'
-                            }
                         ])
                 )
             ]
 
-            await interaction.reply({
+            await interaction.editReply({
                 embeds: [embed],
                 components: row(false)
             })
@@ -177,7 +162,7 @@ module.exports = {
                 const embed = new MessageEmbed()
                     .setTitle(`Không tìm thấy lệnh! Sử dụng \`${prefix}help\` để xem tất cả lệnh!`)
                     .setColor("FF0000");
-                return interaction.reply({ embeds: [embed] });
+                return interaction.editReply({ embeds: [embed] });
             }
 
             const embed = new MessageEmbed()

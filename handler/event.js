@@ -1,37 +1,31 @@
 const fs = require('fs')
-const ascii = require('ascii-table');
+    , ascii = require('ascii-table')
+    , { Client, MessageEmbed } = require('discord.js')
 
 let table = new ascii('Event');
-table.setHeading("Name", "Status", "Player");
+table.setHeading("Name", "Status");
 
-module.exports = (client, player) => {
-    const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
+/**
+ * 
+ * @param {Client} client 
+ */
+module.exports = async (client) => {
+    let eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'))
+        , num = 0
 
     for (const file of eventFiles) {
         const event = require(`../events/${file}`);
         if (!event.name) {
-            if (event.player && event.player === true) {
-                table.addRow(file, '✖ Not Ready', '✔');
-            } else if (event.player || event.player === false) {
-                table.addRow(file, '✖ Not Ready', '');
-            }
+            table.addRow(file, '✖ Not Ready');
         } else {
-            if (event.player && event.player === true) {
-                table.addRow(file, '✔ Ready', '✔');
-                if (event.once) {
-                    player.once(event.name, (...args) => event.run(...args));
-                } else {
-                    player.on(event.name, (...args) => event.run(...args));
-                }
-            } else if (!event.player || event.player === false) {
-                table.addRow(file, '✔ Ready', '');
-                if (event.once) {
-                    client.once(event.name, (...args) => event.run(...args));
-                } else {
-                    client.on(event.name, (...args) => event.run(...args));
-                }
+            num++
+            table.addRow(file, '✔ Ready');
+            if (event.once) {
+                client.once(event.name, (...args) => event.run(...args));
+            } else {
+                client.on(event.name, (...args) => event.run(...args));
             }
         }
     }
-    console.log(table.toString())
+    console.log(`Đã load ${num} EVENTS!\n` + table.toString())
 }

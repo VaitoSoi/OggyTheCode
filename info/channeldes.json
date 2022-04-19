@@ -1,0 +1,9 @@
+{
+    "mute": "Thông báo khi user bị `Mute`",
+    "warn": "Thông báo khi user bị `Warn`",
+    "kick": "Thông báo khi user bị `Kick`",
+    "ban": "Thông báo khi user bị `Ban`",
+    "welcome": "Thông báo khi có user vào server",
+    "goodbye": "Thông báo khi có user vào server",
+    "livechat": "Tin nhắn trực tiếp từ server `2y2c.org`"
+}

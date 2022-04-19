@@ -29,16 +29,17 @@ const client = new Client({
 
 module.exports.client = client
 
-const { Player } = require('discord-player')
+// const { Player } = require('discord-player')
 const { readdirSync } = require('fs')
-
+/*
 const player = new Player(client, {
     ytdlDownloadOptions: { filter: "audioonly" }
 });
 
 client.player = player;
 module.exports.player = player
-// require('dotenv').config('./.env')
+*/
+require('dotenv').config('./.env')
 
 /**
  * 
@@ -54,47 +55,13 @@ client.categories = readdirSync("./commands/");
 client.interactions = new Collection();
 
 require('./util/mongooseConnect')(require('mongoose'))
-require('./handler/event')(client, player)
+require('./handler/event')(client)
 require('./handler/command')(client)
-
 
 /**
  * 
  * ^ Handler / Kết nối vối Mongoose
  * 
- * v Event Ready
- * 
- */
-const arrayOfStatus = require('./info/statusArray')
-const ms = require('ms')
-
-client.on('ready', async () => {
-    await require('./handler/commands-interaction')(client)
-    console.log(`${client.user.username} is onl now`)
-    let index = 0
-    setInterval(() => {
-        if (index === arrayOfStatus.length) index = 0;
-        const status = arrayOfStatus[index];
-        client.user.setActivity(status);
-        index++;
-    }, ms('5sec'))
-    /**
-    * 
-    * Minecraft Bot
-    * 
-    */
-
-    const { createBot } = require('./minecraft/minecraftbot')
-    const { checker } = require('./minecraft/queueChecker')
-
-    checker(client)
-    createBot(client)
-})
-
-/**
- * 
- * ^ Event Ready
- *
  * v Login vào tài khoản
  * 
  */

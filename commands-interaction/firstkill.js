@@ -15,19 +15,20 @@ module.exports = {
     * @param {CommandInteraction} interaction 
     */ 
     run: async(interaction) => {
+        if (interaction.deferred === false) await interaction.deferReply()
         const client = interaction.client
         const kd = require('../models/kd')
         const user = interaction.options.getString('user')
         kd.findOne({ username: user }, async(err, data) => {
             if (err) throw err;
             if (data) {
-                if (!data.firstkill) return interaction.reply('Không tìm thấy dữ liệu')
-                interaction.reply({embeds:[new MessageEmbed()
+                if (!data.firstkill) return interaction.editReply('Không tìm thấy dữ liệu')
+                interaction.editReply({embeds:[new MessageEmbed()
                     .setDescription(data.firstkill)
                     .setColor('RANDOM')]}
                 )
             } else {
-                interaction.reply('Không tìm thấy dữ liệu')
+                interaction.editReply('Không tìm thấy dữ liệu')
             }
         })
     }

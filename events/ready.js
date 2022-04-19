@@ -8,7 +8,27 @@ module.exports = {
      * 
      * @param {Client} client 
      */
-    run(client) {
-        
+    async run(client) {
+        await require('../handler/commands-interaction')(client)
+        console.log(`${client.user.username} is onl now`)
+        let index = 0
+        setInterval(() => {
+            if (index === arrayOfStatus.length) index = 0;
+            const status = arrayOfStatus[index];
+            client.user.setActivity(status);
+            index++;
+        }, ms('5sec'))
+        /**
+        * 
+        * Minecraft Bot
+        * 
+        */
+
+        const { createBot } = require('../minecraft/minecraftbot')
+        const { checker } = require('../minecraft/queueChecker')
+
+        // checker(client)
+        createBot(client)
+        console.log('Đã load Minecraft Bot!')
     }
 }

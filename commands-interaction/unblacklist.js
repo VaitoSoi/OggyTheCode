@@ -23,10 +23,11 @@ module.exports = {
     * @param {CommandInteraction} interaction 
     */ 
     run: async(interaction) => {
+        if (interaction.deferred === false) await interaction.deferReply()
         const client = interaction.client
 
         const blacklist = require('../models/blacklist')
-        if (interaction.user.id !== client.application.owner.id) return interaction.reply('BOT OWNER ONLY')
+        if (interaction.user.id !== client.application.owner.id) return interaction.editReply('BOT OWNER ONLY')
         let User = interaction.options.getUser('user')
         let reason = interaction.options.getString('reason')
         if (!reason) reason = "Không có lý do.";
@@ -52,10 +53,10 @@ module.exports = {
                             inline: true
                         })
                     .setColor('BLUE')
-                interaction.reply({ embeds: [embed] })
+                interaction.editReply({ embeds: [embed] })
                 if (interaction.options.getBoolean('dms') === true) User.send(embed)
             } else {
-                interaction.reply('Người dùng chưa bị blacklist.\nVui lòng dùng lệnh blacklist để blacklist.')
+                interaction.editReply('Người dùng chưa bị blacklist.\nVui lòng dùng lệnh blacklist để blacklist.')
             }
         })
     }

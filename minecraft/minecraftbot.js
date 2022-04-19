@@ -1,18 +1,19 @@
-const mineflayer = require('mineflayer');
-const tpsPlugin = require('mineflayer-tps')(mineflayer);
-const util = require('minecraft-server-util');
-const { Client } = require('discord.js');
-const ms = require('ms');
-const setchannel = require('../models/setchannel');
-const { MessageEmbed, Message } = require('discord.js');
-const { env } = require('process')
-const info = {
-	name: env.MC_NAME,
-	pass: env.MC_PASS,
-	version: env.MC_VERSION,
-	ip: env.MC_IP,
-	port: env.MC_PORT
-}
+const mineflayer = require('mineflayer')
+	, tpsPlugin = require('mineflayer-tps')(mineflayer)
+	, util = require('minecraft-server-util')
+	, { Client } = require('discord.js')
+	, ms = require('ms')
+	, setchannel = require('../models/setchannel')
+	, config = require('../models/option')
+	, { MessageEmbed, Message } = require('discord.js')
+	, { env } = require('process')
+	, info = {
+		name: env.MC_NAME,
+		pass: env.MC_PASS,
+		version: env.MC_VERSION,
+		ip: env.MC_IP,
+		port: env.MC_PORT
+	}
 
 /**
  *
@@ -36,12 +37,13 @@ function createBot(client) {
 
 	// Log when login
 
-	let click = false;
-	let end = false;
-	let connect = 0;
-	let move = 0;
-	let login = false;
-	let err = 0
+	let click = false
+		, end = false
+		, connect = 0
+		, move = 0
+		, login = false
+		, err = 0
+		, logintime = 0
 
 	/**
 	 * 
@@ -50,56 +52,62 @@ function createBot(client) {
 	 * @param {String} color
 	 */
 	async function send(embed, msg, color) {
+		// console.log(msg)
 		if (embed) {
-			client.guilds.cache.map(guild => guild.id).forEach(id => {
+			client.guilds.cache.map(guild => guild.id).forEach(async (id) => {
 				const guild = client.guilds.cache.get(id);
 				if (!guild.me.permissions.has('SEND_MESSAGES')) return
-				setchannel.findOne({ guildid: id }, async (err, data) => {
-					if (err) throw err;
-					if (data) {
-						if (!data.livechat) return;
-						if (data.livechat === 'No data') return;
-						const channel = guild.channels.cache.get(data.livechat);
-						if (!channel) return;
-						if (guild.me.permissionsIn(channel).has('SEND_MESSAGES') && embed && embed !== '') {
-							if (guild.me.permissionsIn(channel).has('EMBED_LINKS')) {
-								channel.send({
-									embeds: [
-										embed
-									]
-								});
-							} else if (!guild.me.permissionsIn(channel).has('EMBED_LINKS') || !embed || embed === '') {
-								if (!msg) return
-								if (color.toLowerCase() === 'blue' || color.toLowerCase() === 'xanh dương') {
-									channel.send('```md\n# ' + msg.toString() + '```')
-								}
-								else if (color.toLowerCase() === 'orange' || color.toLowerCase() === 'cam') {
-									channel.send('```cs\n# ' + msg.toString() + '```')
-								}
-								else if (color.toLowerCase() === 'red' || color.toLowerCase() === 'đỏ') {
-									channel.send('```cs\n- ' + msg.toString() + '```')
-								}
-								else if (color.toLowerCase() === 'green' || color.toLowerCase() === 'xanh lá') {
-									channel.send('```cs\n+ ' + msg.toString() + '```')
-								}
-								else if (color.toLowerCase() === 'gray' || color.toLowerCase() === 'grey' || color.toLowerCase() === 'xám') {
-									channel.send('```md\n> ' + msg.toString() + '```')
-								}
-								else {
-									channel.send('```' + msg + '```')
-								}
-							}
-						}
-					}
-				});
+				let data = await config.findOne({ guildid: id })
+				if (!data) data = await setchannel.findOne({ guildid: id })
+				if (data) {
+					if (!data.config.channels.livechat) return;
+					if (data.config.channels.livechat === '') return;
+					const channel = guild.channels.cache.get(data.config.channels.livechat);
+					if (!channel) return;
+					if (!guild.me.permissionsIn(channel).has('SEND_MESSAGES')) return
+					if (embed && embed !== '') channel.send({ embeds: [embed] })
+					else channel.send(await codeblockGenerator(msg, color))
+				}
 			})
 		}
 	}
+	/**
+	 * 
+	 * @param {String} msg 
+	 * @param {String} color 
+	 * @returns 
+	 */
+	async function codeblockGenerator(msg, color) {
+		let c = color.toLowerCase()
+		if (c === 'blue' || c === 'xanh dương') {
+			return '```md\n# ' + msg.toString() + '```'
+		}
+		else if (c === 'orange' || c === 'cam') {
+			return '```cs\n# ' + msg.toString() + '```'
+		}
+		else if (c === 'red' || c === 'đỏ') {
+			return '```cs\n- ' + msg.toString() + '```'
+		}
+		else if (c === 'green' || c === 'xanh lá') {
+			return '```cs\n+ ' + msg.toString() + '```'
+		}
+		else if (c === 'gray' || c === 'grey' || c === 'xám') {
+			return '```md\n> ' + msg.toString() + '```'
+		}
+		else {
+			return '```' + msg + '```'
+		}
+	}
+	/**
+	 * 
+	 * @param {String} pass 
+	 */
 
 	minecraftbot.on('login', async () => {
 		move++
 		end = false
 		let server = ''
+		logintime++
 		if (move == 1) { server = 'Pin'; minecraftbot.afk.stop() }
 		else if (move == 2) { server = 'Queue'; minecraftbot.afk.stop() }
 		else if (move == 3) {
@@ -164,6 +172,7 @@ function createBot(client) {
 			minecraftbot.simpleClick.leftMouse(Number(p2));
 			minecraftbot.simpleClick.leftMouse(Number(p3));
 			minecraftbot.simpleClick.leftMouse(Number(p4));
+
 			const embed1 = new MessageEmbed()
 				.setTitle('Đã nhập mật khẩu')
 				.setColor('#07fc03') // Xanh lá
@@ -194,6 +203,7 @@ function createBot(client) {
 	const chat8 = /^<BotNameIsOggy>(.+)$/;
 
 	minecraftbot.on('message', async (message) => {
+		// console.log(message.toString())
 		if (chat1.test(message.toString()) || chat2.test(message.toString())) {
 			const embed = new MessageEmbed()
 				.setDescription(`${message.toString()}`)
@@ -306,19 +316,23 @@ function createBot(client) {
 		blacklist.findOne({ id: message.author.id }, async (err, data) => {
 			if (err) throw err;
 			if (!data) {
-				setchannel.findOne({ guildid: message.guild.id, livechat: message.channel.id }, async (err, data) => {
-					if (err) throw err;
-					if (data) {
-						if (end === false) {
-							minecraftbot.chat(`<${message.author.tag}> ${message.content}`);
-							if (!message) return
-							message.react('✅');
-						} else if (end === true) {
-							if (!message) return
-							message.react('❌');
-						}
+				let data2 = await config.findOne({ guildid: message.guildId })
+				if (!data2) data2 = await setchannel.findOne({ guildid: message.guildId })
+				if (data2) {
+					let id = data2.config.channels.livechat
+					if (!id) id = data2.livechat
+					let channel = message.guild.channels.cache.get(id)
+					if (!channel) return
+					if (message.channel.id !== channel.id) return
+					if (end === false) {
+						minecraftbot.chat(`<${message.author.tag}> ${message.content}`);
+						if (!message) return
+						message.react('✅');
+					} else if (end === true) {
+						if (!message) return
+						message.react('❌');
 					}
-				});
+				}
 				if (!message.content.startsWith(prefix)) return;
 				const args = message.content.slice(prefix.length).trim().split(/ +/g);
 				const cmd = args.shift().toLocaleLowerCase();
@@ -335,7 +349,7 @@ function createBot(client) {
 				} else if (cmd === 'playeronline' || cmd === 'ponl' || cmd === 'player-online' || cmd === 'players-online') {
 					if (end === true) return message.channel.send('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
 					message.channel.send('Hiện có `' + Object.values(minecraftbot.players).map(name => name.username).length + '` player(s) đang onl trong server bot đang ở!')
-				} else if (cmd === '2y2c' || cmd === '2y2c-queue' || cmd === 'queue-2y2c' || cmd === 'hangcho-2y2c') {
+				} /*else if (cmd === '2y2c' || cmd === '2y2c-queue' || cmd === 'queue-2y2c' || cmd === 'hangcho-2y2c') {
 					const time = Math.floor(Date.now() / 1000)
 					var queueOnline = Object.values(minecraftbot.players).map(name => name.username).length
 					const queueEmbed = new MessageEmbed()
@@ -368,7 +382,7 @@ function createBot(client) {
 						})
 						send = true
 					})
-				}
+				} */
 			}
 			else { return }
 		});
@@ -398,7 +412,7 @@ function createBot(client) {
 						]
 					})
 				} else if (ava === true || !ava) {
-					if (interaction.commandName === '2y2c') {
+					/*if (interaction.commandName === '2y2c') {
 						const time = Math.floor(Date.now() / 1000)
 						var queueOnline = Object.values(minecraftbot.players).map(name => name.username).length
 						const queueEmbed = new MessageEmbed()
@@ -423,20 +437,20 @@ function createBot(client) {
 						interaction.channel.send({
 							embeds: [queueEmbed]
 						})
-					}
-				} else if (interaction.commandName === 'check-online') {
-					if (end === true) return interaction.reply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
-					let i = 0;
-					const num = Object.values(minecraftbot.players).map(name => name.username).length;
-					Object.values(minecraftbot.players).map(name => name.username).forEach((names) => {
-						if (names === interaction.options.getString('player')) return interaction.reply(`✅ | Player ${names} đang onl!`);
-						if (i > num) return interaction.reply('❌ | Player hiện không onl!');
-						i++;
-					});
-				} else if (interaction.commandName === 'players-online') {
-					if (end === true) return interaction.reply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
+					} else*/if (interaction.commandName === 'check-online') {
+						if (end === true) return interaction.reply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
+						let i = 0;
+						const num = Object.values(minecraftbot.players).map(name => name.username).length;
+						Object.values(minecraftbot.players).map(name => name.username).forEach((names) => {
+							if (names === interaction.options.getString('player')) return interaction.reply(`✅ | Player ${names} đang onl!`);
+							if (i > num) return interaction.reply('❌ | Player hiện không onl!');
+							i++;
+						});
+					} else if (interaction.commandName === 'players-online') {
+						if (end === true) return interaction.reply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
 
-					interaction.reply(`Hiện có ${Object.values(minecraftbot.players).map(name => name.username).length} players đang online trong server bot đang có mặt!`)
+						interaction.reply(`Hiện có ${Object.values(minecraftbot.players).map(name => name.username).length} players đang online trong server bot đang có mặt!`)
+					}
 				}
 			}
 		}
@@ -531,7 +545,7 @@ function createBot(client) {
 		const randomnum = await random()
 
 		util.status('2y2c.org').then(async (response) => {
-			minecraftbot.chat(`Total Player: ${response.onlinePlayers}/${response.maxPlayers} | ${randomnum}`);
+			minecraftbot.chat(`Total Player: ${response.players.online}/${response.players.max} | ${randomnum}`);
 		});
 	});
 
@@ -539,7 +553,7 @@ function createBot(client) {
 	minecraftbot.addChatPattern('botinfo', /<(.+)> (?:og.botinfo|og.bi|!botinfo|!bi)/, { parse: true });
 	minecraftbot.on('chat:botinfo', async (message) => {
 		const randomnum = await random()
-		minecraftbot.chat(`WSPing: ${client.ws.ping} | Uptime: ${client.uptime} | ${randomnum}`);
+		minecraftbot.chat(`WSPing: ${client.ws.ping} | Uptime: ${ms(client.uptime)} | ${randomnum}`);
 	});
 	minecraftbot.addChatPattern('help', /<(.+)> (?:og.help|!help)/, { parse: true });
 	minecraftbot.on('chat:help', async () => {
@@ -710,7 +724,6 @@ function createBot(client) {
 	minecraftbot.on('message', async (message) => {
 		const messageregex = /^<(.+)> (.+)$/;
 		if (messageregex.test(message.toString())) return;
-		if (info.ingame === 'BotNameIsOggy') return;
 		const str = message.toString();
 		if (kill1.test(str)) {
 			const victim = `${kill1.exec(str)[1]}`;

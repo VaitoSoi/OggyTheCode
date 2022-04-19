@@ -15,6 +15,7 @@ module.exports = {
     * @param {CommandInteraction} interaction 
     */ 
     run: async(interaction) => {
+        if (interaction.deferred === false) await interaction.deferReply()
         const client = interaction.client
         const kd = require('../models/kd')
         const user = interaction.options.getString('user')
@@ -26,7 +27,7 @@ module.exports = {
                 if (data.death === '0' && data.kill === '0') kd = '0'
                 if (data.death === '0' || !data.death) kd = `Kill: ${data.kill}`
                 if (data.kill === '0' || !data.kill) kd = ` Death: ${data.death}`
-                interaction.reply({embeds:[new MessageEmbed()
+                interaction.editReply({embeds:[new MessageEmbed()
                     .setTitle(`Số kill/death của ${user}`)
                     .addFields({
                         name: 'Kill',
@@ -46,7 +47,7 @@ module.exports = {
                     .setColor('RANDOM')]}
                 )
             } else {
-                interaction.reply('Không thấy data.\nHãy bóp bird tự tử để tạo data')
+                interaction.editReply('Không thấy data.\nHãy bóp bird tự tử để tạo data')
             }
         })
     }

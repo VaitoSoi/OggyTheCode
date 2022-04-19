@@ -25,64 +25,18 @@ module.exports = {
         const client = interaction.client
         const setchannel = require('../models/setchannel');
         const type = interaction.options.getString('type')
+        
         setchannel.findOne({ guildid: interaction.guild.id }, async (err, data) => {
             if (err) throw err;
-            if (type === 'mute') {
-                setchannel.findOneAndUpdate({ guildid: interaction.guild.id }, { $set: { mute: 'No data' } }, async (err, data) => {
-                    if (err) throw err;
-                    interaction.reply(`Đã xóa data của channel ${type}`)
-                    data.save()
-                })
-
-            } else if (type === 'ban') {
-                setchannel.findOneAndUpdate({ guildid: interaction.guild.id }, { $set: { ban: 'No data' } }, async (err, data) => {
-                    if (err) throw err;
-                    interaction.reply(`Đã xóa data của channel ${type}`)
-                    data.save()
-                })
-            } else if (type === 'kick') {
-                setchannel.findOneAndUpdate({ guildid: interaction.guild.id }, { $set: { kick: 'No data' } }, async (err, data) => {
-                    if (err) throw err;
-                    interaction.reply(`Đã xóa data của channel ${type}`)
-                    data.save()
-                })
-            } else if (type === 'warn') {
-                setchannel.findOneAndUpdate({ guildid: interaction.guild.id }, { $set: { warn: 'No data' } }, async (err, data) => {
-                    if (err) throw err;
-                    interaction.reply(`Đã xóa data của channel ${type}`)
-                    data.save()
-                })
-            } else if (type === 'welcome') {
-                setchannel.findOneAndUpdate({ guildid: interaction.guild.id }, { $set: { welcome: 'No data' } }, async (err, data) => {
-                    if (err) throw err;
-                    interaction.reply(`Đã xóa data của channel ${type}`)
-                    data.save()
-                })
-            } else if (type === 'goodbye') {
-                setchannel.findOneAndUpdate({ guildid: interaction.guild.id }, { $set: { goodbye: 'No data' } }, async (err, data) => {
-                    if (err) throw err;
-                    interaction.reply(`Đã xóa data của channel ${type}`)
-                    data.save()
-                })
-            } else if (type === 'livechat') {
-                setchannel.findOneAndUpdate({ guildid: interaction.guild.id }, { $set: { livechat: 'No data' } }, async (err, data) => {
-                    if (err) throw err;
-                    interaction.reply(`Đã xóa data của channel ${type}`)
-                    data.save()
-                })
-            } else if (type === 'submitshow') {
-                setchannel.findOneAndUpdate({ guildid: interaction.guild.id }, { $set: { submitshow: 'No data' } }, async (err, data) => {
-                    if (err) throw err;
-                    interaction.reply(`Đã xóa data của channel ${type}`)
-                    data.save()
-                })
-            } else if (type === 'submitnoti') {
-                setchannel.findOneAndUpdate({ guildid: interaction.guild.id }, { $set: { submitnoti: 'No data' } }, async (err, data) => {
-                    if (err) throw err;
-                    interaction.reply(`Đã xóa data của channel ${type}`)
-                    data.save()
-                })
-            }
+                 if (type === 'mute') data.mute = 'No data'
+            else if (type === 'ban') data.ban = 'No data'
+            else if (type === 'kick') data.kick = 'No data'
+            else if (type === 'warn') data.warn = 'No data'
+            else if (type === 'welcome') data.welcome = 'No data'
+            else if (type === 'goodbye') data.goodbye = 'No data'
+            else if (type === 'livechat') data.livechat = 'No data'
+            interaction.editReply(`Đã xóa data của channel \`${type.toUpperCase()}\``)
+            data.save()
         })
     }
 } 

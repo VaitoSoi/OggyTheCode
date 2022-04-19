@@ -1,5 +1,6 @@
 const { CommandInteraction, MessageEmbed } = require('discord.js')
 const { SlashCommandBuilder } = require('@discordjs/builders')
+const delay = require('../util/delay')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -23,7 +24,7 @@ module.exports = {
             client.commands.find(
                 (c) => c.aliases && c.aliases.includes(getString('command'))
             );
-        if (!c) return interaction.reply({
+        if (!c) return interaction.editReply({
             embeds: [
                 new MessageEmbed()
                     .setTitle(`❌ | Không tìm thấy lệnh **\`${args[1]}\`**`)
@@ -35,7 +36,7 @@ module.exports = {
             if (err) throw err;
             if (data) {
                 if (!data.commands.includes(cmd)) {
-                    interaction.reply(`Lệnh \`${cmd}\` không bị tắt!`)
+                    interaction.editReply(`Lệnh \`${cmd}\` không bị tắt!`)
                 } else {
                     const cmds = data.commands
                     for (let i = 0; i < cmds.length; i++) {
@@ -43,7 +44,7 @@ module.exports = {
                             dcommand.findOneAndUpdate({ guildid: interaction.guildId }, { $set: { commands: data.commands.slice(0, i).concat(data.commands.slice(i + 1, data.commands.length)) } }, async (err, data) => {
                                 if (err) throw err;
                                 if (data) {
-                                    interaction.reply(`Đã bật lệnh ${cmd}`)
+                                    interaction.editReply(`Đã bật lệnh ${cmd}`)
                                     data.save()
                                 }
                             })
@@ -51,17 +52,16 @@ module.exports = {
                     }
                 }
             } else {
-                interaction.channel.send('Không thấy data.').then(msg => {
-                    msg.edit('Đang tạo data')
-                    data = new dcommand({
-                        guildid: interaction.guildId,
-                        guildname: interaction.guild.name,
-                        commands: []
-                    })
-                    data.save()
-                    msg.delete()
-                    interaction.reply('Đã tạo data và đã bật lệnh ' + cmd)
+                interaction.channel.send('Không thấy data.')
+                delay(1000)
+                interaction.editReply('Đang tạo data')
+                data = new dcommand({
+                    guildid: interaction.guildId,
+                    guildname: interaction.guild.name,
+                    commands: []
                 })
+                data.save()
+                interaction.editReply('Đã tạo data và đã bật lệnh ' + cmd)
             }
         })
     }

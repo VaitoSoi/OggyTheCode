@@ -140,6 +140,6 @@ module.exports = {
                 })
             .setFooter({ text: `${interaction.user.tag} • ${interaction.guild.name}`, iconURL: `${interaction.user.displayAvatarURL()}` })
             .setTimestamp()
-        await interaction.reply({ embeds: [embed] })
+        await interaction.editReply({ embeds: [embed] })
     }
 } 

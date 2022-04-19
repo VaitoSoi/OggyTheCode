@@ -19,7 +19,7 @@ module.exports = {
         const prefixSchema = require('../models/prefix')
         const baseprefix = process.env.PREFIX
         const res = await interaction.options.getString('prefix')
-        if (res === baseprefix) return interaction.reply('Vui lòng dùng lệnh `reset-prefix`')
+        if (res === baseprefix) return interaction.editReply('Vui lòng dùng lệnh `reset-prefix`')
 
         prefixSchema.findOne({ GuildId: interaction.guild.id }, async (err, data) => {
             if (err) throw err;
@@ -33,7 +33,7 @@ module.exports = {
                     UserName: interaction.user.username
                 })
                 data.save()
-                interaction.reply(`Prefix đã đc đổi thành "**${res}**"`)
+                interaction.editReply(`Prefix đã đc đổi thành "**${res}**"`)
             } else {
                 data = new prefixSchema({
                     GuildId: interaction.guild.id,
@@ -43,7 +43,7 @@ module.exports = {
                     UserName: interaction.user.username
                 })
                 data.save()
-                interaction.reply(`Prefix đã đc đổi thành "**${res}**"`)
+                interaction.editReply(`Prefix đã đc đổi thành "**${res}**"`)
             }
         })
     }

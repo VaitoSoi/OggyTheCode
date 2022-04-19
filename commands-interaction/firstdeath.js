@@ -22,15 +22,15 @@ module.exports = {
         kd.findOne({ username: user }, async (err, data) => {
             if (err) throw err;
             if (data) {
-                if (!data.firstdeath) return interaction.reply('Không tìm thấy dữ liệu')
-                interaction.reply({
+                if (!data.firstdeath) return interaction.editReply('Không tìm thấy dữ liệu')
+                interaction.editReply({
                     embeds: [
                         new MessageEmbed()
                             .setDescription(data.firstdeath)
                             .setColor('RANDOM')]
                 })
             } else {
-                interaction.reply('Không tìm thấy dữ liệu')
+                interaction.editReply('Không tìm thấy dữ liệu')
             }
         })
     }

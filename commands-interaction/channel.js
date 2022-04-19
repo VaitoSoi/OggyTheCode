@@ -10,6 +10,7 @@ module.exports = {
     * @param {CommandInteraction} interaction 
     */ 
     run: async(interaction) => {
+        if (interaction.deferred === false) await interaction.deferReply()
         const client = interaction.client
         const setchannel = require('../models/setchannel');
         setchannel.findOne({ guildid: interaction.guild.id }, async (err, data) => {
@@ -28,7 +29,7 @@ module.exports = {
                     status: 'No data',
                 })
                 data.save()
-                interaction.reply({
+                interaction.editReply({
                     content: '🟢 | Đã tạo dữ liệu!',
                     embeds: [
                         new MessageEmbed()
@@ -86,7 +87,7 @@ module.exports = {
                     ]
                 })
             } else {
-                interaction.reply({
+                interaction.editReply({
                     embeds: [
                         new MessageEmbed()
                         .setAuthor({ name: `${client.user.tag}`, iconURL: client.user.displayAvatarURL() })

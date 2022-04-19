@@ -4,7 +4,7 @@ const minecraft = require('minecraft-server-util')
 const { report } = require('superagent')
 
 module.exports = {
-    name: 'server',
+    name: 'status',
     description: 'Thông tin về sever muốn biết.',
     usage: ' <ip> <port>',
     category: 'user',

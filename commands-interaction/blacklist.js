@@ -26,16 +26,16 @@ module.exports = {
     * @param {CommandInteraction} interaction 
     */
     run: async (interaction) => {
-        if (interaction.user.id !== '692271452053045279') return interaction.reply('BOT OWNER ONLY')
+        if (interaction.user.id !== '692271452053045279') return interaction.editReply('BOT OWNER ONLY')
         const client = interaction.client
         const user = interaction.options.getUser('user')
-        if (!user) return interaction.reply('Không phát hiện User !')
+        if (!user) return interaction.editReply('Không phát hiện User !')
         let reason = interaction.options.getString('reason')
         if (!reason) reason = "Không có lý do.";
         blacklist.findOne({ id: user.id }, async (err, data) => {
             if (err) throw err;
             if (data) {
-                interaction.reply(`**${user.tag}** đã bị blacklist từ trước.`)
+                interaction.editReply(`**${user.tag}** đã bị blacklist từ trước.`)
             } else {
                 data = new blacklist({
                     id: user.id,
@@ -70,7 +70,7 @@ module.exports = {
                         name: client.user.tag + ' blacklist',
                         iconURL: client.user.displayAvatarURL()
                     })
-                interaction.reply({ embeds: [embed1] })
+                interaction.editReply({ embeds: [embed1] })
                 if (interaction.options.getBoolean('dms') === true) user.send({ embeds: [embed1] })
             }
         })
