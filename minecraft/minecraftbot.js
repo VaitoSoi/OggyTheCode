@@ -316,11 +316,9 @@ function createBot(client) {
 		blacklist.findOne({ id: message.author.id }, async (err, data) => {
 			if (err) throw err;
 			if (!data) {
-				let data2 = await config.findOne({ guildid: message.guildId })
-				if (!data2) data2 = await setchannel.findOne({ guildid: message.guildId })
+				let data2  = await setchannel.findOne({ guildid: message.guildId })
 				if (data2) {
-					let id = data2.config.channels.livechat
-					if (!id) id = data2.livechat
+					let id = data2.livechat
 					let channel = message.guild.channels.cache.get(id)
 					if (!channel) return
 					if (message.channel.id !== channel.id) return

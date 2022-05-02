@@ -1,7 +1,6 @@
 const { MessageEmbed } = require('discord.js')
 const { response } = require('express')
 const minecraft = require('minecraft-server-util')
-const { report } = require('superagent')
 
 module.exports = {
     name: 'status',

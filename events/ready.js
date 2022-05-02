@@ -25,9 +25,7 @@ module.exports = {
         */
 
         const { createBot } = require('../minecraft/minecraftbot')
-        const { checker } = require('../minecraft/queueChecker')
-
-        // checker(client)
+        
         createBot(client)
         console.log('Đã load Minecraft Bot!')
     }

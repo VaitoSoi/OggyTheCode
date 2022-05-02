@@ -19,9 +19,7 @@
     "mineflayer-tps": "^1.0.1",
     "mongoose": "^6.0.10",
     "ms": "^2.1.3",
-    "nodemon": "^2.0.15",
-    "npm": "^8.3.0",
-    "pm2": "^5.1.2"
+    "npm": "^8.3.0"
   },
   "scripts": {
     "start": "nodemon index.js",
