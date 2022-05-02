@@ -57,12 +57,11 @@ function createBot(client) {
 			client.guilds.cache.map(guild => guild.id).forEach(async (id) => {
 				const guild = client.guilds.cache.get(id);
 				if (!guild.me.permissions.has('SEND_MESSAGES')) return
-				let data = await config.findOne({ guildid: id })
-				if (!data) data = await setchannel.findOne({ guildid: id })
+				let data = await setchannel.findOne({ guildid: id })
 				if (data) {
-					if (!data.config.channels.livechat) return;
-					if (data.config.channels.livechat === '') return;
-					const channel = guild.channels.cache.get(data.config.channels.livechat);
+					if (!data.livechat) return;
+					if (data.livechat === '') return;
+					const channel = guild.channels.cache.get(data.livechat);
 					if (!channel) return;
 					if (!guild.me.permissionsIn(channel).has('SEND_MESSAGES')) return
 					if (embed && embed !== '') channel.send({ embeds: [embed] })
