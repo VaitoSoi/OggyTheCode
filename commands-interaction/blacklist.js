@@ -6,6 +6,13 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('blacklist')
         .setDescription('Blacklist 1 user')
+        .addStringOption(option => option
+            .setName('action')
+            .setDescription('Xóa / Thêm blacklist')
+            .setRequired(true)
+            .addChoice('Add', 'add')
+            .addChoice('Remove', 'remove')
+        )
         .addUserOption(option => option
             .setName('user')
             .setDescription('User bạn muốn bị blacklist')
@@ -14,12 +21,10 @@ module.exports = {
         .addStringOption(option => option
             .setName('reason')
             .setDescription('Lý do user bị blacklist')
-            .setRequired(true)
         )
         .addBooleanOption(option => option
             .setName('dms')
             .setDescription('Gửi tin nhắn cho user bị blacklist')
-            .setRequired(true)
         ),
     /**
     * 
@@ -27,13 +32,14 @@ module.exports = {
     */
     run: async (interaction) => {
         if (interaction.user.id !== '692271452053045279') return interaction.editReply('BOT OWNER ONLY')
-        const client = interaction.client
-        const user = interaction.options.getUser('user')
+        let client = interaction.client
+            , user = interaction.options.getUser('user')
+            , reason = interaction.options.getString('reason')
+            , data = blacklist.findOne({ id: user.id })
+            , action = interaction.options.getString('action').toLowerCase()
         if (!user) return interaction.editReply('Không phát hiện User !')
-        let reason = interaction.options.getString('reason')
         if (!reason) reason = "Không có lý do.";
-        blacklist.findOne({ id: user.id }, async (err, data) => {
-            if (err) throw err;
+        if (action === 'add') {
             if (data) {
                 interaction.editReply(`**${user.tag}** đã bị blacklist từ trước.`)
             } else {
@@ -73,6 +79,39 @@ module.exports = {
                 interaction.editReply({ embeds: [embed1] })
                 if (interaction.options.getBoolean('dms') === true) user.send({ embeds: [embed1] })
             }
-        })
+        } else if (action === 'remove') {
+            if (!data) {
+                blacklist.findOneAndDelete({ id: user.id })
+                const embed = new MessageEmbed()
+                    .setTitle('Người dùng đã được gỡ blacklist')
+                    .addFields({
+                        name: 'Username:',
+                        value: `> ${user.username}`,
+                        inline: true
+                    },
+                        {
+                            name: 'Bởi: ',
+                            value: `> ${interaction.user.tag}`,
+                            inline: true
+                        },
+                        {
+                            name: 'Lý do',
+                            value: `> ${reason}`,
+                            inline: true
+                        })
+                    .setColor('BLUE')
+                    .setThumbnail(user.displayAvatarURL())
+                    .setTimestamp()
+                    .setFooter({ text: 'Vào lúc', iconURL: interaction.user.displayAvatarURL() })
+                    .setAuthor({
+                        name: client.user.tag + ' blacklist',
+                        iconURL: client.user.displayAvatarURL()
+                    })
+                interaction.editReply({ embeds: [embed] })
+                if (interaction.options.getBoolean('dms') === true) user.send({ embeds: [embed] })
+            } else {
+                interaction.editReply('Người dùng chưa bị blacklist.\nVui lòng dùng lệnh blacklist để blacklist.')
+            }
+        }
     }
 }

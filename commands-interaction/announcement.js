@@ -1,23 +1,25 @@
-const { Client, Message } = require('discord.js')
+const { CommandInteraction } = require('discord.js')
+const { SlashCommandBuilder } = require('@discordjs/builders')
 
 module.exports = {
-    name: 'announcement',
-    description: 'BOT OWNER ONLY',
-    usage: '',
+    data: new SlashCommandBuilder()
+        .setName('announcement')
+        .setDescription('BOT OWNER ONLY'),
     /**
     * 
-    * @param {Client} client 
-    * @param {Message} message 
-    * @param {String[]} args 
+    * @param {CommandInteraction} interaction 
     */
-    run: async (client, message, args) => {
-        if (message.author.id !== '692271452053045279') return
-        message.channel.send('🔽 | Vui lòng nhập đoạn văn bản muốn gửi đi.\n🟢 | Ghi `DONE` để kết thúc.')
-        let messageCollector = message.channel.createMessageCollector()
+    run: async (interaction) => {
+        const client = interaction.client
+
+        if (interaction.user.id !== '692271452053045279') return
+        interaction.editReply('🔽 | Vui lòng nhập đoạn văn bản muốn gửi đi.\n🟢 | Ghi `DONE` để kết thúc.')
+        let messageCollector = interaction.channel.createMessageCollector()
             , array = []
         messageCollector.on('collect', (msg) => {
             if (msg.author.id !== '692271452053045279') return
             if (msg.content.toLowerCase() === 'done') {
+                msg.react('✅')
                 msg.channel.send('Bản xem trước:\n```' + array.join('\n') + '```\nReact:\n> 🟢 để gửi đi.\n> 🔴 để hủy.').then(async (m) => {
                     let emojiCollector = m.createReactionCollector()
                         , num = 0

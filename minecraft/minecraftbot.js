@@ -59,9 +59,8 @@ function createBot(client) {
 				if (!guild.me.permissions.has('SEND_MESSAGES')) return
 				let data = await setchannel.findOne({ guildid: id })
 				if (data) {
-					if (!data.livechat) return;
-					if (data.livechat === '') return;
-					const channel = guild.channels.cache.get(data.livechat);
+					let id = data.livechat
+					const channel = guild.channels.cache.get(id);
 					if (!channel) return;
 					if (!guild.me.permissionsIn(channel).has('SEND_MESSAGES')) return
 					if (embed && embed !== '') channel.send({ embeds: [embed] })
@@ -96,6 +95,28 @@ function createBot(client) {
 		else {
 			return '```' + msg + '```'
 		}
+	}
+	/**
+	 * 
+	 * @param {Number} rejoin 
+	 */
+	function reconnect(rejoin) {
+		setTimeout(async () => {
+			let server = await util.status('2y2c.org', 25565)
+			if (server.players.online < 20) {
+				const embed = new MessageEmbed()
+					.setTitle('Ngắt kết nối với ' + info.ip + '.\nVì server hiện tại có player < 20!')
+					.setColor('RED')
+				send(embed, embed.title ? embed.title : embed.description, 'red')
+				rejoin()
+			} else {
+				const embed = new MessageEmbed()
+					.setTitle('Đang kết nối lại với ' + info.ip + '...')
+					.setColor('#ffe021')
+				send(embed, embed.title ? embed.title : embed.description, 'orange')
+				createBot(client, 'mc');
+			}
+		}, ms(`${rejoin}m`));
 	}
 	/**
 	 * 
@@ -150,7 +171,7 @@ function createBot(client) {
 
 			send(embed1, embed1.title ? embed1.title : embed1.description, 'green')
 
-		} else {
+		} else if (Number(window.slots.length) == 45 || Number(window.slots.length) == 46) {
 			const embed = new MessageEmbed()
 				.setTitle('Cửa sổ `Nhập PIN` mở')
 				.setColor('#07fc03') // Xanh lá
@@ -196,10 +217,6 @@ function createBot(client) {
 
 	// Donater
 	const chat6 = /^[Broadcast] (.+) (?:đạt mốc nạp|vừa ủng hộ) (.+)$/;
-
-	// Bot
-	const chat7 = /^<OggyTheBot>(.+)$/;
-	const chat8 = /^<BotNameIsOggy>(.+)$/;
 
 	minecraftbot.on('message', async (message) => {
 		// console.log(message.toString())
@@ -282,7 +299,7 @@ function createBot(client) {
 			}
 			const embed = new MessageEmbed()
 				.setDescription(`${message.toString()}`);
-			if (chat7.test(message.toString()) || chat8.test(message.toString())) {
+			if (message.toString().split(' ').shift() === `<${minecraftbot.player.username}>`) {
 				embed.setColor('#094ded');
 			}
 			else {
@@ -315,27 +332,32 @@ function createBot(client) {
 		blacklist.findOne({ id: message.author.id }, async (err, data) => {
 			if (err) throw err;
 			if (!data) {
-				let data2  = await setchannel.findOne({ guildid: message.guildId })
+				let data2 = await setchannel.findOne({ guildid: message.guildId })
 				if (data2) {
+					if (!data2.livechat) return
 					let id = data2.livechat
-					let channel = message.guild.channels.cache.get(id)
+						, channel = message.guild.channels.cache.get(id)
 					if (!channel) return
 					if (message.channel.id !== channel.id) return
-					if (end === false) {
-						minecraftbot.chat(`<${message.author.tag}> ${message.content}`);
-						if (!message) return
-						message.react('✅');
-					} else if (end === true) {
-						if (!message) return
-						message.react('❌');
+					try {
+						if (end === false) {
+							minecraftbot.chat(`<${message.author.tag}> ${message.content}`);
+							if (!message) return
+							message.react('✅');
+						} else if (end === true) {
+							if (!message) return
+							message.react('❌');
+						}
+					} catch (e) {
+						console.log(e.stack)
 					}
 				}
 				if (!message.content.startsWith(prefix)) return;
 				const args = message.content.slice(prefix.length).trim().split(/ +/g);
 				const cmd = args.shift().toLocaleLowerCase();
 				if (cmd.length === 0) return;
+				if (end === true) return message.channel.send('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
 				if (cmd === 'checkonline' || cmd === 'conl') {
-					if (end === true) return message.channel.send('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
 					let i = 0;
 					const num = Object.values(minecraftbot.players).map(name => name.username).length;
 					Object.values(minecraftbot.players).map(name => name.username).forEach((names) => {
@@ -344,42 +366,8 @@ function createBot(client) {
 						i++;
 					});
 				} else if (cmd === 'playeronline' || cmd === 'ponl' || cmd === 'player-online' || cmd === 'players-online') {
-					if (end === true) return message.channel.send('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
 					message.channel.send('Hiện có `' + Object.values(minecraftbot.players).map(name => name.username).length + '` player(s) đang onl trong server bot đang ở!')
-				} /*else if (cmd === '2y2c' || cmd === '2y2c-queue' || cmd === 'queue-2y2c' || cmd === 'hangcho-2y2c') {
-					const time = Math.floor(Date.now() / 1000)
-					var queueOnline = Object.values(minecraftbot.players).map(name => name.username).length
-					const queueEmbed = new MessageEmbed()
-						.setAuthor({
-							name: 'Hàng chờ tính theo OggyTheBot',
-							iconURL: client.user.displayAvatarURL()
-						})
-					util.status('2y2c.org').then(async (res) => {
-						if (end === true) {
-							queueEmbed
-								.setTitle('Bot đang mất kết nối với server')
-								.setColor('#f00c0c') // Đỏ
-						} else {
-							queueEmbed
-								.addFields({
-									name: 'Hàng chờ: ' + Number(res.onlinePlayers - queueOnline),
-									value: 'Restart: underfinded \n ' + 'Dữ liệu ghi vào lúc:\n<t:' + time + ':T> | <t:' + time + ':d> (<t:' + time + ':R>)'
-								})
-								.setColor('RANDOM')
-						}
-					})
-					let send = false
-					let sendtime = 0
-					message.channel.createMessageCollector().on('collect', (msg) => {
-						sendtime++
-						if (send === true || sendtime != 2) return
-						if (msg.author.id !== client.user.id) return
-						message.channel.send({
-							embeds: [queueEmbed]
-						})
-						send = true
-					})
-				} */
+				}
 			}
 			else { return }
 		});
@@ -409,32 +397,7 @@ function createBot(client) {
 						]
 					})
 				} else if (ava === true || !ava) {
-					/*if (interaction.commandName === '2y2c') {
-						const time = Math.floor(Date.now() / 1000)
-						var queueOnline = Object.values(minecraftbot.players).map(name => name.username).length
-						const queueEmbed = new MessageEmbed()
-							.setAuthor({
-								name: 'Hàng chờ tính theo OggyTheBot',
-								iconURL: client.user.displayAvatarURL()
-							})
-						await util.status('2y2c.org').then(async (res) => {
-							if (end === true) {
-								queueEmbed
-									.setTitle('Bot đang mất kết nối với server')
-									.setColor('#f00c0c') // Đỏ
-							} else {
-								queueEmbed
-									.addFields({
-										name: 'Hàng chờ: ' + Number(res.onlinePlayers - queueOnline),
-										value: 'Restart: underfinded \n ' + 'Dữ liệu ghi vào lúc:\n<t:' + time + ':T> | <t:' + time + ':d> (<t:' + time + ':R>)'
-									})
-									.setColor('RANDOM')
-							}
-						})
-						interaction.channel.send({
-							embeds: [queueEmbed]
-						})
-					} else*/if (interaction.commandName === 'check-online') {
+					if (interaction.commandName === 'check-online') {
 						if (end === true) return interaction.reply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
 						let i = 0;
 						const num = Object.values(minecraftbot.players).map(name => name.username).length;
@@ -445,8 +408,7 @@ function createBot(client) {
 						});
 					} else if (interaction.commandName === 'players-online') {
 						if (end === true) return interaction.reply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
-
-						interaction.reply(`Hiện có ${Object.values(minecraftbot.players).map(name => name.username).length} players đang online trong server bot đang có mặt!`)
+						interaction.reply(`Hiện có ${Object.values(minecraftbot.players).map(name => name.username).length} player(s) đang online trong server bot đang có mặt!`)
 					}
 				}
 			}
@@ -459,104 +421,40 @@ function createBot(client) {
 	let rejoin = 0;
 	minecraftbot.on('end', (reason) => {
 		end = true;
-		if (kickcount < 2) { rejoin = 1; kickcount = Number(kickcount) + 1; }
+		if (kickcount < 2) { rejoin = 1; kickcount++ }
 		else { rejoin = 5; }
 		if (reason.toString().toLowerCase == 'server restart') rejoin = 5;
 		const embed = new MessageEmbed()
 			.setDescription(`**Bot đã mất kết nối đến server!` + info.ip + `\nLý do: \`${reason}\`\nKết nối lại sau ${rejoin} phút**`)
 			.setColor('#f00c0c') // Đỏ
-		send(embed, embed.title ? embed.title : embed.description, 'blue')
-
-		setTimeout(() => {
-			const embed = new MessageEmbed()
-				.setTitle('Đang kết nối lại với ' + info.ip + '....')
-				.setColor('#ffe021')
-			send(embed, embed.title ? embed.title : embed.description, 'orange')
-			createBot(client, 'mc');
-
-		}, ms(`${rejoin}m`));
+		send(embed, embed.title ? embed.title : embed.description, 'red')
+		reconnect(rejoin)
 	});
-
-	function random() {
-		let random1 = Math.floor(Math.random() * 10)
-		let random2 = Math.floor(Math.random() * 10)
-		let random3 = Math.floor(Math.random() * 10)
-		let random4 = Math.floor(Math.random() * 10)
-		let random5 = Math.floor(Math.random() * 10)
-		return `${random1}${random2}${random3}${random4}${random5}`
-	}
 
 	/**
 	*
 	* Command của bot ingame
 	*
 	*/
-
-	// Queue
-	// v Bảo trì!
-	/*
-	minecraftbot.addChatPattern('2y2c', /<(.+)> (?:og.2y2c|og.2Y2C|og.queue|og.checkqueue|!queue|!2y2c|!2Y2C)/, { parse: true })
-	minecraftbot.on('chat:2y2c', async () => {
-		util.status('2y2c.org').then((response) => {
-			var string = `1 2 3 4 5 6 6 7 8 9 0`;
-			var words = string.split(' ');
-			let random1 = words[Math.floor(Math.random() * words.length)];
-			let random2 = words[Math.floor(Math.random() * words.length)];
-			let random3 = words[Math.floor(Math.random() * words.length)];
-			let random4 = words[Math.floor(Math.random() * words.length)];
-			let random5 = words[Math.floor(Math.random() * words.length)];
-			let random6 = words[Math.floor(Math.random() * words.length)];
-			let random7 = words[Math.floor(Math.random() * words.length)];
-			let random8 = words[Math.floor(Math.random() * words.length)];
-			let random9 = words[Math.floor(Math.random() * words.length)];
-			let random10 = words[Math.floor(Math.random() * words.length)];
-			var randomnum = `${random1}${random2}${random3}${random4}${random5}${random6}${random7}${random8}${random9}${random10}`
-
-			let yc = response.onlinePlayers - 100;
-			let yct = parseInt(response.samplePlayers[2].name.split("§")[2].replace("l", ""))
-			let ycq = parseInt(response.samplePlayers[1].name.split("§")[2].replace("l", ""))
-			minecraftbot.chat(`[2Y2C] Queues: ${yct} | ${ycq} || ${randomnum}`)
-		})
+	minecraftbot.on('chat', (username, message) => {
+		let msg = message.split(' ').splice(1).join(' ')
+			, prefix = '!'
+		if (!msg.split(' ').shift().startsWith(prefix)) return
+		let args = msg.slice(prefix.length).trim().split(/ +/g)
+			, cmd = args.shift().toLowerCase()
+			, command = client.mccommands.get(cmd)
+		if (cmd === '>') cmd = args[1].toLowerCase()
+		try {
+			command.run(client, minecraftbot, args, username)
+		} catch (err) {
+			minecraftbot.chat(`/msg ${username} Error: ${err}`)
+		}
 	})
-	*/
-	// Server
-	minecraftbot.addChatPattern('server', /<(.+)> (?:og.server|!server)/, { parse: true });
-	minecraftbot.on('chat:server', async () => {
-		const randomnum = await random()
-		util.status('2y2c.org').then(async (response) => {
-			minecraftbot.chat(`Total Players: ${response.onlinePlayers}/${response.maxPlayers} | TPS: ${minecraftbot.getTps()} | Bot Uptime : ${ms(client.uptime)} | ${randomnum}`);
-		});
-	});
-
-	// TPS
-	minecraftbot.addChatPattern('tps', /<(.+)> (?:og.tps|!tps)/, { parse: true });
-	minecraftbot.on('chat:tps', async () => {
-		const randomnum = await random()
-
-		minecraftbot.chat(`TPS: ${minecraftbot.getTps()} | ${randomnum}`);
-	});
-
-	// Player
-	minecraftbot.addChatPattern('player', /<(.+)> (?:og.player|!player)/, { parse: true });
-	minecraftbot.on('chat:player', async () => {
-		const randomnum = await random()
-
-		util.status('2y2c.org').then(async (response) => {
-			minecraftbot.chat(`Total Player: ${response.players.online}/${response.players.max} | ${randomnum}`);
-		});
-	});
-
-	// Help
-	minecraftbot.addChatPattern('botinfo', /<(.+)> (?:og.botinfo|og.bi|!botinfo|!bi)/, { parse: true });
-	minecraftbot.on('chat:botinfo', async (message) => {
-		const randomnum = await random()
-		minecraftbot.chat(`WSPing: ${client.ws.ping} | Uptime: ${ms(client.uptime)} | ${randomnum}`);
-	});
-	minecraftbot.addChatPattern('help', /<(.+)> (?:og.help|!help)/, { parse: true });
-	minecraftbot.on('chat:help', async () => {
-		minecraftbot.chat('Lệnh hiện có: " queue, server, tps, player, botinfo, fd, ld, fk, lk, kd, jd "');
-	});
-	// KD
+	/**
+	 * 
+	 * KDA Writer
+	 * 
+	 */
 	// Const regex
 	const kill1 = /^(.+) bị giết bởi (.+) sử dụng (.+)$/;
 	const kill2 = /^(.+) bị đẩy té xuống vực bởi (.+)$/;
@@ -599,49 +497,12 @@ function createBot(client) {
 		if (data) {
 			const deathcount = Number(data.death) + 1;
 			if (data.firstdeath === 'No data') {
-				kd.findOneAndUpdate({ username: victim }, { $set: { firstdeath: message, lastdeath: message, death: deathcount } }, async (err, data) => {
-					if (err) throw err;
-					if (data) {
-						data.save();
-					}
-					else if (!data) {
-						data = new kd({
-							username: victim,
-							kill: '0',
-							death: '1',
-							firstkill: 'No data',
-							lastkill: 'No data',
-							firstdeath: `${message}`,
-							lastdeath: `${message}`,
-							joinDate: joinDate,
-						});
-						data.save();
-					}
-				});
+				kd.findOneAndUpdate({ username: victim }, { $set: { firstdeath: message, lastdeath: message, death: deathcount } });
 			}
 			else if (data.firstdeath !== 'No data' && data.lastdeath !== 'No data') {
-				kd.findOneAndUpdate({ username: victim }, { $set: { lastdeath: message, death: deathcount } }, async (err, data) => {
-					if (err) throw err;
-					if (data) {
-						data.save();
-					}
-					else if (!data) {
-						data = new kd({
-							username: victim,
-							kill: '0',
-							death: '1',
-							firstkill: 'No data',
-							lastkill: 'No data',
-							firstdeath: `${message}`,
-							lastdeath: `${message}`,
-							joinDate: joinDate,
-						});
-						data.save();
-					}
-				});
+				kd.findOneAndUpdate({ username: victim }, { $set: { lastdeath: message, death: deathcount } });
 			}
-		}
-		else {
+		} else {
 			data = new kd({
 				username: victim,
 				kill: '0',
@@ -661,49 +522,12 @@ function createBot(client) {
 		if (data) {
 			const killcount = Number(data.kill) + 1;
 			if (data.firstdeath === 'No data') {
-				kd.findOneAndUpdate({ username: killer }, { $set: { firstkill: message, lastkill: message, kill: killcount } }, async (err, data) => {
-					if (err) throw err;
-					if (data) {
-						data.save();
-					}
-					else if (!data) {
-						data = new kd({
-							username: killer,
-							kill: '1',
-							death: '0',
-							firstkill: `${message}`,
-							lastkill: `${message}`,
-							firstdeath: 'No data',
-							lastdeath: 'No data',
-							joinDate: joinDate,
-						});
-						data.save();
-					}
-				});
+				await kd.findOneAndUpdate({ username: killer }, { $set: { firstkill: message, lastkill: message, kill: killcount } });
 			}
 			else if (data.firstkill !== 'No data' && data.lastkill !== 'No data') {
-				kd.findOneAndUpdate({ username: killer }, { $set: { lastkill: message, kill: killcount } }, async (err, data) => {
-					if (err) throw err;
-					if (data) {
-						data.save();
-					}
-					else if (!data) {
-						data = new kd({
-							username: killer,
-							kill: '1',
-							death: '0',
-							firstkill: `${message}`,
-							lastkill: `${message}`,
-							firstdeath: 'No data',
-							lastdeath: 'No data',
-							joinDate: joinDate,
-						});
-						data.save();
-					}
-				});
+				await kd.findOneAndUpdate({ username: killer }, { $set: { lastkill: message, kill: killcount } });
 			}
-		}
-		else {
+		} else {
 			data = new kd({
 				username: killer,
 				kill: '1',
@@ -714,11 +538,13 @@ function createBot(client) {
 				lastdeath: 'No data',
 				joinDate: joinDate,
 			});
-			data.save();
+			await data.save();
 		}
 	}
 
+	// Message
 	minecraftbot.on('message', async (message) => {
+		if (minecraftbot.player.username === 'BotNameisOggy') return
 		const messageregex = /^<(.+)> (.+)$/;
 		if (messageregex.test(message.toString())) return;
 		const str = message.toString();
@@ -937,194 +763,6 @@ function createBot(client) {
 			const message = `${victim} bị bốc hơi`;
 			// Victim
 			victimWriter(victim, message, kd)
-		}
-	});
-	const kdcommand = /^<(.+)> (?:og.kd|!kd)/;
-	const jdcommand = /^<(.+)> (?:!jd|og.jd)/;
-	const lastkill = /^<(.+)> (?:!lk|!lastkill|og.lk|og.lastkill)/;
-	const firstkill = /^<(.+)> (?:!fk|!firstkill|og.firstkill|og.fk)/;
-	const lastdeath = /^<(.+)> (?:!ld|!lastdeath|og.ld|og.lastdeath)/;
-	const firstdeath = /^<(.+)> (?:!fd|!firstdeath|og.fd|og.firstdeath)/;
-
-	minecraftbot.on('message', async (msg) => {
-		const text = msg.toString();
-		const str = msg.toString();
-		if (kdcommand.test(msg.toString())) {
-			var randomnum = await random()
-			const fullname = kdcommand.exec(text)[1];
-			const userlenght = fullname.length - 9;
-			const username = fullname.slice(-userlenght);
-			const checkdonator = fullname.slice(0, -username.length);
-			if (checkdonator === '[Donator]') {
-				kd.findOne({ username: `${username}` }, async (err, data) => {
-					if (err) throw err;
-					if (data) {
-						const kdpoint = data.kill / data.death;
-						minecraftbot.chat(`/w ${username} Kill: ${data.kill} | Death: ${data.death} | K/D: ${kdpoint} | ${randomnum}`);
-					}
-					else {
-						minecraftbot.chat(`/w ${username} Không tìm thấy data! Hãy bóp bird tự tử để tạo data.`);
-					}
-				});
-			}
-			else {
-				kd.findOne({ username: `${fullname}` }, async (err, data) => {
-					if (err) throw err;
-					if (data) {
-						const kdpoint = data.kill / data.death;
-						minecraftbot.chat(`/w ${fullname} Kill: ${data.kill} | Death: ${data.death} | K/D: ${kdpoint} | ${randomnum}`);
-					}
-					else {
-						minecraftbot.chat(`/w ${fullname} Không tìm thấy data! Hãy bóp bird tự tử để tạo data.`);
-					}
-				});
-			}
-		}
-		else if (jdcommand.test(msg.toString())) {
-			var randomnum = await random()
-			const fullname = jdcommand.exec(text)[1];
-			const userlenght = fullname.length - 9;
-			const username = fullname.slice(-userlenght);
-			const checkdonator = fullname.slice(0, -username.length);
-			if (checkdonator === '[Donator]') {
-				kd.findOne({ username: `${username}` }, async (err, data) => {
-					if (err) throw err;
-					if (data) {
-						minecraftbot.chat(`/w ${username} Dữ liệu được tạo từ ${data.joinDate}`);
-					}
-					else {
-						minecraftbot.chat(`/w ${username} Không tìm thấy data. Hãy bóp bird tự tử để tạo data.`);
-					}
-				});
-			}
-			else {
-				kd.findOne({ username: `${fullname}` }, async (err, data) => {
-					if (err) throw err;
-					if (data) {
-						minecraftbot.chat(`/w ${fullname} Dữ liệu được tạo từ ${data.joinDate}`);
-					}
-					else {
-						minecraftbot.chat(`/w ${fullname} Không tìm thấy data. Hãy bóp bird tự tử để tạo data.`);
-					}
-				});
-			}
-		}
-		else if (lastkill.test(str)) {
-			var randomnum = await random()
-			var randomnum = `${random1}${random2}${random3}${random4}${random5}`;
-			const fullname = lastkill.exec(text)[1];
-			const userlenght = fullname.length - 9;
-			const username = fullname.slice(-userlenght);
-			const checkdonator = fullname.slice(0, -username.length);
-			if (checkdonator === '[Donator]') {
-				kd.findOne({ username: `${username}` }, async (err, data) => {
-					if (err) throw err;
-					if (data) {
-						minecraftbot.chat(`/w ${username} Lastkill: ${data.lastkill}`);
-					}
-					else {
-						minecraftbot.chat(`/w ${username} Không tìm thấy data. Hãy bún cua để tạo data.`);
-					}
-				});
-			}
-			else {
-				kd.findOne({ username: `${fullname}` }, async (err, data) => {
-					if (err) throw err;
-					if (data) {
-						minecraftbot.chat(`/w ${fullname} Lastkill: ${data.lastkill}`);
-					}
-					else {
-						minecraftbot.chat(`/w ${fullname} Không tìm thấy data. Hãy bún cua để tạo data.`);
-					}
-				});
-			}
-		}
-		else if (firstkill.test(str)) {
-			var randomnum = await random()
-			const fullname = firstkill.exec(text)[1];
-			const userlenght = fullname.length - 9;
-			const username = fullname.slice(-userlenght);
-			const checkdonator = fullname.slice(0, -username.length);
-			if (checkdonator === '[Donator]') {
-				kd.findOne({ username: `${username}` }, async (err, data) => {
-					if (err) throw err;
-					if (data) {
-						minecraftbot.chat(`/w ${username} Firstkill: ${data.firstkill}`);
-					}
-					else {
-						minecraftbot.chat(`/w ${username} Không tìm thấy data. Hãy bún cua để tạo data.`);
-					}
-				});
-			}
-			else {
-				kd.findOne({ username: `${fullname}` }, async (err, data) => {
-					if (err) throw err;
-					if (data) {
-						minecraftbot.chat(`/w ${fullname} Firstkill: ${data.firstkill}`);
-					}
-					else {
-						minecraftbot.chat(`/w ${fullname} Không tìm thấy data. Hãy bún cua để tạo data.`);
-					}
-				});
-			}
-		}
-		else if (lastdeath.test(str)) {
-			var randomnum = await random()
-			const fullname = lastdeath.exec(text)[1];
-			const userlenght = fullname.length - 9;
-			const username = fullname.slice(-userlenght);
-			const checkdonator = fullname.slice(0, -username.length);
-			if (checkdonator === '[Donator]') {
-				kd.findOne({ username: `${username}` }, async (err, data) => {
-					if (err) throw err;
-					if (data) {
-						minecraftbot.chat(`/w ${username} Lastdeath: ${data.lastdeath}`);
-					}
-					else {
-						minecraftbot.chat(`/w ${username} Không tìm thấy data. Hãy bóp bird tự tử để tạo data.`);
-					}
-				});
-			}
-			else {
-				kd.findOne({ username: `${fullname}` }, async (err, data) => {
-					if (err) throw err;
-					if (data) {
-						minecraftbot.chat(`/w ${fullname} Lastdeath: ${data.lastdeath}`);
-					}
-					else {
-						minecraftbot.chat(`/w ${fullname} Không tìm thấy data. Hãy bóp bird tự tử để tạo data.`);
-					}
-				});
-			}
-		}
-		else if (firstdeath.test(str)) {
-			var randomnum = await random()
-			const fullname = firstdeath.exec(text)[1];
-			const userlenght = fullname.length - 9;
-			const username = fullname.slice(-userlenght);
-			const checkdonator = fullname.slice(0, -username.length);
-			if (checkdonator === '[Donator]') {
-				kd.findOne({ username: `${username}` }, async (err, data) => {
-					if (err) throw err;
-					if (data) {
-						minecraftbot.chat(`/w ${username} Firstdeath: ${data.firstdeath}`);
-					}
-					else {
-						minecraftbot.chat(`/w ${username} Không tìm thấy data. Hãy bóp bird tự tử để tạo data.`);
-					}
-				});
-			}
-			else {
-				kd.findOne({ username: `${fullname}` }, async (err, data) => {
-					if (err) throw err;
-					if (data) {
-						minecraftbot.chat(`/w ${fullname} Firstdeath: ${data.firstdeath}`);
-					}
-					else {
-						minecraftbot.chat(`/w ${fullname} Không tìm thấy data. Hãy bóp bird tự tử để tạo data.`);
-					}
-				});
-			}
 		}
 	});
 }

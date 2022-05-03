@@ -105,7 +105,7 @@ module.exports = {
                 const category = categories.find(
                     (x) => x.name.toUpperCase() === idirectory.toUpperCase()
                 )
-                if (!category) return console.log('ko có category')
+                if (!category) return
                 const command = category.value.split(' ')
                 const embed = new MessageEmbed()
                     .setColor('RANDOM')

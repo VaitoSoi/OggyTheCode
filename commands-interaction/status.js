@@ -26,48 +26,57 @@ module.exports = {
         if (!port) port = 25565
 
         const embed = new MessageEmbed()
-            .setTitle('Minecraft Sever Info')
             .setFooter({ text: `${interaction.user.tag} • ${interaction.guild.name}`, iconURL: `${interaction.user.displayAvatarURL()}` })
             .setTimestamp()
-            .setAuthor({ name: `${client.user.username}`, iconURL: client.user.displayAvatarURL() })
+            .setAuthor({ name: `Minecraft Server Status`, iconURL: client.user.displayAvatarURL() })
 
         await minecraft.status(ip, port).then((response) => {
             let sample
             if (!response.players.sample || response.players.sample.length == 0) sample = 'null'
             else if (response.players.sample && response.players.sample.length != 0) sample = response.players.sample
             embed
-                .setColor('RANDOM')
-                .addFields({
+            .addFields({
+                name: 'Status',
+                value: '🟢 Online',
+                inline: true
+            },
+                {
                     name: 'IP',
                     value: `${response.srvRecord.host}`,
                     inline: true
                 },
-                    {
-                        name: 'Port',
-                        value: `${response.srvRecord.port}`,
-                        inline: true
-                    },
-                    {
-                        name: 'MOTD',
-                        value: `${response.motd.clean}`,
-                        inline: false
-                    },
-                    {
-                        name: 'Số Player hiện tại',
-                        value: `${response.players.online}/${response.players.max}`,
-                        inline: true
-                    },
-                    {
-                        name: 'Sample player',
-                        value: `${sample}`,
-                        inline: true
-                    },
-                    {
-                        name: 'Phiên bản',
-                        value: `${response.version.name.replace("§1", "")}`,
-                        inline: true
-                    })
-                .setThumbnail(interaction.guild.iconURL())
+                {
+                    name: 'Port',
+                    value: `${response.srvRecord.port}`,
+                    inline: true
+                },
+                {
+                    name: 'MOTD',
+                    value: `${response.motd.clean}`,
+                    inline: true
+                },
+                {
+                    name: 'Sample player',
+                    value: `${sample}`,
+                    inline: true
+                },
+                {
+                    name: '\u200b',
+                    value: '\u200b',
+                    inline: true
+                },
+                {
+                    name: 'Online Player',
+                    value: `${response.players.online}/${response.players.max}`,
+                    inline: true
+                },
+                {
+                    name: 'Version',
+                    value: `${response.version.name.replace("§1", "")}`,
+                    inline: true
+                })
+            .setThumbnail(`https://eu.mc-api.net/v3/server/favicon/${response.srvRecord.host}`)
+            .setColor('GREEN')
         })
             .catch((error) => {
                 embed

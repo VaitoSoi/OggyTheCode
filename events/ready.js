@@ -25,7 +25,6 @@ module.exports = {
         */
 
         const { createBot } = require('../minecraft/minecraftbot')
-        
         createBot(client)
         console.log('Đã load Minecraft Bot!')
     }

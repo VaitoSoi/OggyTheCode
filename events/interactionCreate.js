@@ -12,8 +12,8 @@ module.exports = {
     async run(interaction) {
         if (interaction.isCommand()) {
             let client = interaction.client
-            const data = await require('../models/blacklist').findOne({ id: interaction.user.id })
-            let ava = Boolean;
+                , data = await require('../models/blacklist').findOne({ id: interaction.user.id })
+                , ava = Boolean;
             // if (!interaction.command) return interaction.reply('[🛑] | ERROR: `INTERACTION.COMMAND is underfined`')
             const command = client.interactions.get(interaction.commandName)
             if (!command) return interaction.reply('[🛑] | ERROR: `COMMAND is underfined`')
@@ -68,7 +68,7 @@ module.exports = {
                 } else if (ava === true || !ava) {
                     if (command) {
                         if (command.category === 'music' && !interaction.member.voice.channel) return interaction.reply('Vô voice channel đi t mới mở cho mi nghe đc chứ')
-                        
+
                         try {
                             await interaction.deferReply()
                             command.run(interaction);

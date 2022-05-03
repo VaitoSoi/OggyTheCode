@@ -1,5 +1,6 @@
-const { CommandInteraction, MessageEmbed, MessageActionRow, MessageButton, TextChannel, Webhook } = require('discord.js')
+const { CommandInteraction, MessageEmbed, MessageActionRow, MessageButton } = require('discord.js')
 const { SlashCommandBuilder } = require('@discordjs/builders')
+const minecraft = require('minecraft-server-util')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -91,10 +92,14 @@ module.exports = {
                     guildname: interaction.guild.name,
                     config: {
                         'channels': {
-                            'livechat': ''
+                            'livechat': '',
+                            'status': ''
                         },
                         'prefix': '',
-                        'disable': []
+                        'disable': [],
+                        'message': {
+                            'status': ''
+                        }
                     }
                 })
                 await data1.save()
@@ -103,12 +108,37 @@ module.exports = {
         } else if (action === 'set') {
             if (!id) return interaction.editReply('🛑 | Vui lòng chọn `ID` cho `ACTION` này!')
             else if (id === 'channels') {
-                interaction.editReply('🔽 | Vui lòng ghi ID hoặc tag channel muốn cài !')
+                const row = new MessageActionRow()
+                    .addComponents(
+                        new MessageButton()
+                            .setCustomId('livechat')
+                            .setDisabled(false)
+                            .setLabel('LIVECHAT')
+                            .setStyle('PRIMARY')
+                    )
+                    .addComponents(
+                        new MessageButton()
+                            .setCustomId('status')
+                            .setDisabled(false)
+                            .setLabel('STATUS')
+                            .setStyle('PRIMARY')
+                    )
+                interaction.editReply({ content: '🔽 | Vui lòng chọn type channel muốn cài !\n1️⃣ | Livechat: Hiển thị tin nhắn trực tiếp từ server `2y2c.org`.\n2️⃣ | Status: Hiển thị trạng thái của server `2y2c.org`.', components: [row] })
                 let now = 'channel'
+                    , type = ''
                 const messageCollector = interaction.channel.createMessageCollector()
+                    , interactionCollector = interaction.channel.createMessageComponentCollector({
+                        componentType: 'BUTTON'
+                    })
+                interactionCollector.on('collect', (inter) => {
+                    type = inter.customId.toLowerCase()
+                    interaction.editReply({ content: '🔽 | Vui lòng ghi ID hoặc Tag channel muốn cài !', components: [] })
+                })
                 messageCollector.on('collect', async (msg) => {
+                    if (msg.author.id !== interaction.user.id) return
                     if (now !== 'channel') return
                     now = ''
+                    let set = {}
                     if (msg.author.id !== interaction.user.id) return
                     let channel
                     if (isNaN(msg.content.split(' ')[0])) channel = msg.mentions.channels.first()
@@ -116,17 +146,23 @@ module.exports = {
                     if (msg.deletable) msg.delete()
                     if (!channel) return msg.channel.send('🛑 | Không tìm thấy channel!')
                     if (channel.isText()) {
+                        if (type === 'livechat') set = {
+                            'config.channels.livechat': channel.id
+                        }
+                        else if (type === 'status') set = {
+                            'config.channels.status': channel.id
+                        }
                         try {
-                            await db.findOneAndUpdate({ guildid: msg.guildId }, { $set: { 'config.channels.livechat': channel.id } })
-                            msg.channel.send('✅ | Đã lưu `DATA`')
-                            channel.send(`✅ | Channel đã chỉnh thành \`${'livechat'.toUpperCase()}\``)
+                            await db.findOneAndUpdate({ guildid: msg.guildId }, { $set: set })
+                            interaction.editReply('✅ | Đã lưu `DATA`')
+                            channel.send(`✅ | Channel đã chỉnh thành \`${type.toUpperCase()}\``)
                         } catch (e) {
                             msg.channel.send('🛑 | Phát hiện lỗi khi lưu `DATA`')
                             msg.channel.send('```' + e + '```')
                         }
                     } else return msg.channel.send(`🛑 | <#${channel.id}> không phải channel văn bản.\n▶ | Vui lòng tag hoặc ghi ID của 1 channel văn bản!`)
-
-                    if (data.config['livechat-message'].split('').slice(0, 7).join('').toLowerCase() === 'webhook') {
+                    /*
+                    if (data.config['livechat-message'].split('').slice(0, 7).join('').toLowerCase() === 'webhook' && type === 'livechat') {
                         try {
                             let webhooks = await channel.fetchWebhooks()
                                 , webhook = webhooks.find(wh => wh.token)
@@ -141,6 +177,86 @@ module.exports = {
                         }
                     } else {
                         msg.channel.send('🟡 | Hủy tạo `Webhook` do cài đặt cách gửi tin nhắn không phải là `Webhook`!')
+                    }
+                    */
+                    if (type === 'status') {
+                        const embed = new MessageEmbed()
+                            .setTitle('Minecraft Sever Info')
+                            .setFooter({ text: `Cập nhật lần cuối vào lúc `, iconURL: `${interaction.guild.iconURL()}` })
+                            .setTimestamp()
+                            , now = Date.now()
+                        await minecraft.status('2y2c.org', 25565).then((response) => {
+                            let sample
+                            if (!response.players.sample || response.players.sample.length == 0) sample = 'null'
+                            else if (response.players.sample && response.players.sample.length != 0) sample = response.players.sample
+                            embed
+                                .setColor('RANDOM')
+                                .addFields({
+                                    name: 'Status',
+                                    value: '🟢 Online',
+                                    inline: true
+                                },
+                                    {
+                                        name: 'IP',
+                                        value: `${response.srvRecord.host}`,
+                                        inline: true
+                                    },
+                                    {
+                                        name: 'Port',
+                                        value: `${response.srvRecord.port}`,
+                                        inline: true
+                                    },
+                                    {
+                                        name: 'MOTD',
+                                        value: `${response.motd.clean}`,
+                                        inline: true
+                                    },
+                                    {
+                                        name: 'Sample player',
+                                        value: `${sample}`,
+                                        inline: true
+                                    },
+                                    {
+                                        name: 'Ping',
+                                        value: `${Date.now() - now}ms`,
+                                        inline: true
+                                    },
+                                    {
+                                        name: 'Online Player',
+                                        value: `${response.players.online}/${response.players.max}`,
+                                        inline: true
+                                    },
+                                    {
+                                        name: 'Version',
+                                        value: `${response.version.name.replace("§1", "")}`,
+                                        inline: true
+                                    })
+                                .setThumbnail(`https://eu.mc-api.net/v3/server/favicon/${response.srvRecord.host}`)
+                                .setColor('GREEN')
+                        })
+                            .catch((error) => {
+                                embed
+                                    .setColor('RED')
+                                    .setThumbnail('https://cdn.discordapp.com/attachments/936994104884224020/956369715192795246/2Q.png')
+                                    .addFields({
+                                        name: 'Status',
+                                        value: '🔴 Offline',
+                                        inline: false
+                                    },
+                                        {
+                                            name: 'Error',
+                                            value: '```' + error + '```',
+                                            inline: false
+                                        })
+                            })
+                        channel.send({ embeds: [embed] }).then(async (msg) => {
+                            msg.react('🔁')
+                            await db.findOneAndUpdate({ guildid: msg.guildId }, {
+                                $set: {
+                                    'config.message.status': msg.id
+                                }
+                            })
+                        })
                     }
                 })
             } else if (id === 'disable-enable') {
@@ -219,9 +335,10 @@ module.exports = {
                 interaction.editReply('🔽 | Vui lòng ghi Prefix muốn chuyển thành:')
                 const messageCollector = interaction.channel.createMessageCollector()
                 messageCollector.on('collect', async (msg) => {
-                    if (msg.content.split('').includes('ㅤ')) return msg.reply('🛑 | Prefix không thể chứa 1 kí tự tàn hình!')
+                    if (msg.deletable) msg.delete()
+                    if (msg.content.split('').includes('ㅤ')) return interaction.editReply('🛑 | Prefix không thể chứa 1 kí tự tàn hình!')
                     await db.findOneAndUpdate({ guildid: msg.guildId }, { $set: { 'config.prefix': msg.content.trim() } })
-                    msg.reply('✅ | Đã chỉnh Prefix thành `' + msg.content.trim() + '`')
+                    interaction.editReply('✅ | Đã chỉnh Prefix thành `' + msg.content.trim() + '`')
                 })
             }
         }

@@ -1,22 +1,25 @@
-const { CommandInteraction } = require('discord.js')
-const { SlashCommandBuilder } = require('@discordjs/builders')
+const highway = require('../models/highway')
+    , { CommandInteraction } = require('discord.js')
+    , { SlashCommandBuilder } = require('@discordjs/builders')
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('update')
-        .setDescription('Update tiến độ Highway tại server 2y2c.org')
+        .setDescription('Update tiến độ Highway')
         .addStringOption(option => option
-            .setName('highway')
-            .setDescription('Hướng cao tốc muốn cập nhật')
-            .setRequired(true)
+            .setName('direction')
+            .setDescription('Hướng cao tốc muốn chỉnh.')
             .addChoice('X+', 'x+')
             .addChoice('X-', 'x-')
             .addChoice('Z+', 'z+')
             .addChoice('Z-', 'z-')
+            .setRequired(true)
         )
         .addIntegerOption(option => option
-            .setName('how')
-            .setDescription('Tiến trình cao tốc | Đơn vị: k (ngàn/nghìn)')
+            .setName('update')
+            .setDescription('Tiến độ muốn cập nhật.')
+            .setMaxValue(3750)
+            .setMinValue(1)
             .setRequired(true)
         ),
     /**
@@ -25,36 +28,31 @@ module.exports = {
     */
     run: async (interaction) => {
         const client = interaction.client
-
-        const highway = require('../../models/highway')
-
-        if (interaction.user.id !== '692271452053045279' && interaction.user.id !== '749964743854522439' && interaction.user.id !== '485419430885457930' && interaction.user.id !== '321553911716642822') return interaction.editReply('🛑 | Lệnh này chỉ hoạt động với Highway worker cấp cao!')
-        const updatedata = interaction.options.getstring('highway')
-        const how = args[1]
-        if (how > 3750) return interaction.editReply('Không thể nhập giá trị lớn hơn **"3750"**')
-
-        highway.findOne({ which: 'straight' }, async (err, data) => {
-            if (type === 'x+') {
-                if (how < data.xplus) return interaction.editReply(`Data mới không thể nhỏ hơn "${data.xplus}"`)
-                if (Number(data.xplus) >= 3750) return interaction.editReply('Không thể thay đổi giá trị của đoạn đường đã đạt đến 3750k')
-                await highway.findOneAndUpdate({ which: 'straight' }, { $set: { xplus: how } })
-                interaction.editReply('Đã cập nhật thông tin!')
-            } else if (type === 'x-') {
-                if (how < data.xminus) return interaction.editReply(`Data mới không thể nhỏ hơn "${data.xminus}"`)
-                if (Number(data.xminus) >= 3750) return interaction.editReply('Không thể thay đổi giá trị của đoạn đường đã đạt đến 3750k')
-                await highway.findOneAndUpdate({ which: 'straight' }, { $set: { xminus: how } })
-                interaction.editReply('Đã cập nhật thông tin!')
-            } else if (type === 'z+') {
-                if (how < data.zplus) return interaction.editReply(`Data mới không thể nhỏ hơn "${data.zplus}"`)
-                if (Number(data.zplus) >= 3750) return interaction.editReply('Không thể thay đổi giá trị của đoạn đường đã đạt đến 3750k')
-                await highway.findOneAndUpdate({ which: 'straight' }, { $set: { zplus: how } })
-                interaction.editReply('Đã cập nhật thông tin!')
-            } else if (type === 'z-') {
-                if (how < data.zminus) return interaction.editReply(`Data mới không thể nhỏ hơn "${data.zminus}"`)
-                if (Number(data.zminus) >= 3750) return interaction.editReply('Không thể thay đổi giá trị của đoạn đường đã đạt đến 3750k')
-                await highway.findOneAndUpdate({ which: 'straight' }, { $set: { zminus: how } })
-                interaction.editReply('Đã cập nhật thông tin!')
-            } 
+        let data = highway.findOne({ which: 'straight' })
+            , updatedata = interaction.options.getString('direction')
+            , how = Number(interaction.options.getNumber('update'))
+            , old = 0
+            , name = {}
+        if (interaction.user.id !== '692271452053045279' && interaction.user.id !== '749964743854522439' && interaction.user.id !== '485419430885457930' && interaction.user.id !== '321553911716642822') return interaction.editReply('M là ai, m là thg nào, t ko quen m, tránh xa t ra!')
+        if (updatedata === 'x+') {
+            old = Number(data.xplus)
+            name = { 'data.xplus': how }
+        } else if (updatedata === 'z+') {
+            old = Number(data.zplus)
+            name = { 'data.zplus': how }
+        } else if (updatedata === 'x-') {
+            old = Number(data.xminus)
+            name = { 'data.xminus': how }
+        } else if (updatedata === 'z-') {
+            old = Number(data.zminus)
+            name = { 'data.xminus': how }
+        }
+        if (how < old) return interaction.editReply(`Data mới không thể nhỏ hơn \`${old}\``)
+        if (old >= 3750) return interaction.editReply('Không thể thay đổi giá trị của đoạn đường đã đạt đến 3750k')
+        highway.findOne({
+            which: 'straight'
+        }, {
+            $set: name
         })
     }
-} 
+}

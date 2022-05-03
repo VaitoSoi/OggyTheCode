@@ -45,7 +45,7 @@ module.exports = async(client) => {
 
     const register = async () => {
         try {
-            await rest.put(Routes.applicationGuildCommands(client.user.id, process.env.GUILD_ID), {
+            await rest.put(Routes.applicationCommands(client.user.id), {
                 body: rcommand
             })
             console.log('Đã load slash command!')

@@ -53,10 +53,12 @@ client.commands = new Collection();
 client.aliases = new Collection();
 client.categories = readdirSync("./commands/");
 client.interactions = new Collection();
+client.mccommands = new Collection();
 
 require('./util/mongooseConnect')(require('mongoose'))
 require('./handler/event')(client)
 require('./handler/command')(client)
+require('./handler/mc-command')(client)
 
 /**
  * 
