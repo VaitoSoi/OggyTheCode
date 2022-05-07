@@ -11,6 +11,6 @@ module.exports = {
     * @param {String[]} args 
     */ 
     run: async(client, minecraftbot, args) => {
-        minecraftbot.chat(`WS-Ping: ${client.ws.ping} | Bot-Ping: ${minecraftbot.player.ping}`)
+        minecraftbot.chat(`WS-Ping: ${client.ws.ping}ms | Bot-Ping: ${minecraftbot.player.ping}ms`)
     }
 } 

@@ -11,6 +11,6 @@ module.exports = {
     * @param {String[]} args 
     */ 
     run: async(client, minecraftbot, args) => {
-        minecraftbot.chat(`Tag: ${client.user.tag} | Author: ${client.application.owner.tag} | Guild(s): ${client.guilds.cache.size} | User: ${client.users.cache.size}`)
+        minecraftbot.chat(`Name: ${minecraftbot.player.displayName} | UUID: ${minecraftbot.player.uuid}`)
     }
 } 
