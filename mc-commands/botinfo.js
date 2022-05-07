@@ -1,5 +1,6 @@
 const mineflayer = require('mineflayer')
     , { Client } = require('discord.js')
+    , ms = require('ms')
 
 module.exports = {
     name: 'botinfo',
@@ -11,6 +12,6 @@ module.exports = {
     * @param {String[]} args 
     */ 
     run: async(client, minecraftbot, args) => {
-        minecraftbot.chat(`Name: ${minecraftbot.player.displayName} | UUID: ${minecraftbot.player.uuid}`)
+        minecraftbot.chat(`Name: ${minecraftbot.player.displayName} | Uptime: ${ms(client.uptime())}`)
     }
 } 
