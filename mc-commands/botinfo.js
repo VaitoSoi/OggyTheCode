@@ -12,6 +12,6 @@ module.exports = {
     * @param {String[]} args 
     */ 
     run: async(client, minecraftbot, args) => {
-        minecraftbot.chat(`Name: ${minecraftbot.player.displayName} | Uptime: ${ms(client.uptime())}`)
+        minecraftbot.chat(`Name: ${minecraftbot.player.displayName} | Uptime: ${ms(client.uptime)}`)
     }
 } 
