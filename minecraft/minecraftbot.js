@@ -439,11 +439,11 @@ function createBot(client) {
 	minecraftbot.on('chat', (username, message) => {
 		let msg = message.split(' ').splice(1).join(' ')
 			, prefix = '!'
-		if (!msg.split(' ').shift().startsWith(prefix)) return
+		if (!msg.startsWith(prefix)) return
 		let args = msg.slice(prefix.length).trim().split(/ +/g)
 			, cmd = args.shift().toLowerCase()
-			, command = client.mccommands.get(cmd)
 		if (cmd === '>') cmd = args[1].toLowerCase()
+		let command = client.mccommands.get(cmd)
 		try {
 			command.run(client, minecraftbot, args, username)
 		} catch (err) {
