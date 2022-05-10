@@ -66,9 +66,7 @@ module.exports = {
             })
             message.reply({ embeds: [embed] })
         } else if (action === 'create') {
-            if (data.config) {
-                message.reply('🟡 | Data `CONFIG` đã có sẵn!')
-            } else {
+            if (!data) {
                 message.reply('⏳ | Đang tạo data!')
                 await require('../util/delay')(1000)
                 let data1 = new db({
@@ -88,6 +86,8 @@ module.exports = {
                 })
                 await data1.save()
                 message.reply('✅ | Đã tạo data `CONFIG`!')
+            } else {
+                message.reply('🟡 | Data `CONFIG` đã có sẵn!')
             }
         } else if (action === 'set') {
             if (!id) return message.reply('🛑 | Vui lòng chọn `ID` cho `ACTION` này!')

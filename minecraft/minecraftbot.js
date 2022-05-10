@@ -387,7 +387,6 @@ function createBot(client) {
 					ava = true
 				}
 
-
 				if (ava === false) {
 					interaction.reply({
 						embeds: [

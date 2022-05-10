@@ -81,10 +81,7 @@ module.exports = {
             })
             interaction.editReply({ embeds: [embed] })
         } else if (action === 'create') {
-            console.log(data)
-            if (data.config) {
-                interaction.editReply('🟡 | Data `CONFIG` đã có sẵn!')
-            } else {
+            if (!data) {
                 interaction.editReply('⏳ | Đang tạo data!')
                 await require('../util/delay')(1000)
                 let data1 = new db({
@@ -104,6 +101,8 @@ module.exports = {
                 })
                 await data1.save()
                 interaction.editReply('✅ | Đã tạo data `CONFIG`!')
+            } else {
+                interaction.editReply('🟡 | Data `CONFIG` đã có sẵn!')
             }
         } else if (action === 'set') {
             if (!id) return interaction.editReply('🛑 | Vui lòng chọn `ID` cho `ACTION` này!')
