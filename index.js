@@ -159,7 +159,7 @@ client.on('error', async (error) => {
 
 client.on('ready', async () => {
     const reg = require('./handler/commands-interaction')
-    await reg(client, 'client1').then(() => timeout())
+    await reg('client1', client).then(() => timeout())
     console.log(`[CLIENT1] ${client.user.tag} is ready!`)
     console.log('\n--------------------------------\n')
     let index = 0
@@ -180,7 +180,7 @@ client.on('ready', async () => {
     async function timeout() {
         setTimeout(async () => {
             if (client2.isReady()) {
-                await reg(client2, 'client2')
+                await reg('client2', client2)
                 console.log(`[CLIENT2] ${client2.user.tag} is ready!`)
                 setInterval(() => {
                     if (index === arraystatus2.length) index = 0;
