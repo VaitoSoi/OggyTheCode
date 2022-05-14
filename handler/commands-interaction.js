@@ -43,7 +43,7 @@ module.exports = async (client, str) => {
         }
     }
 
-    console.log(`[${str.toUpperCase()}] ${num} SLASH_COMMANDS LOAD.\n[${str.toUpperCase()}] ${err} SLASH_COMMAND CAN'T LOAD.`/* + table.toString()*/);
+    console.log(`[${str/*.toUpperCase()*/}] ${num} SLASH_COMMANDS LOAD.\n[${str/*.toUpperCase()*/}] ${err} SLASH_COMMAND CAN'T LOAD.`/* + table.toString()*/);
 
     const rest = new REST({
         version: '9'
