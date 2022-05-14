@@ -405,6 +405,7 @@ function createBot(client, client2) {
 					ava = true
 				}
 				if (ava) {
+					if (!interaction.deferred) await require('../util/delay')(1000)
 					if (interaction.commandName === 'check-online') {
 						if (end === true) return interaction.editReply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
 						let i = 0;
@@ -509,6 +510,7 @@ function createBot(client, client2) {
 						]
 					})
 				} else if (ava === true || !ava) {
+					if (!interaction.deferred) await require('../util/delay')(1000)
 					if (interaction.commandName === 'check-online') {
 						if (end === true) return interaction.editReply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
 						let i = 0;
