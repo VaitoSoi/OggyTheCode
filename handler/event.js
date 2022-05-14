@@ -29,5 +29,5 @@ module.exports = async (client, str) => {
             }
         }
     }
-    console.log(`[${str.toUpperCase()}] ${num} EVENTS LOADED\n[${str.toUpperCase()}] EVENT CAN'T LOAD`/* + table.toString()*/ )
+    console.log(`[${str.toUpperCase()}] ${num} EVENTS LOADED\n[${str.toUpperCase()}] ${err} EVENT CAN'T LOAD`/* + table.toString()*/ )
 }

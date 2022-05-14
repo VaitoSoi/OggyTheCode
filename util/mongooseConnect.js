@@ -3,6 +3,7 @@ async function mongooseconnect(mongoose) {
         useUnifiedTopology: true,
         useNewUrlParser: true,
     }).then(() => {
+        console.log('\n--------------------------------\n')
         console.log('[MONGOOSE] CONNECTED');
         console.log('\n--------------------------------\n')
     })

@@ -46,7 +46,7 @@ module.exports.client2 = client2
 // const { Player } = require('discord-player')
 /*
 const player = new Player(client, {
-    ytdlDownloadOptions: { filter: "audioonly" }
+ ytdlDownloadOptions: { filter: "audioonly" }
 });
 
 client.player = player;
@@ -55,12 +55,12 @@ module.exports.player = player
 require('dotenv').config('./.env')
 
 /**
- * 
- * ^ Khai báo
- * 
- * v Handler / Kết nối với Mongoose
- * 
- */
+* 
+* ^ Khai báo
+* 
+* v Handler / Kết nối với Mongoose
+* 
+*/
 // Mongoose
 require('./util/mongooseConnect')(require('mongoose'))
 
@@ -96,12 +96,12 @@ reg().then(() => reg2().then(async () => {
     console.log('\n--------------------------------\n')
 }))
 /**
- * 
- * ^ Handler / Kết nối vối Mongoose
- * 
- * v Login vào tài khoản
- * 
- */
+* 
+* ^ Handler / Kết nối vối Mongoose
+* 
+* v Login vào tài khoản
+* 
+*/
 
 // Client 1
 client.login(env.TOKEN_1).catch(err => console.log(err));
@@ -110,12 +110,12 @@ client.login(env.TOKEN_1).catch(err => console.log(err));
 client2.login(env.TOKEN_2).catch(err => console.log(err))
 
 /**
- * 
- * ^ Login vào tài khoản
- * 
- * v Event rateLimit và error
- * 
- */
+* 
+* ^ Login vào tài khoản
+* 
+* v Event rateLimit và error
+* 
+*/
 // Client 1
 
 client.on('rateLimit', async (rateLimit) => {

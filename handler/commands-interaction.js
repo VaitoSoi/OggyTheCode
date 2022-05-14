@@ -13,14 +13,13 @@ const { readdirSync } = require('fs')
  * @param {String} str
  */
 module.exports = async (client, str) => {
-    console.log(str)
     let guild = client.guilds.cache.get(process.env.GUILD_ID)
         , num = 0
         , command
         , rcommand = []
         , token = ''
         , err = 0
-    if (str.toLowerCase() === 'client2') token = process.env.TOKEN_2
+    if (str === 'client2') token = process.env.TOKEN_2
     else token = process.env.TOKEN_1
 
     if (guild) {
@@ -44,7 +43,7 @@ module.exports = async (client, str) => {
         }
     }
 
-    console.log(`[${str/*.toUpperCase()*/}] ${num} SLASH_COMMANDS LOAD.\n[${str/*.toUpperCase()*/}] ${err} SLASH_COMMAND CAN'T LOAD.`/* + table.toString()*/);
+    console.log(`[${str.toUpperCase()}] ${num} SLASH_COMMANDS LOAD.\n[${str.toUpperCase()}] ${err} SLASH_COMMAND CAN'T LOAD.`/* + table.toString()*/);
 
     const rest = new REST({
         version: '9'
