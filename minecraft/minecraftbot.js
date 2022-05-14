@@ -404,32 +404,19 @@ function createBot(client, client2) {
 				} else {
 					ava = true
 				}
-				if (ava === false) {
-					interaction.reply({
-						embeds: [
-							new MessageEmbed()
-								.setTitle(`❌ | Lệnh \`${cmd}\` đã bị tắt bởi Admin`)
-								.setColor('#f00c0c')
-						]
-					})
-				} else if (ava === true || !ava) {
-					try {
-						if (!interaction.deferred) await interaction.deferReply()
-					} catch (error) {
-
-					}
+				if (ava) {
 					if (interaction.commandName === 'check-online') {
-						if (end === true) return interaction.reply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
+						if (end === true) return interaction.editReply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
 						let i = 0;
 						const num = Object.values(minecraftbot.players).map(name => name.username).length;
 						Object.values(minecraftbot.players).map(name => name.username).forEach((names) => {
-							if (names === interaction.options.getString('player')) return interaction.reply(`✅ | Player ${names} đang onl!`);
-							if (i > num) return interaction.reply('❌ | Player hiện không onl!');
+							if (names === interaction.options.getString('player')) return interaction.editReply(`✅ | Player ${names} đang onl!`);
+							if (i > num) return interaction.editReply('❌ | Player hiện không onl!');
 							i++;
 						});
 					} else if (interaction.commandName === 'players-online') {
-						if (end === true) return interaction.reply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
-						interaction.reply(`Hiện có ${Object.values(minecraftbot.players).map(name => name.username).length} player(s) đang online trong server bot đang có mặt!`)
+						if (end === true) return interaction.editReply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
+						interaction.editReply(`Hiện có ${Object.values(minecraftbot.players).map(name => name.username).length} player(s) đang online trong server bot đang có mặt!`)
 					} else if (interaction.commandName === 'chat') {
 						if (end === true) {
 							interaction.editReply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
@@ -514,7 +501,7 @@ function createBot(client, client2) {
 					ava = true
 				}
 				if (ava === false) {
-					interaction.reply({
+					interaction.editReply({
 						embeds: [
 							new MessageEmbed()
 								.setTitle(`❌ | Lệnh \`${cmd}\` đã bị tắt bởi Admin`)
@@ -522,23 +509,18 @@ function createBot(client, client2) {
 						]
 					})
 				} else if (ava === true || !ava) {
-					try {
-						if (!interaction.deferred) await interaction.deferReply()
-					} catch (error) {
-
-					}
 					if (interaction.commandName === 'check-online') {
-						if (end === true) return interaction.reply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
+						if (end === true) return interaction.editReply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
 						let i = 0;
 						const num = Object.values(minecraftbot.players).map(name => name.username).length;
 						Object.values(minecraftbot.players).map(name => name.username).forEach((names) => {
-							if (names === interaction.options.getString('player')) return interaction.reply(`✅ | Player ${names} đang onl!`);
-							if (i > num) return interaction.reply('❌ | Player hiện không onl!');
+							if (names === interaction.options.getString('player')) return interaction.editReply(`✅ | Player ${names} đang onl!`);
+							if (i > num) return interaction.editReply('❌ | Player hiện không onl!');
 							i++;
 						});
 					} else if (interaction.commandName === 'players-online') {
-						if (end === true) return interaction.reply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
-						interaction.reply(`Hiện có ${Object.values(minecraftbot.players).map(name => name.username).length} player(s) đang online trong server bot đang có mặt!`)
+						if (end === true) return interaction.editReply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
+						interaction.editReply(`Hiện có ${Object.values(minecraftbot.players).map(name => name.username).length} player(s) đang online trong server bot đang có mặt!`)
 					} else if (interaction.commandName === 'chat') {
 						if (end === true) {
 							interaction.editReply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
