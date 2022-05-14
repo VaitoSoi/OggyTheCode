@@ -9,6 +9,7 @@ module.exports = {
      * @param {Client} client 
      */
     async run(client) {
+        return
         await require('../handler/commands-interaction')(client)
         console.log(`${client.user.username} is onl now`)
         let index = 0
