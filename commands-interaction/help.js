@@ -4,7 +4,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('help')
-        .setDescription('Xem tất cả / một lệnh')
+        .setDescription('Xem tất cả hoặc một lệnh')
         .addStringOption(option => option
             .setName('command')
             .setDescription('Tên lệnh')
@@ -200,7 +200,7 @@ module.exports = {
                 })
                 .setTimestamp()
                 .setColor('RANDOM');
-            return interaction.reply({ embeds: [embed] });
+            return interaction.editReply({ embeds: [embed] });
         }
     }
 } 

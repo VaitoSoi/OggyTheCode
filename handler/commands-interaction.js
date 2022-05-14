@@ -4,18 +4,23 @@ const { readdirSync } = require('fs')
     , { REST } = require('@discordjs/rest')
     , { Routes } = require('discord-api-types/v9')
 
-let table = new ascii('Slash Command');
-table.setHeading("Name", "Status", "Loaded");
+// let table = new ascii('Slash Command');
+// table.setHeading("Name", "Status", "Loaded");
 
 /**
  * 
  * @param {Client} client 
+ * @param {String} str
  */
-module.exports = async(client) => {
+module.exports = async (client, str) => {
     let guild = client.guilds.cache.get(process.env.GUILD_ID)
         , num = 0
         , command
         , rcommand = []
+        , token = ''
+        , err = 0
+    if (str === 'client2') token = process.env.TOKEN_2
+    else token = process.env.TOKEN_1
 
     if (guild) {
         command = guild.commands
@@ -30,30 +35,26 @@ module.exports = async(client) => {
             num++
             client.interactions.set(pull.data.name, pull);
             rcommand.push(pull.data.toJSON())
-            table.addRow(file, '✔ Ready');
+            //table.addRow(file, '✔ Ready');
         } else {
-            table.addRow(file, '✖ Not ready');
+            err++
+            //table.addRow(file, '✖ Not ready');
             continue;
         }
     }
 
-    console.log(`Đã load ${num} SLASH_COMMANDS!\n` + table.toString());
+    console.log(`[${str.toUpperCase()}] ${num} SLASH_COMMANDS LOAD.\n[${str.toUpperCase()}] ${err} SLASH_COMMAND CAN'T LOAD.`/* + table.toString()*/);
 
     const rest = new REST({
         version: '9'
-    }).setToken(process.env.TOKEN)
+    }).setToken(token)
 
-    const register = async () => {
-        try {
-            await rest.put(Routes.applicationCommands(client.user.id), {
-                body: rcommand
-            })
-            console.log('Đã load slash command!')
-        } catch (e) {
-            console.log(e)
-        }
+    try {
+        await rest.put(Routes.applicationCommands(client.user.id), {
+            body: rcommand
+        })
+        console.log(`[${str.toUpperCase()}] SLASH_COMMAND REGISTER`)
+    } catch (e) {
+        console.log(`[${str.toUpperCase()}] REGISTER ERROR: ${e}`)
     }
-
-    register()
-
 }

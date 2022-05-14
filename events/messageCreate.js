@@ -1,7 +1,6 @@
 const { Message, MessageEmbed } = require('discord.js')
 const prefixSchema = require('../models/prefix')
 const blacklist = require('../models/blacklist')
-const p = process.env.PREFIX
 const dcommand = require('../models/commands')
 
 module.exports = {
@@ -12,6 +11,8 @@ module.exports = {
      * @returns 
      */
     async run(message) {
+        if (message.content.startsWith(process.env.PREFIX)) return message.reply(`🛑 | MESSAGE_COMMAND đã hết được hỗ trợ bởi <@!${message.client.user.id}>!\n✅ | Vui lòng dùng SLASH_COMMAND (command dùng \`/\`) để ra lệnh.\n❕ | Để biết thông tin thì hãy vào Server Support của <@!${message.client.user.id}>!\n🔽 | Link Server Support: https://discord.com/invite/NBsnNGDeQd`)
+        /*
         // console.log(message.content)
         const client = message.client
         if (message.author.bot || !message.guild) return;
@@ -20,7 +21,10 @@ module.exports = {
             GuildId: message.guild.id
         });
 
-        let prefix = ''
+        let p = ''
+        , prefix = ''
+        if (client.user.id === process.env.ID_1) p = process.env.PREFIX_1
+        else if (client.user.id === process.env.ID_2) p = process.env.PREFIX_2
 
         if (pdata) {
             prefix = pdata.Prefix
@@ -34,8 +38,9 @@ module.exports = {
         const args = message.content.slice(prefix.length).trim().split(/ +/g)
         const cmd = args.shift().toLocaleLowerCase();
         if (cmd.length === 0) return;
+
         var command = client.commands.get(cmd);
-        if (!command) command = await client.commands.get(client.aliases.get(cmd));
+        if (!command) command = await client.commands.get(client.aliases.get(cmd))
         if (!command) return
 
         if (!message.guild.me.permissionsIn(message.channel).has('SEND_MESSAGES')) {
@@ -157,5 +162,6 @@ module.exports = {
                 }
             })
         }
+        */
     }
 }

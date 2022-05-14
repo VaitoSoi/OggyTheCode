@@ -11,6 +11,7 @@ table.setHeading("Name", "Status");
  */
 module.exports = async (client) => {
     let num = 0
+    , err = 0
     const commands = readdirSync(`./mc-commands/`).filter(file => file.endsWith(".js"));
     for (let file of commands) {
         let pull = require(`../mc-commands/${file}`);
@@ -25,5 +26,5 @@ module.exports = async (client) => {
         }
     }
 
-    console.log(`Đã load ${num} MINECRAFT_COMMANDS!\n` + table.toString());
+    console.log(`[MINECRAFT] ${num} MINECRAFT_COMMANDS LOADED!\n[MINECRAFT] ${err} MINECRAFT_COMMANDS CAN'T LOAD!`/* + table.toString() */);
 }

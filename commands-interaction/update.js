@@ -15,7 +15,7 @@ module.exports = {
             .addChoice('Z-', 'z-')
             .setRequired(true)
         )
-        .addNumberOption(option => option
+        .addIntegerOption(option => option
             .setName('update')
             .setDescription('Tiến độ muốn cập nhật.')
             .setMaxValue(3750)
@@ -30,7 +30,7 @@ module.exports = {
         const client = interaction.client
         let data = highway.findOne({ which: 'straight' })
             , updatedata = interaction.options.getString('direction')
-            , how = interaction.options.getNumber('update')
+            , how = Number(interaction.options.getNumber('update'))
             , old = 0
             , name = {}
         if (interaction.user.id !== '692271452053045279' && interaction.user.id !== '749964743854522439' && interaction.user.id !== '485419430885457930' && interaction.user.id !== '321553911716642822') return interaction.editReply('M là ai, m là thg nào, t ko quen m, tránh xa t ra!')
@@ -49,10 +49,10 @@ module.exports = {
         }
         if (how < old) return interaction.editReply(`Data mới không thể nhỏ hơn \`${old}\``)
         if (old >= 3750) return interaction.editReply('Không thể thay đổi giá trị của đoạn đường đã đạt đến 3750k')
-        highway.findOneAndUpdate({
+        highway.findOne({
             which: 'straight'
         }, {
             $set: name
-        }).then(()=> interaction.editReply('✅ | Đã cập nhật data!'))
+        })
     }
 }

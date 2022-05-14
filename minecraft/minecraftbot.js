@@ -3,8 +3,8 @@ const mineflayer = require('mineflayer')
 	, util = require('minecraft-server-util')
 	, { Client } = require('discord.js')
 	, ms = require('ms')
-	, setchannel = require('../models/setchannel')
 	, config = require('../models/option')
+	// , config = require('../models/option')
 	, { MessageEmbed, Message } = require('discord.js')
 	, { env } = require('process')
 	, info = {
@@ -18,8 +18,9 @@ const mineflayer = require('mineflayer')
 /**
  *
  * @param {Client} client
+ * @param {Client} client2
  */
-function createBot(client) {
+function createBot(client, client2) {
 
 	// Create bot
 
@@ -44,6 +45,7 @@ function createBot(client) {
 		, login = false
 		, err = 0
 		, logintime = 0
+		, guilds = []
 
 	/**
 	 * 
@@ -54,17 +56,38 @@ function createBot(client) {
 	async function send(embed, msg, color) {
 		// console.log(msg)
 		if (embed) {
-			client.guilds.cache.map(guild => guild.id).forEach(async (id) => {
-				const guild = client.guilds.cache.get(id);
+			client.guilds.cache.map(guild => guild).forEach(async (guild) => {
+				guilds.push(guild.id)
 				if (!guild.me.permissions.has('SEND_MESSAGES')) return
-				let data = await setchannel.findOne({ guildid: id })
+				let data = await config.findOne({ guildid: guild.id })
 				if (data) {
-					let id = data.livechat
+					let id = data.config.channels.livechat
 					const channel = guild.channels.cache.get(id);
 					if (!channel) return;
 					if (!guild.me.permissionsIn(channel).has('SEND_MESSAGES')) return
-					if (embed && embed !== '') channel.send({ embeds: [embed] })
-					else channel.send(await codeblockGenerator(msg, color))
+					try {
+						if (embed && embed !== '') channel.send({ embeds: [embed] })
+						else channel.send(await codeblockGenerator(msg, color))
+					} catch (e) {
+						console.log(e)
+					}
+				}
+			})
+			client2.guilds.cache.map(guild => guild).forEach(async (guild) => {
+				if (guilds.includes(guild.id)) return
+				if (!guild.me.permissions.has('SEND_MESSAGES')) return
+				let data = await config.findOne({ guildid: guild.id })
+				if (data) {
+					let id = data.config.channels.livechat
+					const channel = guild.channels.cache.get(id);
+					if (!channel) return;
+					if (!guild.me.permissionsIn(channel).has('SEND_MESSAGES')) return
+					try {
+						if (embed && embed !== '') channel.send({ embeds: [embed] })
+						else channel.send(await codeblockGenerator(msg, color))
+					} catch (e) {
+						console.log(e)
+					}
 				}
 			})
 		}
@@ -105,10 +128,10 @@ function createBot(client) {
 			let server = await util.status('2y2c.org', 25565)
 			if (server.players.online < 20) {
 				const embed = new MessageEmbed()
-					.setTitle('Ngắt kết nối với ' + info.ip + '.\nVì server hiện tại có player < 20!')
+					.setTitle('Ngắt kết nối với ' + info.ip + '.\nLý do: Server hiện tại có players < 20 người!')
 					.setColor('RED')
 				send(embed, embed.title ? embed.title : embed.description, 'red')
-				reconnect(rejoin)
+				rejoin()
 			} else {
 				const embed = new MessageEmbed()
 					.setTitle('Đang kết nối lại với ' + info.ip + '...')
@@ -135,7 +158,7 @@ function createBot(client) {
 			move = 0;
 			err = 0
 			setTimeout(() => {
-				if (end === 'true') { return; }
+				if (end === true) { return; }
 				else {
 					minecraftbot.afk.start();
 				}
@@ -286,8 +309,9 @@ function createBot(client) {
 				login === true;
 				minecraftbot.afk.stop()
 				setTimeout(() => {
-					if (end === 'true') { return; }
+					if (end === true) { return; }
 					else {
+						end
 						minecraftbot.afk.start();
 						const embed = new MessageEmbed()
 							.setTitle('Bắt đầu afk')
@@ -301,8 +325,7 @@ function createBot(client) {
 				.setDescription(`${message.toString()}`);
 			if (message.toString().split(' ').shift() === `<${minecraftbot.player.username}>`) {
 				embed.setColor('#094ded');
-			}
-			else {
+			} else {
 				embed.setColor('#09bced');
 			}
 			send(embed, embed.title ? embed.title : embed.description, 'blue')
@@ -316,6 +339,7 @@ function createBot(client) {
 	const p = process.env.PREFIX
 
 	client.on('messageCreate', async (message) => {
+		return
 		if (message.author.bot) return;
 		if (!message.guild) return;
 		const data = await prefixSchema.findOne({
@@ -327,31 +351,11 @@ function createBot(client) {
 			prefix = data.Prefix;
 		}
 		else {
-			prefix = p;
+			prefix = process.env.PREFIX_1;
 		}
 		blacklist.findOne({ id: message.author.id }, async (err, data) => {
 			if (err) throw err;
 			if (!data) {
-				let data2 = await setchannel.findOne({ guildid: message.guildId })
-				if (data2) {
-					if (!data2.livechat) return
-					let id = data2.livechat
-						, channel = message.guild.channels.cache.get(id)
-					if (!channel) return
-					if (message.channel.id !== channel.id) return
-					try {
-						if (end === false) {
-							minecraftbot.chat(`<${message.author.tag}> ${message.content}`);
-							if (!message) return
-							message.react('✅');
-						} else if (end === true) {
-							if (!message) return
-							message.react('❌');
-						}
-					} catch (e) {
-						console.log(e.stack)
-					}
-				}
 				if (!message.content.startsWith(prefix)) return;
 				const args = message.content.slice(prefix.length).trim().split(/ +/g);
 				const cmd = args.shift().toLocaleLowerCase();
@@ -367,6 +371,20 @@ function createBot(client) {
 					});
 				} else if (cmd === 'playeronline' || cmd === 'ponl' || cmd === 'player-online' || cmd === 'players-online') {
 					message.channel.send('Hiện có `' + Object.values(minecraftbot.players).map(name => name.username).length + '` player(s) đang onl trong server bot đang ở!')
+				} else if (cmd === 'chat') {
+					if (end === true) {
+						message.reactions.removeAll()
+						message.react('❌')
+					} else {
+						try {
+							minecraftbot.chat(`<${message.author.tag}> ${message.content.split(' ').slice(1).join(' ')}`)
+							message.reactions.removeAll()
+							message.react('✅')
+						} catch (error) {
+							message.reactions.removeAll()
+							message.react('❌')
+						}
+					}
 				}
 			}
 			else { return }
@@ -386,7 +404,6 @@ function createBot(client) {
 				} else {
 					ava = true
 				}
-
 				if (ava === false) {
 					interaction.reply({
 						embeds: [
@@ -396,6 +413,11 @@ function createBot(client) {
 						]
 					})
 				} else if (ava === true || !ava) {
+					try {
+						if (!interaction.deferred) await interaction.deferReply()
+					} catch (error) {
+
+					}
 					if (interaction.commandName === 'check-online') {
 						if (end === true) return interaction.reply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
 						let i = 0;
@@ -408,6 +430,126 @@ function createBot(client) {
 					} else if (interaction.commandName === 'players-online') {
 						if (end === true) return interaction.reply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
 						interaction.reply(`Hiện có ${Object.values(minecraftbot.players).map(name => name.username).length} player(s) đang online trong server bot đang có mặt!`)
+					} else if (interaction.commandName === 'chat') {
+						if (end === true) {
+							interaction.editReply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
+						} else {
+							try {
+								minecraftbot.chat(`<${interaction.user.tag}> ${interaction.options.getString('chat')}`)
+								interaction.editReply('✅ | Đã gửi chat!')
+							} catch (error) {
+								interaction.editReply('❌ | Không thể gửi chat!\n🛑 | Lý do: ```' + error + '```')
+							}
+						}
+					}
+				}
+			}
+		}
+	})
+
+	client2.on('messageCreate', async (message) => {
+		return
+		if (message.author.bot) return;
+		if (!message.guild) return;
+		const data = await prefixSchema.findOne({
+			GuildId: message.guild.id,
+		});
+		const blacklist = require('../models/blacklist');
+		let prefix;
+		if (data) {
+			prefix = data.Prefix;
+		}
+		else {
+			prefix = process.env.PREFIX_2;
+		}
+		blacklist.findOne({ id: message.author.id }, async (err, data) => {
+			if (err) throw err;
+			if (!data) {
+				if (!message.content.startsWith(prefix)) return;
+				const args = message.content.slice(prefix.length).trim().split(/ +/g);
+				const cmd = args.shift().toLocaleLowerCase();
+				if (cmd.length === 0) return;
+				if (end === true) return message.channel.send('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
+				if (cmd === 'checkonline' || cmd === 'conl') {
+					let i = 0;
+					const num = Object.values(minecraftbot.players).map(name => name.username).length;
+					Object.values(minecraftbot.players).map(name => name.username).forEach((names) => {
+						if (names === args[0]) return message.channel.send(`✅ | Player ${names} đang onl!`);
+						if (i > num) return message.channel.send('❌ | Player hiện không onl!');
+						i++;
+					});
+				} else if (cmd === 'playeronline' || cmd === 'ponl' || cmd === 'player-online' || cmd === 'players-online') {
+					message.channel.send('Hiện có `' + Object.values(minecraftbot.players).map(name => name.username).length + '` player(s) đang onl trong server bot đang ở!')
+				} else if (cmd === 'chat') {
+					if (end === true) {
+						message.reactions.removeAll()
+						message.react('❌')
+					} else {
+						try {
+							minecraftbot.chat(`<${message.author.tag}> ${message.content.split(' ').slice(1).join(' ')}`)
+							message.reactions.removeAll()
+							message.react('✅')
+						} catch (error) {
+							message.reactions.removeAll()
+							message.react('❌')
+						}
+					}
+				}
+			}
+			else { return }
+		});
+	});
+	client2.on('interactionCreate', async (interaction) => {
+		if (interaction.isCommand()) {
+			if (!interaction.commandName) return
+			const data = await require('../models/blacklist').findOne({ id: interaction.user.id })
+			let ava = Boolean;
+			const command = client.interactions.get(interaction.commandName)
+			if (!data) {
+				const data2 = await require('../models/commands').findOne({ guildid: interaction.guildId })
+				if (data2) {
+					const ar = data2.commands
+					if (ar.includes(command.name)) { ava = false } else { ava = true }
+				} else {
+					ava = true
+				}
+				if (ava === false) {
+					interaction.reply({
+						embeds: [
+							new MessageEmbed()
+								.setTitle(`❌ | Lệnh \`${cmd}\` đã bị tắt bởi Admin`)
+								.setColor('#f00c0c')
+						]
+					})
+				} else if (ava === true || !ava) {
+					try {
+						if (!interaction.deferred) await interaction.deferReply()
+					} catch (error) {
+
+					}
+					if (interaction.commandName === 'check-online') {
+						if (end === true) return interaction.reply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
+						let i = 0;
+						const num = Object.values(minecraftbot.players).map(name => name.username).length;
+						Object.values(minecraftbot.players).map(name => name.username).forEach((names) => {
+							if (names === interaction.options.getString('player')) return interaction.reply(`✅ | Player ${names} đang onl!`);
+							if (i > num) return interaction.reply('❌ | Player hiện không onl!');
+							i++;
+						});
+					} else if (interaction.commandName === 'players-online') {
+						if (end === true) return interaction.reply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
+						interaction.reply(`Hiện có ${Object.values(minecraftbot.players).map(name => name.username).length} player(s) đang online trong server bot đang có mặt!`)
+					} else if (interaction.commandName === 'chat') {
+						if (end === true) {
+							interaction.editReply('🛑 | Bot đang mất kết nối với server `' + info.ip + '`')
+						} else {
+							try {
+								minecraftbot.chat(`<${interaction.user.tag}> ${interaction.options.getString('chat')}`)
+								interaction.editReply('✅ | Đã gửi chat!')
+							} catch (error) {
+								interaction.editReply('❌ | Không thể gửi chat!\n🛑 | Lý do: ```' + error + '```')
+							}
+						}
 					}
 				}
 			}
@@ -438,11 +580,12 @@ function createBot(client) {
 	minecraftbot.on('chat', (username, message) => {
 		let msg = message.split(' ').splice(1).join(' ')
 			, prefix = '!'
-		if (!msg.startsWith(prefix)) return
+		if (!msg.split(' ').shift().startsWith(prefix)) return
 		let args = msg.slice(prefix.length).trim().split(/ +/g)
 			, cmd = args.shift().toLowerCase()
 		if (cmd === '>') cmd = args[1].toLowerCase()
 		let command = client.mccommands.get(cmd)
+		if (!command) return minecraftbot.chat(`/msg ${username} Error: Không tìm thấy command!!`)
 		try {
 			command.run(client, minecraftbot, args, username)
 		} catch (err) {

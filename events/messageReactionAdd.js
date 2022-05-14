@@ -10,9 +10,16 @@ module.exports = {
      * @param {User} user 
      */
     async run(reaction, user) {
+        try {
+            const client = reaction.message.guild.members.cache.get(process.env.ID_1)
+                , client2 = reaction.message.guild.me.user.id
+            if (client && client2 === process.env.ID_2) return
+        } catch (e) {
+
+        }
         let data = await db.findOne({ guildid: reaction.message.guildId })
         if (!data) return
-        if (!data.config.message.status || data.config.message.status !== reaction.message.id) return
+        if (!data.config.message.status || data.config.message.status !== reaction.message.id || user.id === reaction.client.user.id) return
         reaction.users.remove(user.id)
         const embed = new MessageEmbed()
             .setTitle('Minecraft Sever Info')
@@ -83,8 +90,33 @@ module.exports = {
                             inline: false
                         })
             })
-        reaction.message.edit({
+        if ((await reaction.message.fetch()).author.id === reaction.client.user.id) reaction.message.edit({
             embeds: [embed]
         })
+        else {
+            if (reaction.message.deletable) {
+                reaction.message.delete()
+                reaction.message.channel.send({
+                    embeds: [embed]
+                }).then(async (m) => {
+                    m.react('🔁')
+                    try {
+                        await db.findOneAndUpdate({
+                            guildid: reaction.message.guildId
+                        }, {
+                            $set: {
+                                'data.config.message.status': m.id
+                            }
+                        })
+                    } catch (error) {
+                        console.log(error)
+                    }
+                })
+            } else reaction.message.reply({
+                embeds: [embed]
+            }).then((m) => setTimeout(() => {
+                m.delete()
+            }, 5000))
+        }
     }
 }
