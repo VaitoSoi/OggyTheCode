@@ -13,6 +13,7 @@ const { readdirSync } = require('fs')
  * @param {String} str
  */
 module.exports = async (client, str) => {
+    console.log(str)
     let guild = client.guilds.cache.get(process.env.GUILD_ID)
         , num = 0
         , command
