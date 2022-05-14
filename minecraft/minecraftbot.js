@@ -131,7 +131,7 @@ function createBot(client, client2) {
 					.setTitle('Ngắt kết nối với ' + info.ip + '.\nLý do: Server hiện tại có players < 20 người!')
 					.setColor('RED')
 				send(embed, embed.title ? embed.title : embed.description, 'red')
-				rejoin()
+				reconnect()
 			} else {
 				const embed = new MessageEmbed()
 					.setTitle('Đang kết nối lại với ' + info.ip + '...')
