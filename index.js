@@ -198,7 +198,6 @@ client.on('ready', async () => {
 
 // Client 2
 
-
 client2.on('rateLimit', async (rateLimit) => {
     const channel = await client.channels.cache.get(env.RATELIMIT_CHANNEL)
     if (!channel || !channel.isText() || !channel.guild) return
