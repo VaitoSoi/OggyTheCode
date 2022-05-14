@@ -12,7 +12,7 @@ const { readdirSync } = require('fs')
  * @param {Client} client 
  * @param {String} str
  */
-module.exports = async (str, client) => {
+module.exports = async (client, str) => {
     console.log(str)
     let guild = client.guilds.cache.get(process.env.GUILD_ID)
         , num = 0
@@ -20,7 +20,7 @@ module.exports = async (str, client) => {
         , rcommand = []
         , token = ''
         , err = 0
-    if (str === 'client2') token = process.env.TOKEN_2
+    if (str.toLowerCase() === 'client2') token = process.env.TOKEN_2
     else token = process.env.TOKEN_1
 
     if (guild) {
