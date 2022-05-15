@@ -337,7 +337,7 @@ function createBot(client, client2) {
 
 	const prefixSchema = require('../models/prefix');
 	const p = process.env.PREFIX
-
+	/*
 	client.on('messageCreate', async (message) => {
 		return
 		if (message.author.bot) return;
@@ -390,6 +390,7 @@ function createBot(client, client2) {
 			else { return }
 		});
 	});
+	*/
 	client.on('interactionCreate', async (interaction) => {
 		if (interaction.isCommand()) {
 			if (!interaction.commandName) return
@@ -434,7 +435,7 @@ function createBot(client, client2) {
 			}
 		}
 	})
-
+	/*
 	client2.on('messageCreate', async (message) => {
 		return
 		if (message.author.bot) return;
@@ -487,6 +488,7 @@ function createBot(client, client2) {
 			else { return }
 		});
 	});
+	*/
 	client2.on('interactionCreate', async (interaction) => {
 		if (interaction.isCommand()) {
 			if (!interaction.commandName) return
