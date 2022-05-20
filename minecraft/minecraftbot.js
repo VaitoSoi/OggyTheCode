@@ -124,9 +124,9 @@ function createBot(client, client2) {
 	 * @param {Number} rejoin 
 	 */
 	function reconnect(rejoin) {
-                let time = 5
-                if (rejoin) time = rejoin
-                else time = 5
+		let time = 5
+		if (rejoin) time = rejoin
+		else time = 5
 		setTimeout(async () => {
 			let server = await util.status('2y2c.org', 25565)
 			if (server.players.online < 20) {
