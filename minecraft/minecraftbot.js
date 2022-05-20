@@ -124,6 +124,9 @@ function createBot(client, client2) {
 	 * @param {Number} rejoin 
 	 */
 	function reconnect(rejoin) {
+                let time = 5
+                if (rejoin) time = rejoin
+                else time = 5
 		setTimeout(async () => {
 			let server = await util.status('2y2c.org', 25565)
 			if (server.players.online < 20) {
@@ -131,7 +134,7 @@ function createBot(client, client2) {
 					.setTitle('Ngắt kết nối với ' + info.ip + '.\nLý do: Server hiện tại có players < 20 người!')
 					.setColor('RED')
 				send(embed, embed.title ? embed.title : embed.description, 'red')
-				reconnect()
+				reconnect(time)
 			} else {
 				const embed = new MessageEmbed()
 					.setTitle('Đang kết nối lại với ' + info.ip + '...')
@@ -139,7 +142,7 @@ function createBot(client, client2) {
 				send(embed, embed.title ? embed.title : embed.description, 'orange')
 				createBot(client, 'mc');
 			}
-		}, ms(`${rejoin}m`));
+		}, ms(`${time}m`));
 	}
 	/**
 	 * 
