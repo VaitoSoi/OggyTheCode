@@ -1,6 +1,6 @@
 {
   "name": "oggythebot",
-  "version": "3.3.0",
+  "version": "3.3.2",
   "description": "A discord bot",
   "main": "index.js",
   "dependencies": {
@@ -24,8 +24,7 @@
     "pm2": "^5.1.2"
   },
   "scripts": {
-    "start": "node index.js",
-    "nodemon": "nodemon index.js",
+    "start": "nodemon index.js",
     "test": "node test.js"
   },
   "keywords": [],

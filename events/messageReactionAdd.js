@@ -21,6 +21,13 @@ module.exports = {
         if (!data) return
         if (!data.config.message.status || data.config.message.status !== reaction.message.id || user.id === reaction.client.user.id) return
         reaction.users.remove(user.id)
+        reaction.message.edit({
+            embeds: [
+                new MessageEmbed()
+                    .setTitle('⏳ | Đang tải...')
+                    .setColor('NOT_QUITE_BLACK')
+            ]
+        })
         const embed = new MessageEmbed()
             .setTitle('Minecraft Sever Info')
             .setFooter({ text: `Cập nhật lần cuối vào cuối`, iconURL: `${reaction.message.guild.iconURL()}` })

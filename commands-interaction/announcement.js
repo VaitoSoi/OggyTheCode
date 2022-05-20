@@ -50,7 +50,7 @@ module.exports = {
                                         err++
                                         await m.edit('```' + e + '```')
                                     }
-                                    if (num === await client.guilds.cache.size) setTimeout(() => {
+                                    if (num === client.guilds.cache.size) setTimeout(() => {
                                         m.channel.send(`✅ | Đã gửi cho ${num} Guild và Qwner.\n🔴 | ${err} Guild không thể gửi đi.`)
                                     }, 1000);
                                 })

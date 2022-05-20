@@ -13,7 +13,7 @@ module.exports = {
     */
     run: async (interaction) => {
         const client = interaction.client
-        const ping = interaction.createdTimestamp - Date.now();
+        const ping = Date.now() - interaction.createdTimestamp;
         const wsping = client.ws.ping
         var pingbar = ''
         if (ping <= 25) { pingbar = '[■□□□□□] Nhanh' }

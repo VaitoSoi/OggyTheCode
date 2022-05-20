@@ -46,6 +46,7 @@ function createBot(client, client2) {
 		, err = 0
 		, logintime = 0
 		, guilds = []
+		, restart = false
 
 	/**
 	 * 
@@ -126,21 +127,20 @@ function createBot(client, client2) {
 	function reconnect(rejoin) {
 		let time = 5
 		if (rejoin) time = rejoin
-		else time = 5
 		setTimeout(async () => {
-			let server = await util.status('2y2c.org', 25565)
-			if (server.players.online < 20) {
+			let server = await util.status('2y2c.org', 25565).catch((err) => { return console.log(err.stack) })
+			if (server.players.online < 15 && restart === true) {
 				const embed = new MessageEmbed()
-					.setTitle('Ngắt kết nối với ' + info.ip + '.\nLý do: Server hiện tại có players < 20 người!')
-					.setColor('RED')
+					.setDescription(`**Ngắt kết nối với \`${info.ip}\`.\nLý do: Server hiện tại có players < 20 người!\nKết nối lại sau ${time} phút**`)
+					.setColor('#f00c0c')
 				send(embed, embed.title ? embed.title : embed.description, 'red')
 				reconnect(time)
 			} else {
 				const embed = new MessageEmbed()
-					.setTitle('Đang kết nối lại với ' + info.ip + '...')
+					.setDescription('Đang kết nối lại với ' + info.ip + '...')
 					.setColor('#ffe021')
 				send(embed, embed.title ? embed.title : embed.description, 'orange')
-				createBot(client, 'mc');
+				createBot(client, client2, 'mc');
 			}
 		}, ms(`${time}m`));
 	}
@@ -553,9 +553,9 @@ function createBot(client, client2) {
 		end = true;
 		if (kickcount < 2) { rejoin = 1; kickcount++ }
 		else { rejoin = 5; }
-		if (reason.toString().toLowerCase == 'server restart') rejoin = 5;
+		if (reason.toString().toLowerCase == 'server restart') { rejoin = 5; restart = true }
 		const embed = new MessageEmbed()
-			.setDescription(`**Bot đã mất kết nối đến server!` + info.ip + `\nLý do: \`${reason}\`\nKết nối lại sau ${rejoin} phút**`)
+			.setDescription(`**Bot đã mất kết nối đến server \`${info.ip}\`!\nLý do: \`${reason}\`\nKết nối lại sau ${rejoin} phút**`)
 			.setColor('#f00c0c') // Đỏ
 		send(embed, embed.title ? embed.title : embed.description, 'red')
 		reconnect(rejoin)

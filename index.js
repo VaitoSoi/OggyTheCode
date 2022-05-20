@@ -191,6 +191,7 @@ client.on('ready', async () => {
                 console.log('\n--------------------------------\n')
                 require('./minecraft/minecraftbot').createBot(client, client2)
                 console.log('[MINECRAFT] BOT LOADED')
+                console.log('\n--------------------------------\n')
             } else timeout()
         }, 500);
     }

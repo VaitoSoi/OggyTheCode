@@ -1,9 +1,6 @@
-const version = require('../package.json').version
-const prefix = process.env.PREFIX_2
-
 module.exports = [
-    `${version}`,
-    `${prefix}help`,
+    `${require('../package.json').version}`,
+    `Đã dừng hỗ trợ MESSAGE_COMMANDS`,
     'Là bản copy chất lượng kém của Ót gy :))',
     'Bủh :v',
     'Hu a du ??',
