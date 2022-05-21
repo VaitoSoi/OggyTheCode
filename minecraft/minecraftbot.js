@@ -553,7 +553,7 @@ function createBot(client, client2) {
 		end = true;
 		if (kickcount < 2) { rejoin = 1; kickcount++ }
 		else { rejoin = 5; }
-		if (reason.toString().toLowerCase == 'server restart') { rejoin = 5; restart = true }
+		if (reason.toString().toLowerCase() == 'server restart') { rejoin = 5; restart = true }
 		const embed = new MessageEmbed()
 			.setDescription(`**Bot đã mất kết nối đến server \`${info.ip}\`!\nLý do: \`${reason}\`\nKết nối lại sau ${rejoin} phút**`)
 			.setColor('#f00c0c') // Đỏ
