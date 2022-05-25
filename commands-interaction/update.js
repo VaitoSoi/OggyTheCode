@@ -15,7 +15,7 @@ module.exports = {
             .addChoice('Z-', 'z-')
             .setRequired(true)
         )
-        .addIntegerOption(option => option
+        .addNumberOption(option => option
             .setName('update')
             .setDescription('Tiến độ muốn cập nhật.')
             .setMaxValue(3750)
@@ -30,29 +30,29 @@ module.exports = {
         const client = interaction.client
         let data = highway.findOne({ which: 'straight' })
             , updatedata = interaction.options.getString('direction')
-            , how = Number(interaction.options.getNumber('update'))
+            , how = interaction.options.getNumber('update')
             , old = 0
             , name = {}
         if (interaction.user.id !== '692271452053045279' && interaction.user.id !== '749964743854522439' && interaction.user.id !== '485419430885457930' && interaction.user.id !== '321553911716642822') return interaction.editReply('M là ai, m là thg nào, t ko quen m, tránh xa t ra!')
         if (updatedata === 'x+') {
             old = Number(data.xplus)
-            name = { 'data.xplus': how }
+            name = { 'xplus': how }
         } else if (updatedata === 'z+') {
             old = Number(data.zplus)
-            name = { 'data.zplus': how }
+            name = { 'zplus': how }
         } else if (updatedata === 'x-') {
             old = Number(data.xminus)
-            name = { 'data.xminus': how }
+            name = { 'xminus': how }
         } else if (updatedata === 'z-') {
             old = Number(data.zminus)
-            name = { 'data.xminus': how }
+            name = { 'xminus': how }
         }
         if (how < old) return interaction.editReply(`Data mới không thể nhỏ hơn \`${old}\``)
         if (old >= 3750) return interaction.editReply('Không thể thay đổi giá trị của đoạn đường đã đạt đến 3750k')
-        highway.findOne({
+        await highway.findOneAndUpdate({
             which: 'straight'
         }, {
             $set: name
-        })
+        }).then(() => interaction.editReply('✅ | Đã cập nhật data!'))
     }
 }

@@ -65,8 +65,8 @@ require('dotenv').config('./.env')
 require('./util/mongooseConnect')(require('mongoose'))
 
 // Client 1
-client.commands = new Collection();
-client.aliases = new Collection();
+// client.commands = new Collection();
+// client.aliases = new Collection();
 client.categories = readdirSync("./commands/");
 client.interactions = new Collection();
 client.mccommands = new Collection();
@@ -79,8 +79,8 @@ async function reg() {
 }
 
 // Client 2
-client2.commands = new Collection();
-client2.aliases = new Collection();
+// client2.commands = new Collection();
+// client2.aliases = new Collection();
 client2.categories = readdirSync("./commands/");
 client2.interactions = new Collection();
 // client2.mccommands = new Collection();

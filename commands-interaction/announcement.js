@@ -32,16 +32,15 @@ module.exports = {
                         if (user.id !== '692271452053045279') return
                         if (reaction.emoji.name === '🟢') {
                             msg.channel.send('⏳ | Loading').then(async (m) => {
-                                await client.guilds.cache.forEach(async (guild) => {
+                                client.guilds.cache.forEach(async (guild) => {
                                     send = false
-                                    num++
                                     try {
                                         const owner = client.users.cache.get(guild.ownerId)
-                                        await owner.send(`Gửi tới chủ của \`${guild.name}\`,\nVaitoSoi (Developer của OggyTheBot) thông báo :\n\`\`\`${array.join('\n')}\`\`\`\n<t:${Math.floor(Date.now() / 1000)}:F>`)
+                                        await owner.send(`Gửi tới chủ của \`${guild.name}\`,\nVaitoSoi (Developer của OggyTheBot) thông báo:\n\`\`\`${array.join('\n')}\`\`\`\n<t:${Math.floor(Date.now() / 1000)}:F>`)
                                         guild.channels.cache.forEach(async (channel) => {
                                             if (channel.isText() && guild.me.permissionsIn(channel).has('SEND_MESSAGES') && send === false) {
                                                 send = true
-                                                await channel.send(`Gửi \`${guild.name}\`,\nVaitoSoi (Developer của OggyTheBot) thông báo:\n\`\`\`${array.join('\n')}\`\`\`\n<t:${Math.floor(Date.now() / 1000)}:F>`)
+                                                await channel.send(`Gửi tới Guild \`${guild.name}\`,\nVaitoSoi (Developer của OggyTheBot) thông báo:\n\`\`\`${array.join('\n')}\`\`\`\n<t:${Math.floor(Date.now() / 1000)}:F>`)
                                                 return m.edit(`Guild:\n> ID: \`${guild.id}\` | Name: \`${guild.name}\`\nChannel:\n> ID: \`${channel.id}\` | Name: \`${channel.name}\`\nOwner:\n> ID: \`${owner.id}\` | Name: \`${owner.username}\`\nStatus: ✅ Đã gửi.`)
                                             }
                                         })
@@ -51,9 +50,11 @@ module.exports = {
                                         await m.edit('```' + e + '```')
                                     }
                                     if (num === client.guilds.cache.size) setTimeout(() => {
-                                        m.channel.send(`✅ | Đã gửi cho ${num} Guild và Qwner.\n🔴 | ${err} Guild không thể gửi đi.`)
+                                       
                                     }, 1000);
                                 })
+                            }).then(() => {
+                                m.channel.send(`✅ | Đã gửi cho ${num} Guild và Qwner.\n🔴 | ${err} Guild không thể gửi đi.`)
                             })
                         } else if (reaction.emoji.name === '🔴') return msg.channel.send('🛑 | Đã hủy.')
                     })

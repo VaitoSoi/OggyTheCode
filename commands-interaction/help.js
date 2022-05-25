@@ -67,8 +67,8 @@ module.exports = {
                 })
                 .setTimestamp()
                 .setColor('RANDOM')
-                .setTitle(`${client.user.username} Helps`)
-                .setDescription(`Prefix hiện tại của bot là: \`${prefix}\`\n\n**Các lệnh cơ bản hữu ích:**\n> \`${prefix}set\` để có thể chỉnh cchannel, role,...\n> \`${prefix}help\` để xem menu này.\n> \`${prefix}botinfo\` để xem toàn bộ thông tin về bot.\n\n **Các link hữu ích:**\n[Invite](https://discord.com/api/oauth2/authorize?client_id=898782551110471701&permissions=351497286&scope=bot%20applications.commands) | [Support server](https://discord.gg/NBsnNGDeQd)`)
+                .setTitle(`${client.user.username} Help Menu`)
+                .setDescription(`Bot đã dừng việc hỗ trợ \`MESSAGE_COMMANDS\` (dùng tin nhắn để ra lệnh)\nVui lòng sử dụng \`SLASH_COMMANDS\` (dùng dấu \`/\`)\nĐể biết thông tin chi tiết hoặc được hỗ trợ vui lòng vào Support Server!\n\n**Các lệnh cơ bản hữu ích:**\n> \`/config\` để có thể chỉnh channel, disable,...\n> \`/help\` để xem menu này.\n> \`/botinfo\` để xem toàn bộ thông tin về bot.\n\n **Các link hữu ích:**\n[Invite 1](https://bit.ly/oggythebot_1) | [Invite 2](https://bit.ly/oggythebot_2) | [Support server](https://discord.gg/NBsnNGDeQd)`)
             const row = (state) => [
                 new MessageActionRow().addComponents(
                     new MessageSelectMenu()
@@ -119,29 +119,29 @@ module.exports = {
                         iconURL: interaction.user.avatarURL()
                     })
 
-                const data1 = await dcommand.findOne({ guildid: interaction.guild.id })
+                const data1 = await require('../models/option').findOne({ guildid: interaction.guild.id })
                 command.forEach(async (name) => {
-                    const c = client.commands.get(name.toLowerCase())
+                    const c = await client.interactions.get(name.toLowerCase())
                     if (data1) {
-                        const n = c.name
-                        const comm = data1.commands
+                        const n = c.data.name
+                        const comm = data1.config.disable
                         if (!comm || Number(comm.length) == 0 || !comm.includes(n)) {
                             embed.addFields({
-                                name: `✅ | \`${c.name}\``,
-                                value: `${c.description ? c.description : 'Lệnh không có mô tả.'}`,
+                                name: `✅ | \`${c.data.name}\``,
+                                value: `${c.data.description ? c.data.description : 'Lệnh không có mô tả.'}`,
                                 inline: true
                             })
                         } else if (comm.includes(n)) {
                             embed.addFields({
-                                name: `❌ | \`${c.name}\``,
-                                value: `${c.description ? c.description : 'Lệnh không có mô tả.'}`,
+                                name: `❌ | \`${c.data.name}\``,
+                                value: `${c.data.description ? c.data.description : 'Lệnh không có mô tả.'}`,
                                 inline: true
                             })
                         }
                     } else {
                         embed.addFields({
-                            name: `✅ | \`${c.name}\``,
-                            value: `${c.description ? c.description : 'Lệnh không có mô tả.'}`,
+                            name: `✅ | \`${c.data.name}\``,
+                            value: `${c.data.description ? c.data.description : 'Lệnh không có mô tả.'}`,
                             inline: true
                         })
                     }
@@ -153,14 +153,14 @@ module.exports = {
             })
         } else {
             const command =
-                client.commands.get(interaction.options.getString('command').toLowerCase()) ||
+                client.interactions.get(interaction.options.getString('command').toLowerCase()) /* ||
                 client.commands.find(
                     (c) => c.aliases && c.aliases.includes(interaction.options.getString('command').toLowerCase())
                 );
-
+                    */
             if (!command) {
                 const embed = new MessageEmbed()
-                    .setTitle(`Không tìm thấy lệnh! Sử dụng \`${prefix}help\` để xem tất cả lệnh!`)
+                    .setTitle(`Không tìm thấy lệnh! Sử dụng \`/help\` để xem tất cả lệnh!`)
                     .setColor("FF0000");
                 return interaction.editReply({ embeds: [embed] });
             }
@@ -168,30 +168,20 @@ module.exports = {
             const embed = new MessageEmbed()
                 .setTitle("Chi tiết lệnh:")
                 .addFields({
-                    name: "PREFIX:", 
-                    value: `\`${prefix}\``, 
-                    inline: true
-                },{
                     name: "LỆNH:",
-                    value: `${command.name 
-                        ? `\`${command.name}\`` 
+                    value: `${command.data.name 
+                        ? `\`${command.data.name}\`` 
                         : "Không có tên cho lệnh này."}`,
                     inline: true
                 },{
                     name: "MÔ TẢ LỆNH:",
-                    value: `${command.description
-                        ? command.description
+                    value: `${command.data.description
+                        ? command.data.description
                         : "Không có mô tả cho lệnh này"}`,
                     inline: false
                 },{
-                    name: "ALIASES:",
-                    value: `Không có Aliases cho slash command`,
-                    inline: true
-                },{
                     name: "CÁCH DÙNG:",
-                    value: `${command.usage 
-                    ? `${prefix}${command.name} ${command.usage}` 
-                    : `${prefix}${command.name}`}`,
+                    value: `/${command.data.name}`,
                     inline: true
                 })
                 .setFooter({
