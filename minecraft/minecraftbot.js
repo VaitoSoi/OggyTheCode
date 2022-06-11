@@ -318,7 +318,7 @@ function createBot(client, client2) {
 	const sleepchat = /^(.+) players sleeping$/
 
 	minecraftbot.on('message', async (message) => {
-		console.log(message.toString())
+		// console.log(message.toString())
 		if (whisper1.test(message.toString())
 			|| whisper2.test(message.toString())) {
 			const embed = new MessageEmbed()
