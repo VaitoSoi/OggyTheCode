@@ -330,7 +330,7 @@ module.exports = {
                                         var role
                                         if (isNaN(m.content)) role = await m.mentions.roles.first()
                                         else role = await reaction.message.guild.roles.cache.get(m.content)
-                                        if (!role) return m.reply('Role không hợp lệ!').then(() => { return collect() })
+                                        if (!role) return m.reply('Role không hợp lệ!')
                                         else {
                                             m.react('👌')
                                             await db.findOneAndUpdate({ guildid: interaction.guildId }, {
@@ -383,7 +383,7 @@ module.exports = {
                                         }).catch(e => m.edit(
                                             `🛑 | Gặp lỗi khi tạo role.\n`
                                             + `Lỗi: \`\`\`${e}\`\`\``
-                                        )).then(() => { return collect() })
+                                        ))
                                     })
                                 }
                             }
