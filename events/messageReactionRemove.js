@@ -16,7 +16,7 @@ module.exports = {
 
         }
         if (user.id === reaction.message.client.user.id) return
-        let data = await db.findOne({ guildid: reaction.message.guildId })
+        let data = await require('../models/option').findOne({ guildid: reaction.message.guildId })
         if (!data) return
         if (reaction.emoji.name === '📢') {
             var have = false
