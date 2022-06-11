@@ -14,6 +14,15 @@ const mineflayer = require('mineflayer')
 		ip: env.MC_IP,
 		port: env.MC_PORT
 	}
+	, color = {
+		red: '#ff17bd',
+		yellow: '#e5f00c',
+		green: '#07fc03',
+		pink: '#ff17bd',
+		blue: '#09bced',
+		purple: '#a009e0',
+		blue2: '#094ded'
+	}
 
 /**
  *
@@ -44,9 +53,9 @@ function createBot(client, client2) {
 		, move = 0
 		, login = false
 		, err = 0
-		, logintime = 0
-		, guilds = []
+		, prepare = false
 		, restart = false
+		, logintime = 0
 
 	/**
 	 * 
@@ -57,8 +66,7 @@ function createBot(client, client2) {
 	async function send(embed, msg, color) {
 		// console.log(msg)
 		if (embed) {
-			client.guilds.cache.map(guild => guild).forEach(async (guild) => {
-				guilds.push(guild.id)
+			client.guilds.cache.forEach(async (guild) => {
 				if (!guild.me.permissions.has('SEND_MESSAGES')) return
 				let data = await config.findOne({ guildid: guild.id })
 				if (data) {
@@ -74,8 +82,8 @@ function createBot(client, client2) {
 					}
 				}
 			})
-			client2.guilds.cache.map(guild => guild).forEach(async (guild) => {
-				if (guilds.includes(guild.id)) return
+			client2.guilds.cache.forEach(async (guild) => {
+				if (guild.members.cache.has(client.user.id)) return
 				if (!guild.me.permissions.has('SEND_MESSAGES')) return
 				let data = await config.findOne({ guildid: guild.id })
 				if (data) {
@@ -122,36 +130,91 @@ function createBot(client, client2) {
 	}
 	/**
 	 * 
-	 * @param {Number} rejoin 
+	 * @param {String} time 
+	 * @param {Boolean} now 
 	 */
-	function reconnect(rejoin) {
-		let time = 5
-		if (rejoin) time = rejoin
-		setTimeout(async () => {
-			let server = await util.status('2y2c.org', 25565).catch((err) => { return console.log(err.stack) })
-			if (server.players.online < 15 && restart === true) {
-				const embed = new MessageEmbed()
-					.setDescription(`**Ngắt kết nối với \`${info.ip}\`.\nLý do: Server hiện tại có players < 20 người!\nKết nối lại sau ${time} phút**`)
-					.setColor('#f00c0c')
-				send(embed, embed.title ? embed.title : embed.description, 'red')
-				reconnect(time)
-			} else {
-				const embed = new MessageEmbed()
-					.setDescription('Đang kết nối lại với ' + info.ip + '...')
-					.setColor('#ffe021')
-				send(embed, embed.title ? embed.title : embed.description, 'orange')
-				createBot(client, client2, 'mc');
+	async function restartsend(time, now) {
+		client.guilds.cache.forEach(async (guild) => {
+			if (!guild.me.permissions.has('SEND_MESSAGES')) return
+			let data = await config.findOne({ guildid: guild.id })
+			if (data) {
+				try {
+					const channel = guild.channels.cache.get(data.config.channels.restart);
+					const role = guild.roles.cache.get(data.config.role.restart)
+					if (!channel || !channel.isText() || !role) return;
+					if (!guild.me.permissionsIn(channel).has('SEND_MESSAGES')) return
+					let str = ''
+					if (!now) str = `${role} | Server sẽ restart trong ${time} nữa!`
+					else str = `${role} | Server đang restart!`
+					channel.send(str)
+				} catch (e) {
+					console.log(e)
+				}
 			}
-		}, ms(`${time}m`));
+		})
+		client2.guilds.cache.forEach(async (guild) => {
+			if (guild.members.cache.has(client.user.id)) return
+			if (!guild.me.permissions.has('SEND_MESSAGES')) return
+			let data = await config.findOne({ guildid: guild.id })
+			if (data) {
+				try {
+					const channel = guild.channels.cache.get(data.config.channels.restart);
+					const role = guild.roles.cache.get(data.config.role.restart)
+					if (!channel || !channel.isText() || !role) return;
+					if (!guild.me.permissionsIn(channel).has('SEND_MESSAGES')) return
+					let str = ''
+					if (!now) str = `${role} | Server sẽ restart trong ${time} nữa!`
+					else str = `${role} | Server đang restart!`
+					channel.send(str)
+				} catch (e) {
+					console.log(e)
+				}
+			}
+		})
+		setTimeout(() => {
+			client.guilds.cache.forEach(async (guild) => {
+				if (!guild.me.permissions.has('SEND_MESSAGES')) return
+				let data = await config.findOne({ guildid: guild.id })
+				if (data) {
+					try {
+						const channel = guild.channels.cache.get(data.config.channels.restart);
+						if (!channel.isText()) return
+						(await channel.messages.fetch()).forEach(msg => {
+							if (msg.id === data.config.message.restart) return
+							if (msg.author.id !== client.user.id && msg.author.id !== client.user.id) return
+							msg.delete().catch((e) => { }) // console.log(e)
+						})
+					} catch (e) {
+						// console.log(e)
+					}
+				}
+			})
+			client2.guilds.cache.forEach(async (guild) => {
+				if (guild.members.cache.has(client.user.id)) return
+				let data = await config.findOne({ guildid: guild.id })
+				if (data) {
+					try {
+						const channel = guild.channels.cache.get(data.config.channels.restart);
+						if (!channel.isText()) return
+						(await channel.messages.fetch()).forEach(msg => {
+							if (msg.id === data.config.message.restart) return
+							if (msg.author.id !== client.user.id && msg.author.id !== client.user.id) return
+							msg.delete().catch((e) => { }) //console.log(e)
+						})
+					} catch (e) {
+						// console.log(e)
+					}
+				}
+			})
+		}, 15 * 60 * 1000);
 	}
-	/**
-	 * 
-	 * @param {String} pass 
-	 */
 
 	minecraftbot.on('login', async () => {
+		client.user.setStatus('online')
+		client2.user.setStatus('online')
 		move++
 		end = false
+		prepare = false
 		let server = ''
 		logintime++
 		if (move == 1) { server = 'Pin'; minecraftbot.afk.stop() }
@@ -167,13 +230,13 @@ function createBot(client, client2) {
 				}
 				const embed = new MessageEmbed()
 					.setTitle('Bắt đầu afk')
-					.setColor('GREY') // Xanh lá
+					.setColor('GREY') // Xám
 				send(embed, 'Bắt đầu AFK', 'gray')
 			}, 15000);
 		}
 		const embed1 = new MessageEmbed()
 			.setTitle('Đã kết nối với server ' + server)
-			.setColor('#07fc03') // Xanh lá
+			.setColor(color.green) // Xanh lá
 
 		send(embed1, embed1.title ? embed1.title : embed1.description, 'green')
 	});
@@ -185,7 +248,7 @@ function createBot(client, client2) {
 
 			const embed = new MessageEmbed()
 				.setTitle('Cửa sổ `Chuyển Server` mở')
-				.setColor('#07fc03') // Xanh lá
+				.setColor(color.green) // Xanh lá
 
 			send(embed, embed.title ? embed.title : embed.description, 'green')
 
@@ -193,14 +256,14 @@ function createBot(client, client2) {
 
 			const embed1 = new MessageEmbed()
 				.setTitle('Đã click vào cửa sổ `Chuyển Server`')
-				.setColor('#07fc03') // Xanh lá
+				.setColor(color.green) // Xanh lá
 
 			send(embed1, embed1.title ? embed1.title : embed1.description, 'green')
 
 		} else if (Number(window.slots.length) == 45 || Number(window.slots.length) == 46) {
 			const embed = new MessageEmbed()
 				.setTitle('Cửa sổ `Nhập PIN` mở')
-				.setColor('#07fc03') // Xanh lá
+				.setColor(color.green) // Xanh lá
 			send(embed, embed.title ? embed.title : embed.description, 'green')
 
 			click = true;
@@ -221,53 +284,70 @@ function createBot(client, client2) {
 
 			const embed1 = new MessageEmbed()
 				.setTitle('Đã nhập mật khẩu')
-				.setColor('#07fc03') // Xanh lá
+				.setColor(color.green) // Xanh lá
 			send(embed1, embed1.title ? embed1.title : embed1.description, 'green')
 		}
 	});
 
 	// Livechat ingame (Mineflayer)
 	// Phân loại
+
+	// CHat thường
 	const chat = /$<(.+)> (.+)^/;
+
 	// Whisper
-	const chat1 = /^nhắn cho (.+): (.+)$/;
-	const chat2 = /^(.+) nhắn: (.+)$/;
+	const whisper1 = /^nhắn cho (.+): (.+)$/;
+	const whisper2 = /^(.+) nhắn: (.+)$/;
 
 	// Error
-	const chat3 = /^Unknown command$/;
-	const chat4 = /^Kicked whilst connecting to (.+)$/;
-	const chat5 = /^Could not connect to a default or fallback server, please try again later:(.+)$/;
-	const chat9 = /^Oops something went wrong... Putting you back in queue.$/;
-	const chat10 = /^Exception Connecting:ReadTimeoutException : null$/;
-	const chat12 = /^CommandWhitelist > No such command.$/;
+	const error1 = /^Unknown command$/;
+	const error2 = /^Kicked whilst connecting to (.+)$/;
+	const error3 = /^Could not connect to a default or fallback server, please try again later:(.+)$/;
+	const error4 = /^Oops something went wrong... Putting you back in queue.$/;
+	const error5 = /^Exception Connecting:ReadTimeoutException : null$/;
+	const error6 = /^CommandWhitelist > No such command.$/;
 
 	// Donater
-	const chat6 = /^[Broadcast] (.+) (?:đạt mốc nạp|vừa ủng hộ) (.+)$/;
+	const donater = /^[Broadcast] (.+) (?:đạt mốc nạp|vừa ủng hộ) (.+)$/;
+
+	//Restart
+	const restartchat1 = /^UltimateAutoRestart » Restarting in (.+)!$/
+	const restartchat2 = /^UltimateAutoRestart » Restarting... join back soon!$/
+
+	//Sleep
+	const sleepchat = /^(.+) players sleeping$/
 
 	minecraftbot.on('message', async (message) => {
-		// console.log(message.toString())
-		if (chat1.test(message.toString()) || chat2.test(message.toString())) {
+		console.log(message.toString())
+		if (whisper1.test(message.toString())
+			|| whisper2.test(message.toString())) {
 			const embed = new MessageEmbed()
 				.setDescription(`${message.toString()}`)
-				.setColor('#ff17bd') // Hồng cánh sen mộng mer
+				.setColor(color.pink) // Hồng cánh sen thơ mộng mer :Đ
 			send(embed, embed.title ? embed.title : embed.description, 'blue')
 		}
-		else if (chat3.test(message.toString()) || chat4.test(message.toString()) || chat5.test(message.toString()) || chat9.test(message.toString()) || chat10.test(message.toString()) || chat12.test(message.toString())) {
+		else if (error1.test(message.toString())
+			|| error2.test(message.toString())
+			|| error3.test(message.toString())
+			|| error4.test(message.toString())
+			|| error5.test(message.toString())
+			|| error6.test(message.toString())
+		) {
 			const embed = new MessageEmbed()
 				.setDescription(`${message.toString()}`)
-				.setColor('#f00c0c') // Đỏ
+				.setColor(color.red) // Đỏ chói như nụ cười của cờ rớt
 
 			send(embed, embed.title ? embed.title : embed.description, 'red')
-		}
-		else if (chat9.test(message.toString())) {
-			err++
-			if (err >= 5) { minecraftbot.end('Không thể kết nối với server `Chính`'); err = 0 }
+			if (error4.test(message.toString())) {
+				err++
+				if (err >= 5) { minecraftbot.end('Không thể kết nối với server `Chính`'); err = 0 }
+			}
 		}
 		else if (message.getText().toLowerCase().trim() === 'dùng lệnh/2y2c  để vào server.') {
 			connect++;
 			const embed = new MessageEmbed()
 				.setDescription(`${message.toString()}`)
-				.setColor('#09bced') // Xanh dương
+				.setColor(color.blue) // Xanh đại dương
 
 			send(embed, embed.title ? embed.title : embed.description, 'blue')
 
@@ -276,7 +356,7 @@ function createBot(client, client2) {
 					minecraftbot.chat('/2y2c');
 					const embed1 = new MessageEmbed()
 						.setTitle('Đã nhập `/2y2c`')
-						.setColor('#07fc03') // Xanh lá
+						.setColor(color.green) // Xanh lá chuối
 
 					send(embed1, embed1.title ? embed1.title : embed1.description, 'green')
 				}
@@ -294,20 +374,39 @@ function createBot(client, client2) {
 				minecraftbot.end('Không thể kết nối với server `Hàng chờ`');
 			}
 		}
-		else if (chat6.test(message.toString())) {
+		else if (donater.test(message.toString())) {
 			const embed = new MessageEmbed()
 				.setDescription(`${message.toString()}`)
-				.setColor('#a009e0') // Tím mộng mer
+				.setColor(color.purple) // Tím mộng mer
 			send(embed, embed.title ? embed.title : embed.description, 'blue')
 		}
 		else if (message.toString() === 'The main server is down. We will be back soon!') {
 			const embed = new MessageEmbed()
 				.setDescription(`${message.toString()}`)
-				.setColor('#f00c0c');
-			send(embed, embed.title ? embed.title : embed.description, 'blue')
+				.setColor(color.red); // Đỏ chói như nụ cười của cờ rớt
+			send(embed, embed.title ? embed.title : embed.description, 'red')
 			setTimeout(() => { minecraftbot.end('Server Restart'); }, 5000);
 		}
-		else if (!chat1.test(message.toString()) || !chat2.test(message.toString()) || !chat3.test(message.toString()) || !chat4.test(message.toString()) || !chat6.test(message.toString())) {
+		else if (restartchat1.test(message.toString())) {
+			const embed = new MessageEmbed()
+				.setDescription(`${message.toString()}`)
+				.setColor('#e5f00c'); // Vàng khè
+			send(embed, embed.title ? embed.title : embed.description, 'orange')
+			restartsend(restartchat1.exec(message.toString())[1], false)
+		}
+		else if (restartchat2.test(message.toString())) {
+			const embed = new MessageEmbed()
+				.setDescription(`${message.toString()}`)
+				.setColor(color.yellow); // Vàng khè
+			send(embed, embed.title ? embed.title : embed.description, 'red')
+			prepare = true; minecraftbot.end('Server Restart')
+			// console.log(prepare)
+		}
+		else if (sleepchat.test(message.toString())) {
+			return
+		}
+		else {
+			if (message.toString() === '') return
 			if (login === false && chat.test(message.toString())) {
 				login === true;
 				minecraftbot.afk.stop()
@@ -318,7 +417,7 @@ function createBot(client, client2) {
 						minecraftbot.afk.start();
 						const embed = new MessageEmbed()
 							.setTitle('Bắt đầu afk')
-							.setColor('GREY') // Xanh lá
+							.setColor('GREY') // Gray
 
 						send(embed, 'Bắt đầu AFK', 'gray')
 					}
@@ -326,10 +425,10 @@ function createBot(client, client2) {
 			}
 			const embed = new MessageEmbed()
 				.setDescription(`${message.toString()}`);
-			if (message.toString().split(' ').shift() === `<${minecraftbot.player.username}>`) {
-				embed.setColor('#094ded');
+			if (message.toString().split(' ').shift() === `<${info.name}}>`) {
+				embed.setColor(color.blue2);
 			} else {
-				embed.setColor('#09bced');
+				embed.setColor(color.blue);
 			}
 			send(embed, embed.title ? embed.title : embed.description, 'blue')
 		}
@@ -338,8 +437,8 @@ function createBot(client, client2) {
 
 	// Chat to game (Discord)
 
-	const prefixSchema = require('../models/prefix');
-	const p = process.env.PREFIX
+	// const prefixSchema = require('../models/prefix');
+	// const p = process.env.PREFIX
 	/*
 	client.on('messageCreate', async (message) => {
 		return
@@ -547,19 +646,45 @@ function createBot(client, client2) {
 
 	// Login when kicked
 
-	var kickcount = 0;
-	let rejoin = 0;
+	var kickcount = 0
+		, rejoin = 0
 	minecraftbot.on('end', (reason) => {
+		// console.log(`${reason} || ${prepare}`)
+		client.user.setStatus('idle')
+		client2.user.setStatus('idle')
 		end = true;
+		let res = reason
+		if (reason === 'player_under_15') res = 'Server có dưới 15 người chơi.'
 		if (kickcount < 2) { rejoin = 1; kickcount++ }
 		else { rejoin = 5; }
-		if (reason.toString().toLowerCase() == 'server restart') { rejoin = 5; restart = true }
+		if (
+			reason.toString().toLowerCase() == 'server restart'
+		) { rejoin = 5; restart = true }
+		if (prepare === true && reason.toString().toLowerCase() == 'server restart') restartsend('', true)
 		const embed = new MessageEmbed()
-			.setDescription(`**Bot đã mất kết nối đến server \`${info.ip}\`!\nLý do: \`${reason}\`\nKết nối lại sau ${rejoin} phút**`)
+			.setDescription(`**Bot đã mất kết nối đến server \`${info.ip}\`!\nLý do: \`${res}\`\nKết nối lại sau ${rejoin} phút**`)
 			.setColor('#f00c0c') // Đỏ
 		send(embed, embed.title ? embed.title : embed.description, 'red')
-		reconnect(rejoin)
+		setTimeout(async () => {
+			let server = await util.status('2y2c.org', 25565).catch((err) => { return console.log(err.stack) })
+			if (server.players.online < 15 && restart === true) {
+				minecraftbot.end('player_under_15')
+			} else {
+				const embed = new MessageEmbed()
+					.setDescription('Đang kết nối lại với ' + info.ip + '...')
+					.setColor('#ffe021')
+				send(embed, embed.title ? embed.title : embed.description, 'orange')
+				createBot(client, client2);
+			}
+		}, ms(`${rejoin}m`));
 	});
+	/*
+	minecraftbot.on('kicked', (reason) => {
+		if (reason.toLowerCase() === 'You have lost connecting to server'.toLowerCase()) {
+			restartsend('', true)
+		}
+	})
+	*/
 
 	/**
 	*
@@ -675,7 +800,7 @@ function createBot(client, client2) {
 
 	// Message
 	minecraftbot.on('message', async (message) => {
-		if (minecraftbot.player.username === 'BotNameisOggy') return
+		if (info.name === 'BotNameisOggy') return
 		const messageregex = /^<(.+)> (.+)$/;
 		if (messageregex.test(message.toString())) return;
 		const str = message.toString();

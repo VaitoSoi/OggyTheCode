@@ -14,14 +14,18 @@ module.exports = {
 
         if (interaction.user.id !== '692271452053045279') return
         interaction.editReply('🔽 | Vui lòng nhập đoạn văn bản muốn gửi đi.\n🟢 | Ghi `DONE` để kết thúc.')
-        let messageCollector = interaction.channel.createMessageCollector()
+        let messageCollector = interaction.channel.createMessageCollector({
+            time: 5 * 60 * 1000
+        })
             , array = []
         messageCollector.on('collect', (msg) => {
             if (msg.author.id !== '692271452053045279') return
             if (msg.content.toLowerCase() === 'done') {
                 msg.react('✅')
                 msg.channel.send('Bản xem trước:\n```' + array.join('\n') + '```\nReact:\n> 🟢 để gửi đi.\n> 🔴 để hủy.').then(async (m) => {
-                    let emojiCollector = m.createReactionCollector()
+                    let emojiCollector = m.createReactionCollector({
+                        time: 5 * 60 * 1000
+                    })
                         , num = 0
                         , done = 0
                         , err = 0

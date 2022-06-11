@@ -110,9 +110,12 @@ module.exports = {
                 message.reply({ content: '🔽 | Vui lòng chọn type channel muốn cài !\n1️⃣ | Livechat: Hiển thị tin nhắn trực tiếp từ server `2y2c.org`.\n2️⃣ | Status: Hiển thị trạng thái của server `2y2c.org`.', components: [row] })
                 let now = 'channel'
                     , type = ''
-                const messageCollector = message.channel.createMessageCollector()
+                const messageCollector = message.channel.createMessageCollector({
+                    time: 5 * 60 * 1000
+                })
                     , componentCollector = message.channel.createMessageComponentCollector({
-                        componentType: 'BUTTON'
+                        componentType: 'BUTTON',
+                        time: 5 * 60 * 1000
                     })
                 componentCollector.on('collect', (inter) => {
                     type = inter.customId.toLowerCase()
@@ -279,9 +282,12 @@ module.exports = {
                     components: [row]
                 })
                 let componentCollector = message.channel.createMessageComponentCollector({
-                    componentType: 'BUTTON'
+                    componentType: 'BUTTON',
+                    time: 5 * 60 * 1000
                 })
-                let messageCollector = message.channel.createMessageCollector()
+                let messageCollector = message.channel.createMessageCollector({
+                    time: 5 * 60 * 1000
+                })
                 componentCollector.on('collect', (inter) => {
                     let type = inter.customId.toLowerCase()
                     message.reply('✅ | Đã chọn chế độ `' + type.toUpperCase() + '`')
