@@ -146,7 +146,7 @@ module.exports = {
             else {
                 reaction.message.guild.members.cache.get(user.id).roles.add(
                     role, 'Oggy Reaction-Role'
-                ).then((member) => member.user.send(`✅ | Đã cho bạn role \`${role.name}\`.`))
+                ).then((member) => member.user.send(`✅ | Đã cho bạn role \`${role.name}\`.`).catch(e => {}))
             }
         }
     }

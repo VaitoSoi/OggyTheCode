@@ -373,7 +373,7 @@ module.exports = {
                                                 `React 📢 để nhận role ${role}\n`
                                                 + `Bot sẽ ping role trên khi server restart`
                                             ).then(async (m) => {
-                                                await m.react('📢')
+                                                m.react('📢')
                                                 await db.findOneAndUpdate({ guildid: interaction.guildId }, {
                                                     $set: {
                                                         'config.message.restart': m.id

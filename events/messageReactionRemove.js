@@ -35,7 +35,7 @@ module.exports = {
                 reaction.message.guild.members.cache.get(user.id).roles.remove(
                     role,
                     'Oggy Reaction-Role'
-                ).then((member) => member.user.send(`✅ | Đã gỡ role \`${role.name}\``))
+                ).then((member) => member.user.send(`✅ | Đã gỡ role \`${role.name}\``).catch(e => {}))
         }
     }
 }
