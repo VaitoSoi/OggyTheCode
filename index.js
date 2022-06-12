@@ -20,7 +20,7 @@ const { Client, Collection, MessageEmbed } = require("discord.js")
         intents: 32767,
         partials: ["MESSAGE", "CHANNEL", "REACTION"],
         allowedMentions: {
-            parse: ['users'],
+            parse: ['users', 'roles'],
             repliedUser: false
         },
         disableEveryone: true,
@@ -30,7 +30,7 @@ const { Client, Collection, MessageEmbed } = require("discord.js")
         intents: 32767,
         partials: ["MESSAGE", "CHANNEL", "REACTION"],
         allowedMentions: {
-            parse: ['users'],
+            parse: ['users', 'roles'],
             repliedUser: false
         },
         disableEveryone: true,
