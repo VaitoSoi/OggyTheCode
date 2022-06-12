@@ -154,7 +154,7 @@ function createBot(client, client2) {
 					else str = `${role} | Server đang restart!`
 					channel.send(str)
 				} catch (e) {
-					console.log(e)
+					// console.log(e)
 				}
 			}
 		})
@@ -179,7 +179,7 @@ function createBot(client, client2) {
 					else str = `${role} | Server đang restart!`
 					channel.send(str)
 				} catch (e) {
-					console.log(e)
+					// console.log(e)
 				}
 			}
 		})
