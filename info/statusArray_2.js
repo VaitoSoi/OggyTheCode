@@ -1,19 +1,6 @@
 module.exports = [
-    `${require('../package.json').version}`,
-    `Đã dừng hỗ trợ MESSAGE_COMMANDS`,
-    'Là bản copy chất lượng kém của Ót gy :))',
-    'Bủh :v',
-    'Hu a du ??',
-    'Quay ờ mi nít...',
-    ';-;',
-    'Hu am ai :)??',
-    'Que am ai :v',
-    'Quát a du đu inh hia :)?',
-    'À thì ... nó là vậy đó :v',
-    'Có thế cũng không hiểu ;-;',
-    'À không có gì đâu đừng nhìn :v',
-    '*đã bị giết vì bọ crush từ chối ;-;',
-    'À........',
-    'Ai biết gì đôu :)))',
-    'Nâu'
+    'Rip OggyTheBot 2#8728 (14/5/2022 - 16/6/2022).',
+    'Đóng cửa sau 2 ngày.',
+    'Cảm ơn 110 servers và 4300 members.',
+    'Rip 2y2c.org :(('
 ]
