@@ -1,4 +1,4 @@
 module.exports = [
-    'Oline again :)))',
+    'Online again :)))',
     'Nothing :v'
 ]
