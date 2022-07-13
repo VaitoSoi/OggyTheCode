@@ -81,13 +81,17 @@ module.exports = {
     run: async (interaction) => {
         // return console.log(interaction.options.resolved)
         if (!interaction.member.permissions.has('MANAGE_GUILD')) return interaction.editReply('🛑 | Bạn thiếu quyền `MANAGE_GUILD`')
-        let client = interaction.client
-            , action = interaction.options.getSubcommandGroup().toLowerCase()
-            , id
-            , db = await require('../models/option')
-            , data = await db.findOne({ guildid: interaction.guildId })
-        if (interaction.options.getSubcommand()) id = interaction.options.getSubcommand().toLowerCase()
-        else id = null
+        const client = interaction.client
+        const db = require('../models/option')
+        let data = await db.findOne({ guildid: interaction.guildId })
+        let id = interaction.options.getSubcommand().toLowerCase()
+        let action = null
+        if ([
+            'create',
+            'show',
+            'delete'
+        ].includes(id)) action = id
+        else action = interaction.options.getSubcommandGroup().toLowerCase();
         if (action === 'show') {
             if (!data) return interaction.editReply('🛑 | Không phát hiện của cho guild này!\n🟢 | Dùng lệnh `/config create` để tạo data!')
             let embed = new MessageEmbed()
