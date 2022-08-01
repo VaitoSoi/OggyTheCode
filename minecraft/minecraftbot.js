@@ -229,7 +229,7 @@ function createBot(client, client2) {
 
 			send(embed, embed.title ? embed.title : embed.description, 'green')
 
-			minecraftbot.simpleClick.leftMouse(10);
+			minecraftbot.simpleClick.leftMouse(13);
 
 			const embed1 = new MessageEmbed()
 				.setTitle('Đã click vào cửa sổ `Chuyển Server`')
