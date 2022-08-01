@@ -330,9 +330,9 @@ function createBot(client, client2) {
 
 			function connectServer(click, end, minecraftbot) {
 				if (click === true && end === false) {
-					minecraftbot.chat('/arnarchyvn');
+					minecraftbot.chat('/anarchyvn');
 					const embed1 = new MessageEmbed()
-						.setTitle('Đã nhập `/2y2c`')
+						.setTitle('Đã nhập `/anarchyvn`')
 						.setColor(color.green) // Xanh lá chuối
 
 					send(embed1, embed1.title ? embed1.title : embed1.description, 'green')
