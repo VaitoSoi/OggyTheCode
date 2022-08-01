@@ -320,7 +320,7 @@ function createBot(client, client2) {
 				if (err >= 5) { minecraftbot.end('Không thể kết nối với server `Chính`'); err = 0 }
 			}
 		}
-		else if (message.getText().toLowerCase().trim() === 'dùng lệnh/2y2c  để vào server.') {
+		else if (message.getText().toLowerCase().trim() === 'dùng lệnh/anarchyvn  để vào server.') {
 			connect++;
 			const embed = new MessageEmbed()
 				.setDescription(`${message.toString()}`)
@@ -330,7 +330,7 @@ function createBot(client, client2) {
 
 			function connectServer(click, end, minecraftbot) {
 				if (click === true && end === false) {
-					minecraftbot.chat('/2y2c');
+					minecraftbot.chat('/arnarchyvn');
 					const embed1 = new MessageEmbed()
 						.setTitle('Đã nhập `/2y2c`')
 						.setColor(color.green) // Xanh lá chuối
