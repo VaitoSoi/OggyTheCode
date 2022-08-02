@@ -633,7 +633,7 @@ function createBot(client, client2) {
 			.setColor('#f00c0c') // Đỏ
 		send(embed, embed.title ? embed.title : embed.description, 'red')
 		setTimeout(async () => {
-			let server = await util.status('2y2c.org', 25565)
+			let server = await util.status(info.ip, 25565)
 			if (server.players.online < 15 && restart === true) {
 				minecraftbot.end('player_under_15')
 			} else {

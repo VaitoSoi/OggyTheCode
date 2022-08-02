@@ -12,7 +12,7 @@ module.exports = {
     * @param {String[]} args 
     */
     run: async (client, minecraftbot, args) => {
-        util.status('2y2c.org').then(async (response) => {
+        util.status(process.env.MC_IP).then(async (response) => {
             minecraftbot.chat(`Total Players: ${response.players.online}/${response.players.max} | TPS: ${minecraftbot.getTps()}`);
         });
     }
