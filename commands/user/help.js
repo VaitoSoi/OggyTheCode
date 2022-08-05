@@ -80,7 +80,7 @@ module.exports = {
                             },
                             {
                                 label: '⛏ Ingame',
-                                description: 'Là các lệnh liên quan đến server 2y2c.org',
+                                description: 'Là các lệnh liên quan đến server anarchyvn.net',
                                 value: 'server'
                             }
                         ])

@@ -4,7 +4,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('chat')
-        .setDescription('Gửi chat đến server minecraft 2y2c.org')
+        .setDescription('Gửi chat đến server minecraft anarchyvn.net')
         .addStringOption(option => option
             .setName('chat')
             .setDescription('Chat muốn gửi đi.')

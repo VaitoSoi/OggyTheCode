@@ -4,7 +4,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('highway')
-        .setDescription('Kiểm tra tiến độ làm Highway trong server 2y2c.org'),
+        .setDescription('Kiểm tra tiến độ làm Highway trong server anarchyvn.net'),
     /**
     * 
     * @param {CommandInteraction} interaction 

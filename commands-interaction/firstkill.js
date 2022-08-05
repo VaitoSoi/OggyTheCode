@@ -4,7 +4,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('firstkill')
-        .setDescription('Xem kill đầu tiên của user trong sevrer 2y2c.org')
+        .setDescription('Xem kill đầu tiên của user trong sevrer anarchyvn.net')
         .addStringOption(option => option
             .setName('user')
             .setDescription('Tên người muốn tìm. VD: VaitoSoi.')

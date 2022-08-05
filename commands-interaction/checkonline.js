@@ -4,7 +4,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('checkonline')
-        .setDescription('Kiểm tra xem player có onl tại server 2y2c.org hay không.')
+        .setDescription('Kiểm tra xem player có onl tại server anarchyvn.net hay không.')
         .addStringOption(option => option
             .setName('player')
             .setDescription('Player bạn muốn kiểm tra')

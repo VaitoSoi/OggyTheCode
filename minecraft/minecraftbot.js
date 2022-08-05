@@ -612,19 +612,18 @@ function createBot(client, client2) {
 	// Login when kicked
 
 	var kickcount = 0
-		, rejoin = 0
 	minecraftbot.on('end', (reason) => {
 		// console.log(`${reason} || ${prepare}`)
 		client.user.setStatus('idle')
 		client2.user.setStatus('idle')
 		end = true;
 		let res = reason
+			, rejoin = 0
 		if (reason === 'player_under_15') res = 'Server có dưới 15 người chơi.'
+		else if (reason.toString().toLowerCase() == 'server restart') { rejoin = 5; restart = true }
 		if (kickcount < 2) { rejoin = 1; kickcount++ }
 		else { rejoin = 5; }
-		if (
-			reason.toString().toLowerCase() == 'server restart'
-		) { rejoin = 5; restart = true }
+		
 		if (prepare === true && reason.toString().toLowerCase() == 'server restart') restartsend('', true)
 		const embed = new MessageEmbed()
 			.setDescription(

@@ -4,7 +4,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('killdeath')
-        .setDescription('Xem KDA của user trong server 2y2c.org')
+        .setDescription('Xem KDA của user trong server anarchyvn.net')
         .addStringOption(option => option
             .setName('user')
             .setDescription('Tên người muốn tìm. VD: VaitoSoi.')

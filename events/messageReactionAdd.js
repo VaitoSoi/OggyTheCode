@@ -36,7 +36,7 @@ module.exports = {
                 .setFooter({ text: `Cập nhật lần cuối vào cuối`, iconURL: `${reaction.message.guild.iconURL()}` })
                 .setTimestamp()
                 , now = Date.now()
-            await minecraft.status('2y2c.org', 25565).then((response) => {
+            await minecraft.status('anarchyvn.net', 25565).then((response) => {
                 let sample
                 if (!response.players.sample || response.players.sample.length == 0) sample = 'null'
                 else if (response.players.sample && response.players.sample.length != 0) sample = response.players.sample

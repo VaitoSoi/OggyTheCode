@@ -107,7 +107,7 @@ module.exports = {
                             .setLabel('STATUS')
                             .setStyle('PRIMARY')
                     )
-                message.reply({ content: '🔽 | Vui lòng chọn type channel muốn cài !\n1️⃣ | Livechat: Hiển thị tin nhắn trực tiếp từ server `2y2c.org`.\n2️⃣ | Status: Hiển thị trạng thái của server `2y2c.org`.', components: [row] })
+                message.reply({ content: '🔽 | Vui lòng chọn type channel muốn cài !\n1️⃣ | Livechat: Hiển thị tin nhắn trực tiếp từ server `anarchyvn.net`.\n2️⃣ | Status: Hiển thị trạng thái của server `anarchyvn.net`.', components: [row] })
                 let now = 'channel'
                     , type = ''
                 const messageCollector = message.channel.createMessageCollector({
@@ -172,7 +172,7 @@ module.exports = {
                             .setFooter({ text: `Cập nhật lần cuối vào lúc`, iconURL: `${message.guild.iconURL()}` })
                             .setTimestamp()
                             , now = Date.now()
-                        await minecraft.status('2y2c.org', 25565).then((response) => {
+                        await minecraft.status('anarchyvn.net', 25565).then((response) => {
                             let sample
                             if (!response.players.sample || response.players.sample.length == 0) sample = 'null'
                             else if (response.players.sample && response.players.sample.length != 0) sample = response.players.sample

@@ -4,7 +4,7 @@ const { MessageEmbed } = require('discord.js')
 module.exports = {
     name: 'killdeath',
     aliases: ['kd', 'kda'],
-    description: 'Dùng để xem điểm KD trong server 2y2c.org',
+    description: 'Dùng để xem điểm KD trong server anarchyvn.net',
     usage: '<Tên ingame, Vd: VaitoSoi>',
     run: async(client, message, args) => {
         const user = args[0]

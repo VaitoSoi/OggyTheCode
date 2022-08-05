@@ -2,7 +2,7 @@ const { Client, Message } = require('discord.js')
 
 module.exports = { 
     name: 'chat',
-    description: 'Gửi chat đến server minecraft `2y2c.org`',
+    description: 'Gửi chat đến server minecraft `anarchyvn.net`',
     usage: '<chat>',
     /**
     * 
