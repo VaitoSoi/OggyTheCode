@@ -1,240 +1,94 @@
-/**
- * 
- * Discord Bot
- * OggyTheBot#8210 Code
- * Chủ nhân: VaitoSoi#2220
- * Bản quyền thuộc về VaitoSoi#2220
- * 
- */
-
-/**
- * 
- * ^ Thông tin
- * 
- * v Khai báo
- * 
- */
-
-const { Client, Collection, MessageEmbed } = require("discord.js")
-    , client = new Client({
-        intents: 32767,
-        partials: ["MESSAGE", "CHANNEL", "REACTION"],
-        allowedMentions: {
-            parse: ['users', 'roles'],
-            repliedUser: false
-        },
-        disableEveryone: true,
-        disableMentions: 'everyone'
-    })
-    , client2 = new Client({
-        intents: 32767,
-        partials: ["MESSAGE", "CHANNEL", "REACTION"],
-        allowedMentions: {
-            parse: ['users', 'roles'],
-            repliedUser: false
-        },
-        disableEveryone: true,
-        disableMentions: 'everyone'
-    })
-    , env = process.env
-    , { readdirSync } = require('fs')
-    , ms = require('ms')
-
-module.exports.client = client
-module.exports.client2 = client2
-
-// const { Player } = require('discord-player')
-/*
-const player = new Player(client, {
- ytdlDownloadOptions: { filter: "audioonly" }
-});
-
-client.player = player;
-module.exports.player = player
-*/
-require('dotenv').config('./.env')
-
-/**
-* 
-* ^ Khai báo
-* 
-* v Handler / Kết nối với Mongoose
-* 
-*/
-// Mongoose
-require('./util/mongooseConnect')(require('mongoose'))
-
-// Client 1
-// client.commands = new Collection();
-// client.aliases = new Collection();
-client.categories = readdirSync("./commands/");
-client.interactions = new Collection();
-client.mccommands = new Collection();
-
-async function reg() {
-    console.log('\n--------------------------------\n')
-    await require('./handler/event')(client, 'client1')
-    await require('./handler/command')(client, 'client1')
-    console.log('\n--------------------------------\n')
-}
-
-// Client 2
-// client2.commands = new Collection();
-// client2.aliases = new Collection();
-client2.categories = readdirSync("./commands/");
-client2.interactions = new Collection();
-// client2.mccommands = new Collection();
-async function reg2() {
-    await require('./handler/event')(client2, 'client2')
-    await require('./handler/command')(client2, 'client2')
-    // require('./handler/mc-command')(client2)
-    console.log('\n--------------------------------\n')
-}
-// Register
-reg().then(() => reg2().then(async () => {
-    await require('./handler/mc-command')(client, 'client1')
-    console.log('\n--------------------------------\n')
-}))
-/**
-* 
-* ^ Handler / Kết nối vối Mongoose
-* 
-* v Login vào tài khoản
-* 
-*/
-
-// Client 1
-client.login(env.TOKEN_1).catch(err => console.log(err));
-
-// Client 2
-client2.login(env.TOKEN_2).catch(err => console.log(err))
-
-/**
-* 
-* ^ Login vào tài khoản
-* 
-* v Event rateLimit và error
-* 
-*/
-// Client 1
-
-client.on('rateLimit', async (rateLimit) => {
-    const channel = await client.channels.fetch(env.RATELIMIT_CHANNEL)
-    if (!channel || !channel.isText() || !channel.guild) return
-    channel.send({
-        embeds: [
-            new MessageEmbed()
-                .setAuthor({
-                    name: '🛑 RateLimit Error!!',
-                    iconURL: client.user.displayAvatarURL()
-                })
-                .setDescription(`**Path:** \`${rateLimit.path}\`\n**Method:** \`${rateLimit.method}\`\n**Limit:** \`${rateLimit.limit}\`\n**Timeout:** \`${rateLimit.timeout}\`\n**Route:** \`${rateLimit.route}\`\n**Global:** \`${rateLimit.global}\``)
-                .setTimestamp().setFooter({
-                    text: `${client.user.tag}`
-                })
-                .setColor('RED')
-        ]
-    })
+const { Client, Collection } = require('discord.js')
+const client1 = new Client({
+    intents: 131071,
+    partials: ['MESSAGE', 'REACTION', 'USER'],
+    allowedMentions: {
+        repliedUser: false,
+        roles: false,
+        users: false
+    }
 })
-
-client.on('error', async (error) => {
-    const channel = await client.channels.fetch(env.ERROR_CHANNEL)
-    if (!channel || !channel.isText() || !channel.guild) return
-    channel.send({
-        embeds: [
-            new MessageEmbed()
-                .setAuthor({
-                    name: '🛑 Error!!',
-                    iconURL: client.user.displayAvatarURL()
-                })
-                .setDescription('**Error:** ```' + error + '```')
-                .setTimestamp()
-                .setFooter({
-                    text: `${client.user.tag}`
-                })
-                .setColor('DARK_RED')
-        ]
-    })
-})
-
-client.on('ready', async () => {
-    const reg = require('./handler/commands-interaction')
-    await reg(client, 'client1').then(() => timeout())
-    console.log(`[CLIENT1] ${client.user.tag} is ready!`)
-    console.log('\n--------------------------------\n')
-    let index = 0
-        , arraystatus = require('./info/statusArray')
-        , arraystatus2 = require('./info/statusArray_2')
-    setInterval(() => {
-        if (index === arraystatus.length) index = 0;
-        const status = arraystatus[index];
-        client.user.setActivity(status);
-        index++;
-    }, ms('5sec'))
-    /**
-    * 
-    * Minecraft Bot
-    * 
-    */
-
-    async function timeout() {
-        setTimeout(async () => {
-            if (client2.isReady()) {
-                await reg(client2, 'client2')
-                console.log(`[CLIENT2] ${client2.user.tag} is ready!`)
-                setInterval(() => {
-                    if (index === arraystatus2.length) index = 0;
-                    const status = arraystatus2[index];
-                    client2.user.setActivity(status);
-                    index++;
-                }, ms('5sec'))
-                console.log('\n--------------------------------\n')
-                require('./minecraft/minecraftbot').createBot(client, client2)
-                console.log('[MINECRAFT] BOT LOADED')
-                console.log('\n--------------------------------\n')
-            } else timeout()
-        }, 500);
+const client2 = new Client({
+    intents: 131071,
+    partials: ['MESSAGE', 'REACTION', 'USER'],
+    allowedMentions: {
+        repliedUser: false,
+        roles: false,
+        users: false
     }
 })
 
-// Client 2
+client1.slash = new Collection()
+client1.message = new Collection()
+client1.aliases = new Collection()
+client1.type = 'client_1'
+client1.client2 = client2
+client1.num = '1'
+client1.setMaxListeners(10)
+
+client2.slash = new Collection()
+client2.message = new Collection()
+client2.aliases = new Collection()
+client2.type = 'client_2'
+client2.client1 = client1
+client2.num = '2'
+client2.setMaxListeners(10)
+
+client1.executed = false
+client1.mc_timeout = 0
+/**
+ * @param {Client} client1
+ * @param {Client} client2
+ */
+client1.start_mc = (client1, client2) => {
+    const MessageEmbed = require('discord.js').MessageEmbed
+    const util = require('minecraft-server-util')
+    const send = require('./minecraft/modules/sendChat')
+    const color = require('./minecraft/modules/color.json')
+    const sendErr = (e) => {
+        send(client1, client2, new MessageEmbed()
+            .setDescription(`Gặp lỗi khi lấy thông tin của \`${process.env.MC_HOST}\`\n` +
+                `Lỗi: \`${e}\`\n` +
+                `Kết nối lại sau 5m`)
+            .setColor(color.red), true)
+        client1.mc_timeout = setTimeout(() => client1.start_mc(client1, client2), 5 * 60 * 1000)
+    }
+    const execute = () => {
+        client1.executed = true
+        require('./minecraft/main')(client1, client2)
+    }
+
+    clearTimeout(client1.mc_timeout == 0 ? undefined : client1.mc_timeout)
+    if (process.env.MC_HOST == 'localhost')
+        util.statusLegacy(process.env.MC_HOST, Number(process.env.MC_PORT))
+            .then(res => execute())
+            .catch(e => sendErr(e))
+    else
+        util.status(process.env.MC_HOST, Number(process.env.MC_PORT))
+        .then(res => execute())
+        .catch(e => sendErr(e))
+}
 
 
-client2.on('rateLimit', async (rateLimit) => {
-    const channel = await client.channels.cache.get(env.RATELIMIT_CHANNEL)
-    if (!channel || !channel.isText() || !channel.guild) return
-    channel.send({
-        embeds: [
-            new MessageEmbed()
-                .setAuthor({
-                    name: '🛑 RateLimit Error!!',
-                    iconURL: client.user.displayAvatarURL()
-                })
-                .setDescription(`**Path:** \`${rateLimit.path}\`\n**Method:** \`${rateLimit.method}\`\n**Limit:** \`${rateLimit.limit}\`\n**Timeout:** \`${rateLimit.timeout}\`\n**Route:** \`${rateLimit.route}\`\n**Global:** \`${rateLimit.global}\``)
-                .setTimestamp()
-                .setFooter({
-                    text: `${client2.user.tag}`
-                })
-                .setColor('RED')
-        ]
-    })
-})
+require('dotenv').config('./.env')
 
-client2.on('error', async (error) => {
-    const channel = await client.channels.fetch(env.ERROR_CHANNEL)
-    if (!channel || !channel.isText() || !channel.guild) return
-    channel.send({
-        embeds: [
-            new MessageEmbed()
-                .setAuthor({
-                    name: '🛑 Error!!',
-                    iconURL: client.user.displayAvatarURL()
-                })
-                .setDescription('**Error:** ```' + error + '```')
-                .setTimestamp().setFooter({
-                    text: `${client2.user.tag}`
-                })
-                .setColor('DARK_RED')
-        ]
-    })
-})
+
+require('./discord/handler/event')(client1)
+require('./discord/handler/message')(client1)
+
+require('./discord/handler/event')(client2)
+require('./discord/handler/message')(client2)
+
+
+require('mongoose').connect(
+    process.env.MONGOOSE,
+    {
+        useUnifiedTopology: true,
+        useNewUrlParser: true,
+    }
+).then(() => console.log('[MONGOOSE]\x1b[32m CONNECTED\x1b[0m'))
+
+client1.login(process.env.DISCORD_TOKEN_1)
+    .catch((e) => { console.log(`[CLIENT_1] LOGIN ERROR: ${e}\x1b[0m`); process.exit(0) })
+client2.login(process.env.DISCORD_TOKEN_2)
+    .catch((e) => { console.log(`[CLIENT_2] LOGIN ERROR: ${e}\x1b[0m`); process.exit(0) })
