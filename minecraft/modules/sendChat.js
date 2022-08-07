@@ -49,7 +49,8 @@ module.exports = (client1, client2, embed, notify) => {
         if (!channel || !channel.isText()) return
         if (!guild.me.permissionsIn(channel).has('SEND_MESSAGES')) return
         if (guild.me.permissionsIn(channel).has('EMBED_LINKS')
-            && data.config.chatType.toLowerCase() === 'embed') channel.send({ embeds: [embed] })
+            && (!data.config.chatType 
+            || data.config.chatType.toLowerCase() === 'embed')) channel.send({ embeds: [embed] })
         else channel.send(
             notify == true
                 ? embed.description
