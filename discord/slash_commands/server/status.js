@@ -20,6 +20,7 @@ module.exports = {
     * @param {Bot} bot
     */
     run: async (interaction, bot) => {
+        const client = interaction.client
         const embed = new MessageEmbed()
             .setAuthor({
                 name: `${client.user.tag} Server Utils`,
