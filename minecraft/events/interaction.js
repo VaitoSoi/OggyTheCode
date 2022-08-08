@@ -13,7 +13,7 @@ module.exports = {
         if (!interaction.isCommand()) return
         const client = interaction.client
         let cmd = await client.slash.get(interaction.commandName)
-        if (!cmd || cmd.server == null || cmd.server == false) return
+        if (!cmd || !cmd.server || cmd.server == null || cmd.server == false) return
         await interaction.deferReply()
         const a = [
             'Mer đki kưng 😏',

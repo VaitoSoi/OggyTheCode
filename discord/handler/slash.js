@@ -16,7 +16,6 @@ module.exports = (client) => {
             const command = require(`../slash_commands/${dir}/${file}`);
             if (!command || !command.data) return
             if (dir == 'server') command.server = true
-            if (command.data.name == 'admin' || command.admin == true) command.admin = true
             if (command.admin == true && client.type == 'client_2') return
             command.data.setDMPermission(false)
             commands.push(command.data.toJSON())
