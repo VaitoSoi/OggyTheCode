@@ -1,8 +1,8 @@
 const { Client, Message } = require('discord.js')
 
 module.exports = { 
-    name: '',
-    description: '',
+    name: 'support',
+    description: 'Thông tin về support server',
     usage: '',
     /**
     * 

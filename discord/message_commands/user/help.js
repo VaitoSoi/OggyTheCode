@@ -109,7 +109,7 @@ module.exports = {
                         cmds.cmds.forEach((c) => {
                             const cmd = require(`../${cmds.name}/${c}`)
                             if (!cmd) return
-                            embed.addField(cmd.name,
+                            embed.addField(cmd.name ? cmd.name : 'Không tên :v',
                                 cmd.description
                                     ? cmd.description
                                     : 'Không có mô tả',
