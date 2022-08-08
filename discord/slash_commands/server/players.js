@@ -1,8 +1,6 @@
 const { CommandInteraction } = require('discord.js')
 const { SlashCommandBuilder } = require('@discordjs/builders')
 const { Bot } = require('mineflayer')
-const ascii = require('ascii-table')
-const table = new ascii()
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -14,6 +12,9 @@ module.exports = {
     * @param {Bot} bot
     */
     run: async (interaction, bot) => {
+        const ascii = require('ascii-table')
+        const table = new ascii()
+
         const client = interaction.client
         if (bot.login == 0) interaction.editReply('🛑 | Bot đang mất kết nối với server')
         else {
@@ -24,7 +25,7 @@ module.exports = {
                     table.addRow(players[i], players[i + 1])
             else for (let i = 0; i < players.length; i += 3)
                 table.addRow(players[i], players[i + 1], players[i + 2])
-            
+
             let i = 0
             interaction.editReply('```' +
                 table.toString()

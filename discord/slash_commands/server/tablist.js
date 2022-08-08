@@ -1,9 +1,6 @@
 const { CommandInteraction, MessageEmbed } = require('discord.js')
 const { SlashCommandBuilder } = require('@discordjs/builders')
 const { Bot } = require('mineflayer')
-const ascii = require('ascii-table')
-const table = new ascii()
-
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('tablist')
@@ -15,6 +12,9 @@ module.exports = {
     */
     run: async (interaction, bot) => {
         const client = interaction.client
+const ascii = require('ascii-table')
+const table = new ascii()
+
         if (bot.login == 0) interaction.editReply('🛑 | Bot đang mất kết nối với server')
         else {
             let players = Object.values(bot.players).map(p => p.username)
