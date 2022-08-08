@@ -58,7 +58,7 @@ module.exports = {
                         '```' + `${e}` + '```'
                     )
             })
-        message.reply({
+        interaction.editReply({
             embeds: [embed]
         })
     }
