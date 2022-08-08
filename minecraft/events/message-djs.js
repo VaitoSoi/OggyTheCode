@@ -38,6 +38,7 @@ module.exports = {
             cmd.run(bot, client, message, args)
         } else {
             if (message.client.type == 'client_2' && message.guild.members.cache.get(message.client.client1.user.id)) return
+            if (message.author.id == '782063343799894046') return message.reply('Miễn :))')
             try {
                 bot.chat(`<${message.author.tag}> ${message.content.trim()}`)
                 message.react('✅')
