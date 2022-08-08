@@ -5,6 +5,7 @@ module.exports = {
     name: 'players',
     description: 'Hiện tất cả player trong server',
     usage: '',
+    server: true,
     /**
     * 
     * @param {Bot} bot

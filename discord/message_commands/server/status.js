@@ -12,6 +12,7 @@ module.exports = {
     name: commandName,
     description: `Hiện tất cả thông tin về server ${process.env.MC_HOST}`,
     usage: '',
+    server: true,
     /**
     * 
     * @param {Client} client 

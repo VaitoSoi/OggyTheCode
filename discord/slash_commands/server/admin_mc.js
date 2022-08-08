@@ -35,6 +35,7 @@ module.exports = {
             )
         ),
     admin: true,
+    server: true,
     /**
     * 
     * @param {Bot} bot

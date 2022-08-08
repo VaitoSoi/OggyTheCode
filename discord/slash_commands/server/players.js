@@ -6,6 +6,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('players')
         .setDescription('Hiện tất cả player trong server'),
+    server: true,
     /**
     * 
     * @param {CommandInteraction} interaction 

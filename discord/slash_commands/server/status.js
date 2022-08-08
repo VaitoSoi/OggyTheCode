@@ -14,6 +14,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName(commandName)
         .setDescription(`Hiện tất cả các thông tin về ${process.env.MC_HOST}`),
+    server: true,
     /**
     * 
     * @param {CommandInteraction} interaction 

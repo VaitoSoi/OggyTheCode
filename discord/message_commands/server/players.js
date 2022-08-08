@@ -5,6 +5,7 @@ module.exports = {
     name: 'tablist',
     description: 'Hiện tablist trong server',
     usage: '',
+    server: true,
     /**
     * 
     * @param {Bot} bot
