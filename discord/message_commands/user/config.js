@@ -25,6 +25,8 @@ module.exports = {
             '+ og.config show\n' +
             '+ og.config delete'
         )
+        if (!message.guild.members.cache.get(message.author.id).permissions.has('MANAGE_GUILD')) 
+            return message.reply('🛑 | Bạn thiếu quyền `MANAGE_GUILD`')
         const db = require('../../../models/option')
         let data = await db.findOne({
             'guildid': message.guildId
