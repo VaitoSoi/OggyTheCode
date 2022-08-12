@@ -15,7 +15,7 @@ module.exports = {
         bot.login = 0
         let reconnect = '3m'
         let r = reason
-        let auto = false
+        let auto = true
         if (reason.toLowerCase() == 'anti-bot') reconnect = '15s'
         if (reason.toLowerCase().split(' ')[0] == 'admin') {
             reason.toLowerCase().split(' ').slice(1).forEach((args) => {
