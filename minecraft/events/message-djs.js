@@ -18,7 +18,7 @@ module.exports = {
         const client = message.client
         if (client.type == 'client_2' && message.guild.members.cache.get(client.client1.user.id)) return
         if (!data || message.channelId != data.config.channels.livechat) {
-            let prefix = process.env.prefix
+            let prefix = process.env.PREFIX
             /*
             const prefixDB = require('../../models/option')
             const prefixData = await prefixDB.findOne({
