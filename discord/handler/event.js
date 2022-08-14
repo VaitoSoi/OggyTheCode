@@ -9,7 +9,7 @@ const { Client } = require('discord.js')
 module.exports = (client) => {
     const eventFiles = fs.readdirSync('./discord/events/').filter(file => file.endsWith('.js'));
     
-    console.log(`[${client.type.toUpperCase()}]\x1b[33m LOADING EVENTS\x1b[0m`);
+    console.log(`[${client.type.toUpperCase()}] LOADING EVENTS`);
 
     for (const file of eventFiles) {
         const event = require(`../events/${file}`);
@@ -20,5 +20,5 @@ module.exports = (client) => {
         }
     }
 
-    console.log(`[${client.type.toUpperCase()}]\x1b[32m LOADED EVENTS\x1b[0m`)
+    console.log(`[${client.type.toUpperCase()}] LOADED EVENTS`)
 }

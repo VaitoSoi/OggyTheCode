@@ -7,12 +7,12 @@ module.exports = {
      * @param {Client} client 
      */
     async run(client) {
-        console.log(`[${client.type.toUpperCase()}]\x1b[32m ${client.user.tag} IS READY\x1b[0m`)
+        console.log(`[${client.type.toUpperCase()}] ${client.user.tag} IS READY`)
         require('../handler/slash.js')(client)
         let m = '.'
         let i = setInterval(() => {
-            if ((client.num.toString() == '2' && client.client1.executed == true)
-                || (client.num.toString() == '1' && client.executed == true)) clearInterval(i)
+            if ((client.num == '2' && client.client1.executed == true)
+                || (client.num == '1' && client.executed == true)) clearInterval(i)
             if (m.length < 5) m += '.'
             else m = '.'
             client.user.setPresence({
@@ -20,7 +20,6 @@ module.exports = {
                 status: 'idle'
             })
         }, 1 * 1000)
-        if (client.type == 'client_2') return
-        client.start_mc(client, client.client2)
+        if (client.num == '1') client.start_mc(client, client.client2)
     }
 }

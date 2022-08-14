@@ -12,6 +12,6 @@ module.exports = {
      * @param {String[]} args 
      */
     run: async (bot, args) => {
-        bot.chat(`Ping: ${bot.player.ping}ms | Uptime: ${ms(Math.floor(Date.now()/1000) - bot.readyAt)} | Position: ${Object.values(bot.player.entity.position).join(' ')}`)
+        bot.chat(`Ping: ${bot.player.ping}ms | Uptime: ${ms(Math.floor(Date.now()/1000) - bot.readyAt)} | Position: đoán xem :))`)
     }
 } 

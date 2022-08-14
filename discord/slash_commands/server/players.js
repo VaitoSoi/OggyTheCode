@@ -1,4 +1,4 @@
-const { CommandInteraction } = require('discord.js')
+const { CommandInteraction, MessageEmbed } = require('discord.js')
 const { SlashCommandBuilder } = require('@discordjs/builders')
 const { Bot } = require('mineflayer')
 
@@ -28,12 +28,17 @@ module.exports = {
                 table.addRow(players[i], players[i + 1], players[i + 2])
 
             let i = 0
-            interaction.editReply('```' +
-                table.toString()
-                    .split('\n')
-                    .slice(1, -1)
-                    .join('\n')
-                + '```')
+            interaction.editReply({
+                embeds: [
+                    new MessageEmbed()
+                        .setDescription('```' +
+                            table.toString()
+                                .split('\n')
+                                .slice(1, -1)
+                                .join('\n')
+                            + '```')
+                ]
+            })
         }
     }
 }

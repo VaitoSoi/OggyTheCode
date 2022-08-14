@@ -16,7 +16,7 @@ module.exports = {
             guildid: reaction.message.guildId
         })
         if (!data) return
-        await reaction.message.fetch()
+        await reaction.message.fetch().catch(e => undefined)
         if (reaction.emoji.name == '🔁' 
         && reaction.message.id == data.config.messages.status) {
             reaction.users.remove(user)

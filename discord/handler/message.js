@@ -7,21 +7,22 @@ const { Client } = require('discord.js')
  */
 
 module.exports = (client) => {
-    console.log(`[${client.type.toUpperCase()}]\x1b[32m LOADING MESSAGE_COMMANDS\x1b[0m`)
+    console.log(`[${client.type.toUpperCase()}] LOADING MESSAGE_COMMANDS`)
 
     fs.readdirSync('./discord/message_commands/').forEach((dir) => {
+        client.message.categories[dir] = []
         fs.readdirSync(`./discord/message_commands/${dir}/`).filter(f => f.endsWith('.js')).forEach((file) => {
             const command = require(`../message_commands/${dir}/${file}`);
             if (!command.name) return
-            if (dir == 'server') command.server = true
-            client.message.set(command.name, command)
+            client.message.commands.set(command.name, command)
+            client.message.categories[dir].push(command.name)
             if (command.aliases
                 && Array.isArray(command.aliases))
                 command.aliases.forEach(
-                    a => client.aliases.set(a, command.name)
+                    a => client.message.aliases.set(a, command.name)
                 )
         })
     })
 
-    console.log(`[${client.type.toUpperCase()}]\x1b[32m LOADED MESSAGE_COMMANDS\x1b[0m`)
+    console.log(`[${client.type.toUpperCase()}] LOADED MESSAGE_COMMANDS`)
 }

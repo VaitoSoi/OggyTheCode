@@ -13,31 +13,35 @@ module.exports = {
     */
     run: async (client, message, args) => {
         if (!args[1]) {
-            let dirs = fs.readdirSync('./discord/message_commands/')
+
             let categories = []
             let option = []
-            dirs.forEach((dir) => {
-                let files = fs.readdirSync(`./discord/message_commands/${dir}/`).filter(file => file.endsWith('.js'))
+            Object.keys(client.message.categories).forEach((key) => {
                 categories.push({
-                    name: dir.toString().toLowerCase(),
-                    cmds: files
+                    name: key.toString().toLowerCase(),
+                    cmds: client.message.categories[key]
                 })
                 option.push({
-                    label: (dir.toLowerCase() === 'user' ?
-                        '🤵'
-                        : dir.toLowerCase() === 'server' ?
-                            '⛏'
+                    label: (key.toLowerCase() === 'user'
+                        ? '🤵'
+                        : key.toLowerCase() === 'server'
+                            ? '⛏'
                             : '') + ' ' +
-                        dir[0].toUpperCase() + dir.slice(1).toLowerCase(),
-                    description: `Có ${files.length} lệnh` + ' | ' +
-                        (dir.toLowerCase() === 'user' ?
-                            'Là các lệnh cơ bản của bot'
-                            : dir.toLowerCase() === 'server' ?
-                                `Là các lệnh liên quan đến ${process.env.MC_HOST}`
+                        key[0].toUpperCase() + key.slice(1).toLowerCase(),
+                    description: `Có ${client.message.categories[key].length} lệnh` + ' | ' +
+                        (key.toLowerCase() === 'user'
+                            ? 'Là các lệnh cơ bản của bot'
+                            : key.toLowerCase() === 'server'
+                                ? `Là các lệnh liên quan đến ${process.env.MC_HOST}`
                                 : ''),
-                    value: dir.toLowerCase()
+                    value: key.toLowerCase()
                 })
             })
+
+            const client1 = client.num == '1' ? client.user.id : client.client1.user.id
+            const client2 = client.num == '1' ? client.client2.user.id : client.user.id
+            const permissions = '93264'
+            const scope = 'bot+applications.commands'
 
             const embed = new MessageEmbed()
                 .setAuthor({
@@ -58,8 +62,8 @@ module.exports = {
                     '> `/help`: Hiện menu này.\n' +
                     '\n' +
                     'Các link liên quan của Oggy:\n' +
-                    '[Invite Oggy](https://discord.com/oauth2/authorize?client_id=898782551110471701&permissions=93264&scope=bot+applications.commands) | ' +
-                    '[Invite Oggy 2](https://discord.com/oauth2/authorize?client_id=974862207106027540&permissions=93264&scope=bot+applications.commands)\n'
+                    `'[Invite Oggy](https://discord.com/oauth2/authorize?client_id=${client1}&permissions=${permissions}&scope=${scope})` + ' | ' +
+                    `'[Invite Oggy 2](https://discord.com/oauth2/authorize?client_id=${client2}&permissions=${permissions}&scope=${scope})\n`
                 )
             let msg = await message.reply({
                 embeds: [
@@ -107,13 +111,15 @@ module.exports = {
                             .setThumbnail(client.user.displayAvatarURL())
                             .setTitle(`Các lệnh hiện có trong tập lệnh \`${cmds.name.toUpperCase()}\``)
                         cmds.cmds.forEach((c) => {
-                            const cmd = require(`../${cmds.name}/${c}`)
+                            const cmd = client.message.commands.get(c)
                             if (!cmd) return
-                            embed.addField(cmd.name ? cmd.name : 'Không tên :v',
-                                cmd.description
+                            embed.addFields({
+                                name: cmd.name ? cmd.name : 'Không tên :v',
+                                value: cmd.description
                                     ? cmd.description
                                     : 'Không có mô tả',
-                                true)
+                                inline: true
+                            })
                         })
                         inter.update({
                             embeds: [embed]
@@ -126,41 +132,49 @@ module.exports = {
                 }))
         } else {
             let prefix = process.env.prefix
+            /*
             const db = require('../../../models/option')
             const data = await db.findOne({
                 guildid: message.guildId
             })
             if (data
                 && data.config.prefix
-                && data.config.prefix != '') prefix = data.config.prefix
-            const command = client.message.get(args[1])
-            if (!command) return message.reply(`🔴 | Không tìm thấy lệnh \`${args[1]}\``)
+                && data.config.prefix != '') prefix = data.config.prefix */
+            let command = client.message.commands.get(args[1])
+            const aliases = client.message.aliases.get(args[1])
+            if (!command && aliases) cmd = client.message.commands.get(aliases)
+            if (!command && !aliases) return message.reply(`🔴 | Không tìm thấy lệnh \`${args[1]}\``)
             const embed = new MessageEmbed()
                 .setAuthor({
                     name: `${client.user.tag} Help Menu`,
                     iconURL: client.user.displayAvatarURL()
                 })
                 .setTitle("Thông tin về lệnh: ")
-                .addField("PREFIX:", `\`${prefix}\``, true)
-                .addField(
-                    "TÊN:",
-                    command.name ? `\`${command.name}\`` : "Lệnh không có tên",
-                    true
-                )
-                .addField(
-                    "CÁCH DÙNG",
-                    command.name == 'config' ?
-                        command.usage
-                            ? `\`${prefix}${command.name} ${command.usage}\``
-                            : `\`${prefix}${command.name}\``
-                        : `\`${command.usage}\``
-                )
-                .addField(
-                    "MÔ TẢ:",
-                    command.description
-                        ? command.description
-                        : "Không có mô tả cho lệnh này"
-                )
+                .addFields({
+                    name: "PREFIX:",
+                    value: `\`${prefix}\``,
+                    inline: true
+                },
+                    {
+                        name: "TÊN:",
+                        value: command.name ? `\`${command.name}\`` : "Lệnh không có tên",
+                        inline: true
+                    },
+                    {
+                        name: "CÁCH DÙNG",
+                        value:
+                            command.name == 'config'
+                                ? command.usage
+                                    ? `\`${prefix}${command.name} ${command.usage}\``
+                                    : `\`${prefix}${command.name}\``
+                                : `\`${command.usage}\``
+                    },
+                    {
+                        name: "MÔ TẢ:",
+                        value: command.description
+                            ? command.description
+                            : "Không có mô tả cho lệnh này"
+                    })
                 .setFooter({
                     text: `Yêu cầu bởi: ${message.author.tag}`,
                     iconURL: message.author.displayAvatarURL({ dynamic: true })

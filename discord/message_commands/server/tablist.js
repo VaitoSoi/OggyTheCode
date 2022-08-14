@@ -2,7 +2,7 @@ const { Client, Message, MessageEmbed } = require('discord.js')
 const { Bot } = require('mineflayer')
 
 module.exports = {
-    name: 'players',
+    name: 'tablist',
     description: 'Hiện tất cả player trong server',
     usage: '',
     server: true,
@@ -29,9 +29,9 @@ module.exports = {
                 embeds: [
                     new MessageEmbed()
                         .setDescription(
-                            '```' + bot.tablist.header.getText().replace('§', '') + '```' + '\n'
-                            + '```' + table.toString().split('\n').slice(1, -1).join('\n') + '```' + '\n'
-                            + '```' + bot.tablist.footer.getText().replace('§', '') + '```'
+                            '```' + bot.tablist.header.getText().replace('§', '') + '```' + '\n' +
+                            '```' + table.toString().split('\n').slice(1, -1).join('\n') + '```' + '\n' +
+                            '```' + bot.tablist.footer.getText().replace('§', '') + '```'
                         )
                 ]
             })

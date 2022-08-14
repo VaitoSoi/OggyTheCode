@@ -1,9 +1,10 @@
-const { CommandInteraction } = require('discord.js')
+const { CommandInteraction, MessageEmbed } = require('discord.js')
 const { SlashCommandBuilder } = require('@discordjs/builders')
 const heroku_client = require('heroku-client')
 const heroku = new heroku_client({
     token: process.env.HEROKU_TOKEN
 })
+const ms = require('ms')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -11,7 +12,7 @@ module.exports = {
         .setDescription('!ADMIN ONLY!')
         .addSubcommand(sub => sub
             .setName('heroku')
-            .setDescription('!ADMIN ONLY | Khởi động lại bot')
+            .setDescription('!ADMIN ONLY! | Khởi động lại bot')
             .addStringOption(o => o
                 .setName('action')
                 .setDescription('Hàng động')
@@ -21,7 +22,7 @@ module.exports = {
         )
         .addSubcommand(sub => sub
             .setName('eval')
-            .setDescription('!ADMIN ONLY | Chạy 1 câu lệnh')
+            .setDescription('!ADMIN ONLY! | Chạy 1 câu lệnh')
             .addStringOption(o => o
                 .setName('action')
                 .setDescription('Hàng động')
@@ -30,7 +31,44 @@ module.exports = {
         )
         .addSubcommand(sub => sub
             .setName('execute')
-            .setDescription('!ADMIN ONLY | Kích hoạt BOT')
+            .setDescription('!ADMIN ONLY! | Kích hoạt BOT')
+        )
+        .addSubcommand(sub => sub
+            .setName('blacklist')
+            .setDescription('!ADMIN_ONLY! | Chặn ai đó')
+            .addStringOption(o => o
+                .setName('action')
+                .setDescription('Hành động')
+                .setRequired(true)
+                .addChoices(
+                    { name: 'add', value: 'add' },
+                    { name: 'edit', value: 'edit' },
+                    { name: 'delete', value: 'delete' },
+                    { name: 'show', value: 'show' }
+                )
+            )
+            .addStringOption(o => o
+                .setName('user_id')
+                .setDescription('ID của ai đó')
+                .setRequired(true)
+            )
+            .addStringOption(o => o
+                .setName('reason')
+                .setDescription('Lý do bị chặn / bỏ chặn')
+            )
+            .addStringOption(o => o
+                .setName('time')
+                .setDescription('Thời gian thời gian bị chặn')
+            )
+            .addStringOption(o => o
+                .setName('type')
+                .setDescription('Loại chặn')
+                .addChoices(
+                    { name: 'all', value: 'all' },
+                    { name: 'command', value: 'command' },
+                    { name: 'livechat', value: 'livechat' }
+                )
+            )
         ),
     admin: true,
     /**
@@ -59,7 +97,7 @@ module.exports = {
                     .catch(e => interaction.editReply('Phát hiện lỗi: \n```' + e + '```'))
         } else if (id == 'eval') {
             try {
-                eval(action)
+                await eval(action)
                 interaction.replied
                     ? interaction.channel.send('✅ | Eval done')
                     : interaction.editReply('✅ | Eval done')
@@ -70,10 +108,84 @@ module.exports = {
             if (client.executed == true) return interaction.editReply('✅ | Bot đã được kích hoạt từ trước!')
             else {
                 interaction.editReply('⏳ | Đang kích hoạt bot...\n👍 | Vui lòng kiểm tra kênh livechat!')
-                if (client.num.toString() == '2')
-                    client.start_mc(client.client1, client)
-                else if (client.num.toString() == '1')
+                if (client.num == '2')
+                    client.client1.start_mc(client.client1, client)
+                else if (client.num == '1')
                     client.start_mc(client, client.client2)
+            }
+        } else if (id == 'blacklist') {
+            const db = require('../../../models/blacklist')
+            const user = client.users.cache.get(interaction.options.getString('user_id'))
+            if (!user) return interaction.editReply('🛑 | User không hợp lệ!')
+            let data = await db.findOne({ id: user.id })
+            if (action == 'add') {
+                if (data) return interaction.editReply({
+                    content:
+                        `🛑 | ${user} đã bị chặn trước đó\n` +
+                        '👍 | Dùng lệnh show để biết thông tin'
+                })
+                const reason = interaction.options.getString('reason')
+                const time = interaction.options.getString('time')
+                const type = interaction.options.getString('type')
+                data = new db({
+                    id: user.id,
+                    tag: user.tag,
+                    reason: reason ? reason : 'Không có lý do',
+                    by: interaction.user.tag,
+                    type: type || 'all',
+                    at: Math.floor(Date.now() / 1000),
+                    end: time && time.toLowerCase() != 'vĩnh viễn' ? Math.floor((ms(time) + Date.now()) / 1000) : 'Vĩnh viễn'
+                })
+                await data.save()
+                interaction.editReply(`✅ | Đã chặn ${user}`)
+            } else if (action == 'edit') {
+                if (!data) return interaction.editReply({ content: `🛑 | ${user} chưa bị chặn.` })
+                const reason = interaction.options.getString('reason')
+                const time = interaction.options.getString('time')
+                const type = interaction.options.getString('type')
+                data.id = user.id
+                data.tag = user.tag
+                data.reason = reason ? reason : 'Không có lý do'
+                data.by = interaction.user.tag
+                data.end = time ? Math.floor((ms(time) + Date.now()) / 1000) : 'Vĩnh viễn'
+                data.type = type || 'all'
+                await data.save()
+                interaction.editReply(`✅ | Đã chỉnh sửa lệnh chặn ${user}`)
+            } else if (action == 'delete') {
+                if (!data) return interaction.editReply({ content: `🛑 | ${user} chưa bị chặn.` })
+                await db.findOneAndDelete({ id: user.id })
+                interaction.editReply(`✅ | Đã bỏ chặn ${user}`)
+            } else if (action == 'show') {
+                if (!data) return interaction.editReply({ content: `🛑 | ${user} chưa bị chặn.` })
+                interaction.editReply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setTitle('User Blacklist')
+                            .setThumbnail(user.displayAvatarURL())
+                            .setFooter({
+                                text: `${interaction.user.tag}`,
+                                iconURL: interaction.user.displayAvatarURL()
+                            })
+                            .setAuthor({
+                                name: client.user.tag,
+                                iconURL: client.user.displayAvatarURL()
+                            })
+                            .setColor('RANDOM')
+                            .setDescription(
+                                'Thông tin về User bị blacklist\n' +
+                                `Tag: \`${user.tag}\`\n` +
+                                `UserID: \`${user.id}\`\n` +
+                                `Lý do: \`${data.reason}\`\n` +
+                                `Bởi: \`${data.by}\`\n` +
+                                `Loại: \`${data.type ? data.type : 'all'}\`\n` +
+                                `Lúc: ${data.at
+                                    ? `<t:${data.at}:f> (<t:${data.at}:R>)` : `\`¯\\_(ツ)_/¯\``}\n` +
+                                `Hết hạn: ${data.end.toLowerCase() != 'vĩnh viễn'
+                                    ? `<t:${data.end}:f> (<t:${data.end}:R>)` : `\`${data.end}\``}`
+                            )
+                            .setTimestamp()
+                    ]
+                })
             }
         }
     }

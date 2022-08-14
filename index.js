@@ -1,3 +1,14 @@
+console.log(
+    `
+*****************************************************
+*                    OggyTheCode                    *
+*         Official code of OggyTheBot#8216          *
+*              Create by VaitoSoi#2220              *
+*  GitHub: https://github.com/VaitoSoi/OggyTheCode  *
+*****************************************************
+`
+)
+
 const { Client, Collection } = require('discord.js')
 const client1 = new Client({
     intents: 131071,
@@ -17,60 +28,82 @@ const client2 = new Client({
         users: false
     }
 })
-
-client1.slash = new Collection()
-client1.message = new Collection()
-client1.aliases = new Collection()
-client1.type = 'client_1'
-client1.client2 = client2
-client1.num = '1'
-client1.setMaxListeners(10)
-
-client2.slash = new Collection()
-client2.message = new Collection()
-client2.aliases = new Collection()
-client2.type = 'client_2'
-client2.client1 = client1
-client2.num = '2'
-client2.setMaxListeners(10)
-
-client1.executed = false
-client1.mc_timeout = 0
 /**
  * @param {Client} client1
  * @param {Client} client2
  */
-client1.start_mc = (client1, client2) => {
+const start_mc = (client1, client2) => {
     const MessageEmbed = require('discord.js').MessageEmbed
     const util = require('minecraft-server-util')
     const send = require('./minecraft/modules/sendChat')
     const color = require('./minecraft/modules/color.json')
-    const sendErr = (e) => {
+    const sendErr = (e, type) => {
+        client1.executed = false
         send(client1, client2, new MessageEmbed()
-            .setDescription(`Gặp lỗi khi lấy thông tin của \`${process.env.MC_HOST}\`\n` +
+            .setDescription(`Gặp lỗi ${type == 1 ? 'khi lấy thông tin của' : 'kết nối đến'} \`${process.env.MC_HOST}\`\n` +
                 `Lỗi: \`${e}\`\n` +
                 `Kết nối lại sau 5m`)
             .setColor(color.red), true)
         client1.mc_timeout = setTimeout(() => client1.start_mc(client1, client2), 5 * 60 * 1000)
     }
     const execute = () => {
+        send(client1, client2, new MessageEmbed()
+            .setDescription(`Đang kết nối với server....`)
+            .setColor(color.yellow), true
+        )
         client1.executed = true
-        require('./minecraft/main')(client1, client2)
+        require('./minecraft/main')(client1, client2).catch(e => {
+            console.log(e)
+            sendErr(e, 2)
+        })
     }
 
     clearTimeout(client1.mc_timeout == 0 ? undefined : client1.mc_timeout)
     if (process.env.MC_HOST == 'localhost')
         util.statusLegacy(process.env.MC_HOST, Number(process.env.MC_PORT))
             .then(res => execute())
-            .catch(e => sendErr(e))
+            .catch(e => sendErr(e, 1))
     else
         util.status(process.env.MC_HOST, Number(process.env.MC_PORT))
-        .then(res => execute())
-        .catch(e => sendErr(e))
+            .then(res => execute())
+            .catch(e => sendErr(e, 1))
 }
 
 
+client1.slash = {
+    commands: new Collection(),
+    categories: {}
+}
+client1.message = {
+    commands: new Collection(),
+    categories: {},
+    aliases: new Collection(),
+}
+client1.type = 'client_1'
+client1.client2 = client2
+client1.num = '1'
+client1.setMaxListeners(15)
+client1.executed = false
+client1.mc_timeout = 0
+client1.start_mc = start_mc
+
+client2.slash = {
+    commands: new Collection(),
+    categories: {}
+}
+client2.message = {
+    commands: new Collection(),
+    categories: {},
+    aliases: new Collection(),
+}
+client2.type = 'client_2'
+client2.client1 = client1
+client2.num = '2'
+client2.setMaxListeners(15)
+
+
 require('dotenv').config('./.env')
+process.env.TZ = 'Asia/Bangkok'
 
 
 require('./discord/handler/event')(client1)
@@ -86,9 +119,9 @@ require('mongoose').connect(
         useUnifiedTopology: true,
         useNewUrlParser: true,
     }
-).then(() => console.log('[MONGOOSE]\x1b[32m CONNECTED\x1b[0m'))
+).then(() => console.log('[MONGOOSE] CONNECTED'))
 
 client1.login(process.env.DISCORD_TOKEN_1)
-    .catch((e) => { console.log(`[CLIENT_1] LOGIN ERROR: ${e}\x1b[0m`); process.exit(0) })
+    .catch((e) => { console.log(`[CLIENT_1] LOGIN ERROR: ${e}`); process.exit(0) })
 client2.login(process.env.DISCORD_TOKEN_2)
-    .catch((e) => { console.log(`[CLIENT_2] LOGIN ERROR: ${e}\x1b[0m`); process.exit(0) })
+    .catch((e) => { console.log(`[CLIENT_2] LOGIN ERROR: ${e}`); process.exit(0) })

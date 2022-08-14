@@ -23,9 +23,14 @@ module.exports = {
             '> og.config set role <@role|role_id>\n' +
             '> og.config set livechat_type <message|embed>\n' +
             '+ og.config show\n' +
-            '+ og.config delete'
+            '+ og.config delete\n' +
+            '❔ | Giải thích:\n' +
+            '> <choice 1|choice 2|...>: chọn 1 trong các lựa chọn (choice 1, choice 2,...)\n' +
+            '> @channel: tag 1 channel (`<#channel-id>`)\n' +
+            '> @role: tag 1 role (`<@!role-id>`)\n' +
+            '> <channel-id> và <role-id>: id của channel hoặc role'
         )
-        if (!message.guild.members.cache.get(message.author.id).permissions.has('MANAGE_GUILD')) 
+        if (!message.guild.members.cache.get(message.author.id).permissions.has('MANAGE_GUILD'))
             return message.reply('🛑 | Bạn thiếu quyền `MANAGE_GUILD`')
         const db = require('../../../models/option')
         let data = await db.findOne({
@@ -68,9 +73,11 @@ module.exports = {
                 if (isNaN(args[4])) channel = message.mentions.channels.first()
                 else channel = message.guild.channels.cache.get(args[4])
                 if (!channel.isText()) return message.reply(`🔴 | <#${channel.id}> phải là một kênh văn bản !`)
-                if (type === 'livechat')data.config.channel.livechat = channel.id
-                else if (type === 'restart') data.config.channel.restart = channel.id
-                else if (type === 'status') data.config.channel.status = channel.id
+                if (!message.guild.me.permissionsIn(channel).has('SEND_MESSAGES'))
+                    return message.reply(`🛑 | Bot thiếu quyền \`SEND_MESSAGES\` trong kênh ${channel}`)
+                if (type === 'livechat') data.config.channels.livechat = channel.id
+                else if (type === 'restart') data.config.channels.restart = channel.id
+                else if (type === 'status') data.config.channels.status = channel.id
                 await data.save()
                 if (type == 'status' || type == 'restart') {
                     try {
@@ -140,8 +147,8 @@ module.exports = {
                     data.config.messages.restart = m.id
                     await data.save()
                 } else if (type == 'restart') {
-                    let send = (role) => {
-                        message.channel.send('Bạn có muốn tạo một reaction-role không').then((msg) => {
+                    let send = (role) =>
+                        void message.channel.send('Bạn có muốn tạo một reaction-role không').then((msg) => {
                             msg.react('✅'); msg.react('❌')
                             let reaction_collector = msg.createReactionCollector({
                                 time: 5 * 60 * 1000,
@@ -166,7 +173,6 @@ module.exports = {
                                 }
                             })
                         })
-                    }
                     let m = await message.channel.send(
                         'Vui lòng chọn 1 trong 2 lựa chọn sau:\n' +
                         '🟢 | Lấy một role restart có sẵn.\n' +
@@ -228,22 +234,11 @@ module.exports = {
                 let role
                 if (isNaN(args[4])) role = message.mentions.roles.first()
                 else role = message.guild.roles.cache.get(args[3])
-                if (type == 'restart') set = {
-                    'config.roles.restart': role.id
-                }
-                await db.findOneAndUpdate({
-                    guildid: message.guildId
-                }, {
-                    $set: set
-                }).then(() =>
-                    message.reply('✅ | Đã chỉnh role thành công')
-                ).catch(e =>
-                    message.reply(
-                        '🔴 | Xảy ra lỗi trong quá trình chỉnh sửa.\n' +
-                        '```' + e + '```'
-                    )
-                )
+                data.config.roles.restart = role.id
+                await data.save()
+                message.reply('✅ | Đã chỉnh role thành công')
             } else if (id == 'livechat_type') {
+                if (!['message', 'embed'].includes(args[3])) return message.reply('🛑 | Chế độ hiển thị không hợp lệ')
                 data.config.chatType = args[3]
                 await data.save()
                 message.reply('✅ | Đã chỉnh chế độ hiển thị thành công')

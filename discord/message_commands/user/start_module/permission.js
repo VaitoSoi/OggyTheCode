@@ -23,12 +23,12 @@ module.exports = async (message) => {
         + `> ADD_REACTIONS (Thêm biểu cảm): ${rate(reactionAddPerm)}\n`
         + `> MANAGE_ROLES (Quản lý vai trò): ${rate(manangeRolePerm)}\n`
         + `> MANAGE_CHANNELS (Quản lý kênh): ${rate(manangeChannelPerm)}\n`
-        + '* *Lưu ý: Nếu một trong các quyền quan trọng (❕) bị thiếu sẽ dẫn đến việc bot gặp lỗi trong quá trình hoặc động! *'
+        + '** *Lưu ý: Nếu một trong các quyền quan trọng (❕) bị thiếu sẽ dẫn đến việc bot gặp lỗi trong quá trình hoặc động! **'
     )
     setTimeout(() => {
         m.delete()
     }, 5 * 1000);
     if (embedPerm == false || sendPerm == false)
-        return message.channel.send('‼Bot thiếu 1 trong 2 quyền quan trọng‼')
+        return message.channel.send('‼ Bot thiếu 1 trong 2 quyền quan trọng ‼')
     else return require('./data_create')(message)
 }

@@ -6,10 +6,10 @@ const ms = require('ms')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('admin_mc')
-        .setDescription('!ADMIN ONLY | Các lệnh về MC')
+        .setDescription('!ADMIN ONLY! | Các lệnh về MC')
         .addSubcommand(sub => sub
             .setName('mc')
-            .setDescription('!ADMIN ONLY | Các lệnh về MC')
+            .setDescription('!ADMIN ONLY! | Các lệnh về MC')
             .addStringOption(o => o
                 .setName('action')
                 .setDescription('Hành động')
@@ -27,7 +27,7 @@ module.exports = {
             )
         ).addSubcommand(sub => sub
             .setName('eval')
-            .setDescription('!ADMIN ONLY | Lệnh chạy BOT')
+            .setDescription('!ADMIN ONLY! | Lệnh chạy BOT')
             .addStringOption(o => o
                 .setName('action')
                 .setDescription('Hành động')

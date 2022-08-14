@@ -13,31 +13,34 @@ module.exports = {
     run: async (interaction) => {
         const client = interaction.client
 
-        let dirs = fs.readdirSync('./discord/slash_commands/')
         let categories = []
         let option = []
-        dirs.forEach((dir) => {
-            let files = fs.readdirSync(`./discord/slash_commands/${dir}/`).filter(file => file.endsWith('.js'))
+        Object.keys(client.slash.categories).forEach((key) => {
             categories.push({
-                name: dir.toString().toLowerCase(),
-                cmds: files
+                name: key.toString().toLowerCase(),
+                cmds: client.slash.categories[key]
             })
             option.push({
-                label: (dir.toLowerCase() === 'user' ?
-                    '🤵'
-                    : dir.toLowerCase() === 'server' ?
-                        '⛏'
+                label: (key.toLowerCase() === 'user'
+                    ? '🤵'
+                    : key.toLowerCase() === 'server'
+                        ? '⛏'
                         : '') + ' ' +
-                    dir[0].toUpperCase() + dir.slice(1).toLowerCase(),
-                description: `Có ${files.length} lệnh` + ' | ' +
-                    (dir.toLowerCase() === 'user' ?
-                        'Là các lệnh cơ bản của bot'
-                        : dir.toLowerCase() === 'server' ?
-                            `Là các lệnh liên quan đến ${process.env.MC_HOST}`
+                    key[0].toUpperCase() + key.slice(1).toLowerCase(),
+                description: `Có ${client.slash.categories[key].length} lệnh` + ' | ' +
+                    (key.toLowerCase() === 'user'
+                        ? 'Là các lệnh cơ bản của bot'
+                        : key.toLowerCase() === 'server'
+                            ? `Là các lệnh liên quan đến ${process.env.MC_HOST}`
                             : ''),
-                value: dir.toLowerCase()
+                value: key.toLowerCase()
             })
         })
+
+        const client1 = client.num == '1' ? client.user.id : client.client1.user.id
+        const client2 = client.num == '1' ? client.client2.user.id : client.user.id
+        const permissions = '93264'
+        const scope = 'bot+applications.commands'
 
         const embed = new MessageEmbed()
             .setAuthor({
@@ -58,8 +61,8 @@ module.exports = {
                 '> `/help`: Hiện menu này.\n' +
                 '\n' +
                 'Các link liên quan của Oggy:\n' +
-                '[Invite Oggy](https://discord.com/oauth2/authorize?client_id=898782551110471701&permissions=93264&scope=bot+applications.commands) | ' +
-                '[Invite Oggy 2](https://discord.com/oauth2/authorize?client_id=974862207106027540&permissions=93264&scope=bot+applications.commands)\n'
+                `[Invite Oggy](https://discord.com/oauth2/authorize?client_id=${client1}&permissions=${permissions}&scope=${scope})` + ' | ' +
+                `[Invite Oggy 2](https://discord.com/oauth2/authorize?client_id=${client2}&permissions=${permissions}&scope=${scope})\n`
             )
         interaction.editReply({
             embeds: [
@@ -107,9 +110,9 @@ module.exports = {
                         .setThumbnail(client.user.displayAvatarURL())
                         .setTitle(`Các lệnh hiện có trong tập lệnh \`${cmds.name.toUpperCase()}\``)
                     cmds.cmds.forEach((c) => {
-                        const cmd = require(`../${cmds.name}/${c}`)
+                        const cmd = client.slash.commands.get(c)
                         if (!cmd) return
-                        embed.addField(cmd.data.name, cmd.data.description, true)
+                        embed.addFields({ name: cmd.data.name, value: cmd.data.description, inline: true })
                     })
                     inter.update({
                         embeds: [embed]

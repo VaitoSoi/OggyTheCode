@@ -1,8 +1,8 @@
-const { Client, Message } = require('discord.js')
+const { Client, Message, MessageEmbed } = require('discord.js')
 const { Bot } = require('mineflayer')
 
 module.exports = {
-    name: 'tablist',
+    name: 'players',
     description: 'Hiện tablist trong server',
     usage: '',
     server: true,
@@ -14,8 +14,8 @@ module.exports = {
     * @param {String[]} args 
     */
     run: async (bot, client, message, args) => {
-const ascii = require('ascii-table')
-const table = new ascii()
+        const ascii = require('ascii-table')
+        const table = new ascii()
         if (bot.login == 0) message.reply('🛑 | Bot đang mất kết nối với server')
         else {
             let players = Object.values(bot.players).map(p => p.username)
@@ -25,12 +25,17 @@ const table = new ascii()
                     table.addRow(players[i], players[i + 1])
             else for (let i = 0; i < players.length; i += 3)
                 table.addRow(players[i], players[i + 1], players[i + 2])
-            message.reply('```' +
-                table.toString()
-                    .split('\n')
-                    .slice(1, -1)
-                    .join('\n')
-                + '```')
+            message.reply({
+                embeds: [
+                    new MessageEmbed()
+                        .setDescription('```' +
+                            table.toString()
+                                .split('\n')
+                                .slice(1, -1)
+                                .join('\n')
+                            + '```')
+                ]
+            })
         }
     }
 }

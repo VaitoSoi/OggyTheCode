@@ -17,9 +17,9 @@ module.exports = {
         if (msg.toString().trim() == '') return
         let embedColor = color.blue
         const restartTime = /^UltimateAutoRestart » Restarting in (.+)!$/
-        if (restartTime.test(msg.toString())) sendRestart(bot.client, restartTime.exec(msg.toString())[1])
+        if (restartTime.test(msg.toString())) sendRestart(bot.client1, bot.client2, restartTime.exec(msg.toString())[1])
         const restartNow = /^UltimateAutoRestart » Restarting... join back soon!$/
-        if (restartNow.test(msg.toString())) sendRestart(bot.client, '', true)
+        if (restartNow.test(msg.toString())) sendRestart(bot.client1, bot.client2, '', true)
         const whisper1 = /^nhắn cho (.+)$/
         const whisper2 = /^(.+) nhắn: (.+)$/
         if (whisper1.test(msg.toString()) || whisper2.test(msg.toString())) embedColor = color.pink
