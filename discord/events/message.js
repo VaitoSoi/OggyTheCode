@@ -10,7 +10,7 @@ module.exports = {
         const client = message.client
         if (message.author.bot) return
         if (client.type == 'client_2' && message.guild.members.cache.get(client.client1.user.id)) return
-        let prefix = process.env.prefix
+        let prefix = process.env.PREFIX
         /*
         const prefixDB = require('../../models/option')
         const prefixData = await prefixDB.findOne({
