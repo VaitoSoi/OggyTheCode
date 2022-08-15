@@ -42,11 +42,12 @@ async function run(client1, client2) {
      * 
      */
 
+    bot.readyAt = Math.floor(Date.now() / 1000)
     bot.client1 = client1
     bot.client2 = client2
     bot.login = 0
     bot.cmds = []
-    bot.readyAt = Math.floor(Date.now() / 1000)
+    bot.reconnect = 0
     require('./handler/event')(bot)
     require('./handler/command')(bot.cmds)
 

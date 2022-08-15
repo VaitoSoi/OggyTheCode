@@ -47,6 +47,7 @@ module.exports = {
             )
             .setColor(color.red), true
         )
+        clearTimeout(bot.reconnect)
         bot.reconnect = setTimeout(() => {
             if (auto == true) {
                 chat(bot.client1, bot.client2, new MessageEmbed()
