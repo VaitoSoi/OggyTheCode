@@ -17,7 +17,7 @@ module.exports = (client) => {
         fs.readdirSync(`./discord/slash_commands/${dir}/`).filter(f => f.endsWith('.js')).forEach((file) => {
             const command = require(`../slash_commands/${dir}/${file}`);
             if (!command || !command.data) return
-            if (command.admin == true && client.type == 'client_2') return
+            //if (command.admin == true && client.type == 'client_2') return
             command.data.setDMPermission(false)
             commands.push(command.data.toJSON())
             client.slash.commands.set(command.data.name, command)
