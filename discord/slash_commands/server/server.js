@@ -4,11 +4,12 @@ const { Bot } = require('mineflayer')
 const util = require('minecraft-server-util')
 let commandName = ''
 let i = 0
-process.env.MC_HOST.split('').forEach(n => {
+if (process.env.MC_HOST != 'localhost') process.env.MC_HOST.split('').forEach(n => {
     if (n.toLowerCase() === '.') {
         return commandName = process.env.MC_HOST.split('').slice(0, i).join('')
     } else i++
 })
+else commandName = 'server'
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -44,7 +45,7 @@ module.exports = {
                         `**Status:** 🟢 Online\n` +
                         `**Player:** ${response.players.online}/${response.players.max}\n` +
                         `**Version:** ${response.version.name}\n` +
-                        `**Ping:** ${ping}\n` +
+                        `**Ping:** ${ping}ms\n` +
                         `**MOTD:** \n>>> ${response.motd.clean}\n`
                     )
             })

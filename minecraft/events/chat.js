@@ -13,6 +13,8 @@ module.exports = {
         let msg = chat.toString()
         let args = msg.trim().split(/ +/g)
         if (args[0] == '>') args = args.slice(1)
+        if (!args[0]) return
+        if (username == bot.player.username) return
         if (args[0] == bot.player.username) return bot.chat(`Prefix: ${prefix} | Dùng ${prefix}help để biết thông thông tin`)
         if (!args[0].startsWith(prefix)) return
         args[0] = args[0].slice(prefix.length)

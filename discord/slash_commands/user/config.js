@@ -83,6 +83,44 @@ module.exports = {
                     .setRequired(true)
                 )
             )
+            .addSubcommand(sc => sc
+                .setName('timestamp')
+                .setDescription('Hiển thị thời gian tin nhắn được gửi đi')
+                .addStringOption(o => o
+                    .setName('type')
+                    .setDescription('Chế độ muốn dùng')
+                    .addChoices(
+                        {
+                            name: 'on',
+                            value: 'on'
+                        },
+                        {
+                            name: 'off',
+                            value: 'off'
+                        }
+                    )
+                    .setRequired(true)
+                )
+            )
+            .addSubcommand(sc => sc
+                .setName('join_leave')
+                .setDescription('Hiển thị member vào vào ra server')
+                .addStringOption(o => o
+                    .setName('type')
+                    .setDescription('Chế độ muốn dùng')
+                    .addChoices(
+                        {
+                            name: 'on',
+                            value: 'on'
+                        },
+                        {
+                            name: 'off',
+                            value: 'off'
+                        }
+                    )
+                    .setRequired(true)
+                )
+            )
         )
         .addSubcommand(scg => scg
             .setName('show')
@@ -213,12 +251,11 @@ module.exports = {
                                     '```' + `${e}` + '```'
                                 )
                         })
-                    let m = await channel.send({
-                        embeds: [embed]
+                    channel.send({ embeds: [embed] }).then(async m => {
+                        m.react('🔁')
+                        data.config.messages.status = m.id
+                        await data.save()
                     })
-                    m.react('🔁')
-                    data.config.messages.status = m.id
-                    await data.save()
                 } else if (type == 'restart') {
                     let send = (role) => {
                         if (!interaction.guild.me.permissions.has('MANAGE_ROLES')) return
@@ -309,8 +346,8 @@ module.exports = {
                 data.config.roles.restart = role.id
                 await data.save()
                 interaction.editReply('✅ | Đã chỉnh role thành công')
-            } else if (id == 'livechat_type') {
-                data.config.chatType = interaction.options.getString('type')
+            } else if (id == 'livechat_type' || id == 'timestamp' || id == 'join_leave') {
+                data.config[id == 'livechat_type' ? 'chatType' : id] = interaction.options.getString('type')
                 await data.save()
                 interaction.editReply('✅ | Đã chỉnh chế độ hiển thị thành công')
             }

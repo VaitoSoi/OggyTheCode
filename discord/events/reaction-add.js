@@ -16,10 +16,9 @@ module.exports = {
             guildid: reaction.message.guildId
         })
         if (!data) return
-        await reaction.message.fetch().catch(e => undefined)
+        await reaction.message.fetch().catch(e => { })
         if (reaction.emoji.name == '🔁' 
         && reaction.message.id == data.config.messages.status) {
-            reaction.users.remove(user)
             if (reaction.message.author.id == client.user.id) reaction.message.edit({
                 embeds: [
                     new Discord.MessageEmbed()
@@ -32,7 +31,7 @@ module.exports = {
                     name: `${client.user.tag} Server Utils`,
                     iconURL: client.user.displayAvatarURL()
                 })
-                .setTitle(`\`${process.env.MC_HOST}\` Status`)
+                .setTitle(`\`${process.env.MC_HOST.toUpperCase()}\` Status`)
                 .setFooter({
                     text: `${reaction.message.author.tag}`,
                     iconURL: reaction.message.author.displayAvatarURL()
@@ -72,6 +71,7 @@ module.exports = {
                 data.config.messages.status = m.id
                 await data.save()
             }
+            reaction.users.remove(user)
         } else if (reaction.emoji.name == '📢' 
         && reaction.message.id == data.config.messages.restart) {
             const role = reaction.message.guild.roles.cache.get(data.config.roles.restart)

@@ -45,7 +45,7 @@ module.exports = {
                         `**Status:** 🟢 Online\n` +
                         `**Player:** ${response.players.online}/${response.players.max}\n` +
                         `**Version:** ${response.version.name}\n` +
-                        `**Ping:** ${ping}\n` +
+                        `**Ping:** ${ping}ms\n` +
                         `**MOTD:** \n>>> ${response.motd.clean}\n`
                     )
             })

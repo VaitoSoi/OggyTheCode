@@ -34,7 +34,7 @@ module.exports = {
                 `Hết hạn: ${data.end.toLowerCase() != 'vĩnh viễn'
                     ? `<t:${data.end}:f> (<t:${data.end}:R>)` : `\`${data.end}\``}`
             )
-        if (!interaction.deferred) await interaction.deferReply()
+        if (!interaction.deferred) await interaction.deferReply().catch(e => interaction.channel.send(`Lỗi: \n \`\`\`${e}\`\`\``))
         const a = [
             'Mer đki kưng 😏',
             'Mài nghĩ mài là ai 😉',

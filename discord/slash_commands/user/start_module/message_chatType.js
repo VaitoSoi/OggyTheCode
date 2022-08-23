@@ -1,21 +1,41 @@
-const { CommandInteraction, MessageEmbed } = require('discord.js')
+const { CommandInteraction, MessageEmbed, MessageButton, MessageActionRow } = require('discord.js')
 
 /**
  * 
  * @param {CommandInteraction} interaction 
  */
 module.exports = async (interaction) => {
-    let m = await interaction.channel.send(
-        'Vui lòng chọn 1 trong các lựa chọn dưới:\n'
-        + '1️⃣ Embed\n'
-        + '2️⃣ Message\n'
-        + 'ℹ Thông tin thêm'
-    )
-    let msg 
-    m.react('1️⃣'); m.react('2️⃣'); m.react('ℹ')
-    let reaction_collector = m.createReactionCollector({
+    let m = await interaction.channel.send({
+        content: 'Vui lòng chọn 1 trong các lựa chọn dưới:\n'
+            + '1️⃣ Embed\n'
+            + '2️⃣ Message\n'
+            + 'ℹ Thông tin thêm',
+        components: [
+            new MessageActionRow()
+                .addComponents(
+                    new MessageButton()
+                        .setCustomId('embed')
+                        .setStyle('PRIMARY')
+                        .setLabel('Embed')
+                )
+                .addComponents(
+                    new MessageButton()
+                        .setCustomId('message')
+                        .setStyle('PRIMARY')
+                        .setLabel('Message')
+                )
+                .addComponents(
+                    new MessageButton()
+                        .setCustomId('info')
+                        .setStyle('PRIMARY')
+                        .setLabel('Info')
+                )
+        ]
+    })
+    let msg
+    let button_collector = m.createMessageComponentCollector({
         time: 5 * 60 * 1000,
-        filter: (react, user) => user.id == interaction.user.id
+        filter: (inter) => inter.user.id == interaction.user.id
     })
     const data = await require('../../../../models/option').findOne({
         guildid: interaction.guildId
@@ -23,10 +43,9 @@ module.exports = async (interaction) => {
     const embedImageLink = 'https://cdn.discordapp.com/attachments/936994104884224020/997858841351962707/unknown.png'
     const messageImageLink = 'https://cdn.discordapp.com/attachments/936994104884224020/997859375790174289/unknown.png'
     const rickRoll = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-    reaction_collector.on('collect', async (react, user) => {
-        if (react.emoji.name == '1️⃣') data.config.chatType = 'embed'
-        else if (react.emoji.name == '2️⃣') data.config.chatType = 'message'
-        else if (react.emoji.name == 'ℹ') return msg = await react.message.reply({
+    button_collector.on('collect', async (inter) => {
+        if (inter.customId != 'info') data.config.chatType = inter.customId
+        else return msg = await inter.reply({
             content: 'Các loại hiển thị tin nhắn: \n'
                 + '1️⃣ Embed (mặc định):\n'
                 + '> Ưu điểm: hiển thị màu sắc,...\n'
@@ -45,11 +64,11 @@ module.exports = async (interaction) => {
                     .setURL(Math.floor(Math.random() * 10) == 10 ? rickRoll : messageImageLink)
                     .setImage(messageImageLink)
             ]
-        })
+        }).then(msg => setTimeout(() => msg.delete, 5000))
         await data.save()
-        reaction_collector.stop()
+        button_collector.stop()
         m.delete()
         if (msg) msg.delete()
-        require('./support')(interaction)
+        require('./join_leave')(interaction)
     })
 }

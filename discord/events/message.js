@@ -18,8 +18,8 @@ module.exports = {
         })
         if (prefixData
             && prefixData.config.prefix
-            && prefixData.config.prefix != '') prefix = prefixData.config.prefix
-        if (!message.content.startsWith(prefix)) return*/
+            && prefixData.config.prefix != '') prefix = prefixData.config.prefix*/
+        if (!message.content.startsWith(prefix)) return
         const args = message.content.slice(prefix.length).split(/ +/g)
         let cmd = client.message.commands.get(args[0])
         const aliases = client.message.aliases.get(args[0])

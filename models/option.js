@@ -17,7 +17,9 @@ let Schema = new mongoose.Schema({
             restart: String,
         },
         chatType: String,
-        prefix: String,
+        timestamp: String,
+        join_leave: String,
+        //prefix: String,
     }
 })
 

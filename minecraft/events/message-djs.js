@@ -26,8 +26,8 @@ module.exports = {
             })
             if (prefixData
                 && prefixData.config.prefix
-                && prefixData.config.prefix != '') prefix = prefixData.config.prefix
-            if (!message.content.startsWith(prefix)) return*/
+                && prefixData.config.prefix != '') prefix = prefixData.config.prefix*/
+            if (!message.content.startsWith(prefix)) return
             const args = message.content.slice(prefix.length).split(/ +/g)
             let cmd = client.message.commands.get(args[0])
             const aliases = client.message.aliases.get(args[0])
@@ -66,12 +66,13 @@ module.exports = {
              */
             const react = (message, emoji) =>
                 message.guild.me.permissions.has('ADD_REACTIONS')
-                    && message.guild.me.permissionsIn(message.channel).has('ADD_REACTIONS') ? void message.react(emoji).catch(e => { }) : undefined
+                    && message.guild.me.permissionsIn(message.channel).has('ADD_REACTIONS')
+                    ? void message.react(emoji).catch(e => { }) : undefined
+            const blacklistDB = require('../../models/blacklist')
+            const blacklistData = await blacklistDB.findOne({
+                id: message.author.id
+            })
             try {
-                const blacklistDB = require('../../models/blacklist')
-                const blacklistData = await blacklistDB.findOne({
-                    id: message.author.id
-                })
                 if (blacklistData
                     && blacklistData.end.toLowerCase() != 'vĩnh viễn'
                     && Math.floor(Date.now() / 1000) >= Number(blacklistData.end))
@@ -81,10 +82,13 @@ module.exports = {
                     && (blacklistData.end.toLowerCase() == 'vĩnh viễn'
                         || Math.floor(Date.now() / 1000) < Number(blacklistData.end)))
                     return react(message, '❌')
-                bot.chat(`<${message.author.tag}> ${message.content.trim()}`)
-                react(message, '✅')
+                if (bot.login != 2) return react(message, '❌')
+                else {
+                    bot.chat(`<${message.author.tag}> ${message.content.trim()}`)
+                    return react(message, '✅')
+                }
             } catch (e) {
-                react(message, '❌')
+                return react(message, '❌')
             }
         }
     }

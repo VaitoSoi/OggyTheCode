@@ -1,7 +1,7 @@
 const mineflayer = require('mineflayer')
-const chat = require('../modules/sendChat')
+const chat = require('../modules/chat').chat
 const { MessageEmbed } = require('discord.js')
-const color = require('../modules/color.json')
+const color = require('../modules/chat').colors
 const ms = require('ms')
 
 module.exports = {
@@ -13,10 +13,11 @@ module.exports = {
      */
     async run(bot, reason) {
         bot.login = 0
+        bot.joinAt = 0
         let reconnect = '3m'
         let r = reason
         let auto = true
-        if (reason.toLowerCase().split(' ')[0] == 'admin') {
+        if (reason.toLowerCase().split(' ')[0] == 'admin') 
             reason.toLowerCase().split(' ').slice(1).forEach((args) => {
                 let key, value, i = 0
                 args.split('').forEach((c) => {
@@ -38,7 +39,8 @@ module.exports = {
                         ? true
                         : false
             })
-        }
+        else if (reason.toLowerCase() == 'restart') reconnect = '5m'
+        else if (reason.toLowerCase() == 'socketclosed') reconnect = '1m'
         chat(bot.client1, bot.client2, new MessageEmbed()
             .setDescription(
                 `Bot đã mất kết nối với server\n` +

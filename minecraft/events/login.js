@@ -1,7 +1,7 @@
 const mineflayer = require('mineflayer')
-const chat = require('../modules/sendChat')
+const chat = require('../modules/chat').chat
 const { MessageEmbed } = require('discord.js')
-const color = require('../modules/color.json')
+const color = require('../modules/chat').colors
 
 module.exports = {
     name: 'login',
@@ -10,7 +10,9 @@ module.exports = {
      * @param {mineflayer.Bot} bot 
      */
     async run(bot) {
+        clearTimeout(bot.reconnect)
         bot.login++
+        bot.joinAt = Date.now()
         let sv = ''
         if (bot.login == 1) sv = 'PIN'
         else if (bot.login == 2) sv = 'MAIN'
@@ -19,7 +21,7 @@ module.exports = {
             .setColor(color.green), true)
         if (sv.toLowerCase() == 'main') {
             bot.afk.stop()
-            setTimeout(() => bot.afk.start(), 5 * 60 * 1000);
+            setTimeout(() => bot.afk.start(), 5 * 60 * 1000)
         }
     }
 }

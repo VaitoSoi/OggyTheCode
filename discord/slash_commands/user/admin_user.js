@@ -12,7 +12,7 @@ module.exports = {
         .setDescription('!ADMIN ONLY!')
         .addSubcommand(sub => sub
             .setName('heroku')
-            .setDescription('!ADMIN ONLY! | Khởi động lại bot')
+            .setDescription('!ADMIN ONLY! | Các lệnh liên quan đến heroku')
             .addStringOption(o => o
                 .setName('action')
                 .setDescription('Hàng động')
@@ -88,13 +88,14 @@ module.exports = {
         const id = interaction.options.getSubcommand()
         const action = interaction.options.get('action') ? interaction.options.get('action').value : null
         if (id == 'heroku') {
-            const env = process.env
-            const app = env.HEROKU_APP
-            const dyno = env.HEROKU_DYNO
-            interaction.editReply('⏳ | Restarting...')
-            if (action == 'restart_dyno')
+            if (action == 'restart_dyno') {
+                const env = process.env
+                const app = env.HEROKU_APP
+                const dyno = env.HEROKU_DYNO
+                interaction.editReply('⏳ | Restarting...')
                 return heroku.delete('/apps/' + app + '/dynos/' + dyno)
                     .catch(e => interaction.editReply('Phát hiện lỗi: \n```' + e + '```'))
+            }
         } else if (id == 'eval') {
             try {
                 await eval(action)

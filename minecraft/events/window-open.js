@@ -1,7 +1,7 @@
 const window = require('prismarine-windows')
 const { MessageEmbed } = require('discord.js')
-const color = require('../modules/color.json')
-const send = require('../modules/sendChat')
+const color = require('../modules/chat').colors
+const send = require('../modules/chat').chat
 const mineflayer = require('mineflayer')
 
 module.exports = {

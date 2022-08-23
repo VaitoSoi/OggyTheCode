@@ -14,14 +14,13 @@ module.exports = {
     run: async (client, message, args) => {
         let action = args[1]
         let id = args[2]
-        if (!action) return message.reply(
-            '🔴 | Thiếu action (create, set, show, delete)\n' +
-            '🟦 | Cách dùng:\n' +
+        let howToUseMsg = '🟦 | Cách dùng:\n' +
             '+ og.config create\n' +
             '+ og.config set:\n' +
             '> og.config set channel <livechat|status|restart> <#channel|channel_id>\n' +
             '> og.config set role <@role|role_id>\n' +
             '> og.config set livechat_type <message|embed>\n' +
+            '> og.config set timestamp <on|off>\n' +
             '+ og.config show\n' +
             '+ og.config delete\n' +
             '❔ | Giải thích:\n' +
@@ -29,6 +28,8 @@ module.exports = {
             '> @channel: tag 1 channel (`<#channel-id>`)\n' +
             '> @role: tag 1 role (`<@!role-id>`)\n' +
             '> <channel-id> và <role-id>: id của channel hoặc role'
+        if (!action) return message.reply(
+            '🔴 | Thiếu action (create, set, show, delete)\n' + howToUseMsg
         )
         if (!message.guild.members.cache.get(message.author.id).permissions.has('MANAGE_GUILD'))
             return message.reply('🛑 | Bạn thiếu quyền `MANAGE_GUILD`')
@@ -140,13 +141,13 @@ module.exports = {
                                     '```' + `${e}` + '```'
                                 )
                         })
-                    let m = await channel.send({
-                        embeds: [embed]
+                    channel.send({ embeds: [embed] }).then(async m => {
+                        m.react('🔁')
+                        data.config.messages.status = m.id
+                        await data.save()
                     })
-                    m.react('🔁')
-                    data.config.messages.restart = m.id
-                    await data.save()
-                } else if (type == 'restart') {
+                }
+                else if (type == 'restart') {
                     let send = (role) =>
                         void message.channel.send('Bạn có muốn tạo một reaction-role không').then((msg) => {
                             msg.react('✅'); msg.react('❌')
@@ -230,19 +231,20 @@ module.exports = {
                     })
                 }
             } else if (id == 'role') {
-                let type = 'restart'
-                let role
-                if (isNaN(args[4])) role = message.mentions.roles.first()
-                else role = message.guild.roles.cache.get(args[3])
-                data.config.roles.restart = role.id
-                await data.save()
-                message.reply('✅ | Đã chỉnh role thành công')
-            } else if (id == 'livechat_type') {
                 if (!['message', 'embed'].includes(args[3])) return message.reply('🛑 | Chế độ hiển thị không hợp lệ')
                 data.config.chatType = args[3]
                 await data.save()
                 message.reply('✅ | Đã chỉnh chế độ hiển thị thành công')
-            }
+            } else if (id == 'livechat_type' || id == 'timestamp' || id == 'join_leave') {
+                if ((id != 'livechat_type' && !['on', 'off'].includes(args[3]))
+                    || (id == 'livechat_type' && !['message', 'embed'].includes(args[3])))
+                    return message.reply('🛑 | Chế độ hiển thị không hợp lệ')
+                data.config[id == 'livechat_type' ? 'chatType' : id] = args[3]
+                await data.save()
+                message.reply('✅ | Đã chỉnh chế độ hiển thị thành công')
+            } else if (!id) return message.reply(
+                '🔴 | Thiếu id (channel, role, livechat_type, timestamp)\n' + howToUseMsg
+            )
         } else if (action == 'show') {
             if (!data)
                 return message.reply('🔴 | Không có dữ liệu về cài đặt của bot.\n' +

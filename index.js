@@ -1,13 +1,11 @@
-console.log(
-    `
-*****************************************************
-*                    OggyTheCode                    *
-*         Official code of OggyTheBot#8216          *
-*              Create by VaitoSoi#2220              *
-*  GitHub: https://github.com/VaitoSoi/OggyTheCode  *
-*****************************************************
-`
-)
+console.log('\n' +
+    '*****************************************************\n' +
+    '*                    OggyTheCode                    *\n' +
+    '*         Official code of OggyTheBot#8216          *\n' +
+    '*              Create by VaitoSoi#2220              *\n' +
+    '*  GitHub: https://github.com/VaitoSoi/OggyTheCode  *\n' +
+    '*****************************************************\n' +
+    '\n')
 
 const { Client, Collection } = require('discord.js')
 const client1 = new Client({
@@ -35,8 +33,8 @@ const client2 = new Client({
 const start_mc = (client1, client2) => {
     const MessageEmbed = require('discord.js').MessageEmbed
     const util = require('minecraft-server-util')
-    const send = require('./minecraft/modules/sendChat')
-    const color = require('./minecraft/modules/color.json')
+    const send = require('./minecraft/modules/chat').chat
+    const color = require('./minecraft/modules/chat').colors
     const sendErr = (e, type) => {
         client1.executed = false
         send(client1, client2, new MessageEmbed()
@@ -52,21 +50,30 @@ const start_mc = (client1, client2) => {
             .setColor(color.yellow), true
         )
         client1.executed = true
+        clearInterval(i)
         require('./minecraft/main')(client1, client2).catch(e => {
             console.log(e)
             sendErr(e, 2)
         })
     }
-
+    const status = process.env.MC_HOST != 'localhost' ? util.status : util.statusLegacy
+    let m = '.'
+    let i = setInterval(() => {
+        if (m.length < 5) m += '.'
+        else m = '.'
+        client1.user.setPresence({
+            activities: [{ name: `Connecting${m}`, type: 'LISTENING' }],
+            status: 'idle'
+        })
+        client2.user.setPresence({
+            activities: [{ name: `Connecting${m}`, type: 'LISTENING' }],
+            status: 'idle'
+        })
+    }, 5 * 1000)
     clearTimeout(client1.mc_timeout == 0 ? undefined : client1.mc_timeout)
-    if (process.env.MC_HOST == 'localhost')
-        util.statusLegacy(process.env.MC_HOST, Number(process.env.MC_PORT))
-            .then(res => execute())
-            .catch(e => sendErr(e, 1))
-    else
-        util.status(process.env.MC_HOST, Number(process.env.MC_PORT))
-            .then(res => execute())
-            .catch(e => sendErr(e, 1))
+    status(process.env.MC_HOST, Number(process.env.MC_PORT))
+        .then(res => execute())
+        .catch(e => sendErr(e, 1))
 }
 
 
@@ -125,3 +132,10 @@ client1.login(process.env.DISCORD_TOKEN_1)
     .catch((e) => { console.log(`[CLIENT_1] LOGIN ERROR: ${e}`); process.exit(0) })
 client2.login(process.env.DISCORD_TOKEN_2)
     .catch((e) => { console.log(`[CLIENT_2] LOGIN ERROR: ${e}`); process.exit(0) })
+/*
+const express = require('express')
+const app = express()
+app.get('/status', (req, res) => res.send({ status: 'Online' }))
+app.listen(process.env.EXPRESS_PORT ? Number(process.env.EXPRESS_PORT) : 8000)
+console.log(`[EXPRESS] Listen on port ${process.env.EXPRESS_PORT ? Number(process.env.EXPRESS_PORT) : 8000}`)
+*/
