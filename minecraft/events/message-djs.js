@@ -64,10 +64,12 @@ module.exports = {
              * @param {Discord.Message} message 
              * @param {String} emoji 
              */
-            const react = (message, emoji) =>
+            const react = (message, emoji) => {
+                message.reactions.removeAll()
                 message.guild.me.permissions.has('ADD_REACTIONS')
                     && message.guild.me.permissionsIn(message.channel).has('ADD_REACTIONS')
                     ? void message.react(emoji).catch(e => { }) : undefined
+            }
             const blacklistDB = require('../../models/blacklist')
             const blacklistData = await blacklistDB.findOne({
                 id: message.author.id

@@ -117,8 +117,8 @@ module.exports = {
         } else if (id == 'blacklist') {
             const db = require('../../../models/blacklist')
             const user = client.users.cache.get(interaction.options.getString('user_id'))
-            if (!user) return interaction.editReply('🛑 | User không hợp lệ!')
-            let data = await db.findOne({ id: user.id })
+            if (!user && action != 'show') return interaction.editReply('🛑 | User không hợp lệ!')
+            let data = user ? await db.findOne({ id: user.id }) : undefined
             if (action == 'add') {
                 if (data) return interaction.editReply({
                     content:
@@ -157,35 +157,53 @@ module.exports = {
                 await db.findOneAndDelete({ id: user.id })
                 interaction.editReply(`✅ | Đã bỏ chặn ${user}`)
             } else if (action == 'show') {
-                if (!data) return interaction.editReply({ content: `🛑 | ${user} chưa bị chặn.` })
+                console.log({ data, user: interaction.options.getString('user_id') })
+                if (!data
+                    && interaction.options.getString('user_id').toLowerCase() != 'all')
+                    return interaction.editReply({ content: `🛑 | ${user} chưa bị chặn.` })
+                let embed = interaction.options.getString('user_id').toLowerCase() !== 'all' ?
+                    new MessageEmbed()
+                        .setTitle('User Blacklist')
+                        .setThumbnail(user.displayAvatarURL())
+                        .setFooter({
+                            text: `${interaction.user.tag}`,
+                            iconURL: interaction.user.displayAvatarURL()
+                        })
+                        .setAuthor({
+                            name: client.user.tag,
+                            iconURL: client.user.displayAvatarURL()
+                        })
+                        .setColor('RANDOM')
+                        .setDescription(
+                            'Thông tin về User bị blacklist\n' +
+                            `Tag: \`${user.tag}\`\n` +
+                            `UserID: \`${user.id}\`\n` +
+                            `Lý do: \`${data.reason}\`\n` +
+                            `Bởi: \`${data.by}\`\n` +
+                            `Loại: \`${data.type ? data.type : 'all'}\`\n` +
+                            `Lúc: ${data.at
+                                ? `<t:${data.at}:f> (<t:${data.at}:R>)` : `\`¯\\_(ツ)_/¯\``}\n` +
+                            `Hết hạn: ${data.end.toLowerCase() != 'vĩnh viễn'
+                                ? `<t:${data.end}:f> (<t:${data.end}:R>)` : `\`${data.end}\``}`
+                        )
+                        .setTimestamp()
+                    : new MessageEmbed()
+                        .setTitle('Users Blacklist')
+                        .setFooter({
+                            text: `${interaction.user.tag}`,
+                            iconURL: interaction.user.displayAvatarURL()
+                        })
+                        .setAuthor({
+                            name: client.user.tag,
+                            iconURL: client.user.displayAvatarURL()
+                        })
+                        .setColor('RANDOM')
+                        .setDescription((await db.find({}))
+                            .map(blacklist => `${client.users.cache.get(blacklist.id) ? `<@!${blacklist.id}>` : blacklist.tag} - ${blacklist.reason}`)
+                            .join('\n'))
+                        .setTimestamp()
                 interaction.editReply({
-                    embeds: [
-                        new MessageEmbed()
-                            .setTitle('User Blacklist')
-                            .setThumbnail(user.displayAvatarURL())
-                            .setFooter({
-                                text: `${interaction.user.tag}`,
-                                iconURL: interaction.user.displayAvatarURL()
-                            })
-                            .setAuthor({
-                                name: client.user.tag,
-                                iconURL: client.user.displayAvatarURL()
-                            })
-                            .setColor('RANDOM')
-                            .setDescription(
-                                'Thông tin về User bị blacklist\n' +
-                                `Tag: \`${user.tag}\`\n` +
-                                `UserID: \`${user.id}\`\n` +
-                                `Lý do: \`${data.reason}\`\n` +
-                                `Bởi: \`${data.by}\`\n` +
-                                `Loại: \`${data.type ? data.type : 'all'}\`\n` +
-                                `Lúc: ${data.at
-                                    ? `<t:${data.at}:f> (<t:${data.at}:R>)` : `\`¯\\_(ツ)_/¯\``}\n` +
-                                `Hết hạn: ${data.end.toLowerCase() != 'vĩnh viễn'
-                                    ? `<t:${data.end}:f> (<t:${data.end}:R>)` : `\`${data.end}\``}`
-                            )
-                            .setTimestamp()
-                    ]
+                    embeds: [embed]
                 })
             }
         }

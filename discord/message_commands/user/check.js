@@ -12,6 +12,7 @@ module.exports = {
     */
     run: async (client, message, args) => {
         const db = require('../../../models/blacklist')
+        if (!args[1]) return message.reply('🛑 | Thiếu User!')
         const user = args[1].isNaN ? message.mentions.users.first() : client.users.cache.get(args[1])
         if (!user) return message.reply('🛑 | User không hợp lệ!')
         let data = await db.findOne({ id: user.id })

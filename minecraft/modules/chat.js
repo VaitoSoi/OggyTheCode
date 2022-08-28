@@ -7,6 +7,24 @@ module.exports.colors = {
     "green": "#87ff36"
 }
 
+module.exports.death_message = [
+    /^(.+) died in a unique way$/,
+    /^(.+) flew into a wall$/,
+    /^(.+) thought they could swim forever$/,
+    /^(.+) blew up(|! They were playing around with an end-crystal!)$/,
+    /^(.+) ran out of food, and died$/,
+    /^(.+) thought lava was a hot tub$/,
+    /^(.+) fell from a high place$/,
+    /^(.+) (killed|shot) themselves$/,
+    /^(.+) was squished to death$/,
+    /^(.+) was burnt to a crisp$/,
+    /^(.+) was playing with magic$/,
+    /^(.+) thought standing in fire was a good idea$/,
+    /^(.+) tried climbing to greater heights and fell off (.+)$/,
+    /^(.+) (was slain|was blown up|was pushed into lava|was pushed off a high place) by (.+)$/,
+    /^(.+) (was slain by|murdered|killed|was ganed up on by some) (.+) (somehow using|using|by|One wacked them with) (.+)$/,
+]
+
 const Discord = require('discord.js')
 
 /**
@@ -36,7 +54,7 @@ module.exports.chat = (client1, client2, embed, notify, join_leave) => {
         if (!guild.me.permissionsIn(channel).has('SEND_MESSAGES')) return
         let timestamp = '', dash = '--------------------------'
         if (data.config.timestamp && data.config.timestamp == 'on') {
-            embed.setTimestamp(); timestamp = `[<t:${Math.floor(Date.now() / 1000)}:t>]`; 
+            embed.setTimestamp(); timestamp = `[<t:${Math.floor(Date.now() / 1000)}:t>]`;
             dash = '---------------------------------------'
         }
         if (guild.me.permissionsIn(channel).has('EMBED_LINKS')
@@ -68,7 +86,7 @@ module.exports.chat = (client1, client2, embed, notify, join_leave) => {
         if (!guild.me.permissionsIn(channel).has('SEND_MESSAGES')) return
         let timestamp = '', dash = '--------------------------'
         if (data.config.timestamp && data.config.timestamp == 'on') {
-            embed.setTimestamp(); timestamp = `[<t:${Math.floor(Date.now() / 1000)}:t>]`; 
+            embed.setTimestamp(); timestamp = `[<t:${Math.floor(Date.now() / 1000)}:t>]`;
             dash = '---------------------------------------'
         }
         if (guild.me.permissionsIn(channel).has('EMBED_LINKS')

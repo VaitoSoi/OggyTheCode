@@ -13,7 +13,7 @@ module.exports = {
         if (!interaction.isCommand()) return
         const client = interaction.client
         let cmd = await client.slash.commands.get(interaction.commandName)
-        if (!client.slash.categories.server.includes(cmd.data.name)) return
+        if (!cmd || !client.slash.categories.server.includes(cmd.data.name)) return
         const db = require('../../models/blacklist')
         const data = await db.findOne({ id: interaction.user.id })
         if (data
@@ -44,6 +44,7 @@ module.exports = {
         await interaction.client.application.fetch()
         if ((cmd.admin || cmd.admin == true) && interaction.user.id != client.application.owner.id)
             return interaction.editReply(a[Math.floor(Math.random() * a.length)])
+        if (bot.login == 0) interaction.editReply('🛑 | Bot đang mất kết nối với server')
         cmd.run(interaction, bot)
     }
 }

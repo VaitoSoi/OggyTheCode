@@ -17,8 +17,8 @@ module.exports = {
         })
         if (!data) return
         await reaction.message.fetch().catch(e => { })
-        if (reaction.emoji.name == '🔁' 
-        && reaction.message.id == data.config.messages.status) {
+        if (reaction.emoji.name == '🔁'
+            && reaction.message.id == data.config.messages.status) {
             if (reaction.message.author.id == client.user.id) reaction.message.edit({
                 embeds: [
                     new Discord.MessageEmbed()
@@ -64,7 +64,8 @@ module.exports = {
                 embeds: [embed]
             })
             else {
-                let m = await reaction.message.reply({
+                if (reaction.message.deletable) reaction.message.delete()
+                let m = await reaction.message.channel.send({
                     embeds: [embed]
                 })
                 m.react('🔁')
@@ -72,19 +73,21 @@ module.exports = {
                 await data.save()
             }
             reaction.users.remove(user)
-        } else if (reaction.emoji.name == '📢' 
-        && reaction.message.id == data.config.messages.restart) {
+        } else if (reaction.emoji.name == '📢'
+            && reaction.message.id == data.config.messages.restart) {
             const role = reaction.message.guild.roles.cache.get(data.config.roles.restart)
             if (!role) return
             reaction.message.guild.members.cache.get(user.id).roles.add(
                 role, 'Oggy Reaction-Role'
             )
-                .then((mem) => reaction.message.reply({
-                    content: `Đã thêm role ${role} cho ${user}`,
-                    allowedMentions: {
-                        parse: ['users']
-                    }
-                }).then(m => setTimeout(() => m.delete().catch(e => { }), 5 * 1000)))
+                .then((mem) =>
+                    reaction.message.reply({
+                        content: `Đã thêm role ${role} cho ${mem.user}`,
+                        allowedMentions: {
+                            parse: ['users']
+                        }
+                    })
+                        .then(m => setTimeout(() => m.delete().catch(e => { }), 5 * 1000)))
                 .catch((e) => reaction.message.reply(`Lỗi: \`\`\`${e}\`\`\``)
                     .then(m => setTimeout(() => m.delete().catch(e => { }), 15 * 1000)))
         } else return

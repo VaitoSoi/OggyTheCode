@@ -43,6 +43,34 @@ module.exports = {
                     .addChannelTypes(ChannelType.GuildText)
                     .setRequired(true)
                 )
+                .addStringOption(o => o
+                    .setName('message_role')
+                    .setDescription('Thêm phần lấy role hoặc nhắn tin nhắn')
+                    .addChoices(
+                        {
+                            name: 'yes',
+                            value: 'yes'
+                        },
+                        {
+                            name: 'no',
+                            value: 'no'
+                        }
+                    )
+                )
+                .addStringOption(o => o
+                    .setName('lock_channel')
+                    .setDescription('Khóa kênh')
+                    .addChoices(
+                        {
+                            name: 'yes',
+                            value: 'yes'
+                        },
+                        {
+                            name: 'no',
+                            value: 'no'
+                        }
+                    )
+                )
             )
             .addSubcommand(sc => sc
                 .setName('role')
@@ -65,56 +93,61 @@ module.exports = {
                 )
             )
             .addSubcommand(sc => sc
-                .setName('livechat_type')
-                .setDescription('Chế độ hiển thị livechat')
+                .setName('message')
+                .setDescription('Cài đặt một tin nhắn')
                 .addStringOption(o => o
                     .setName('type')
-                    .setDescription('Chế độ muốn dùng')
+                    .setDescription('Loại tin nhắn muốn cài')
                     .addChoices(
                         {
-                            name: 'embed',
-                            value: 'embed'
+                            name: 'restart',
+                            value: 'restart'
                         },
                         {
-                            name: 'message',
-                            value: 'message'
+                            name: 'status',
+                            value: 'status'
                         }
                     )
                     .setRequired(true)
                 )
-            )
-            .addSubcommand(sc => sc
-                .setName('timestamp')
-                .setDescription('Hiển thị thời gian tin nhắn được gửi đi')
                 .addStringOption(o => o
-                    .setName('type')
-                    .setDescription('Chế độ muốn dùng')
-                    .addChoices(
-                        {
-                            name: 'on',
-                            value: 'on'
-                        },
-                        {
-                            name: 'off',
-                            value: 'off'
-                        }
-                    )
+                    .setName('id')
+                    .setDescription('ID của tin nhắn muốn cài')
                     .setRequired(true)
                 )
             )
             .addSubcommand(sc => sc
-                .setName('join_leave')
-                .setDescription('Hiển thị member vào vào ra server')
+                .setName('feature')
+                .setDescription('Bật tắt tính năng của bot')
                 .addStringOption(o => o
-                    .setName('type')
-                    .setDescription('Chế độ muốn dùng')
+                    .setName('name')
+                    .setDescription('Tên tính năng (đối với livechat_type: on là embed, off là message)')
                     .addChoices(
                         {
-                            name: 'on',
+                            name: 'livechat_type',
+                            value: 'livechat_type'
+                        },
+                        {
+                            name: 'join_leave',
+                            value: 'join_leave'
+                        },
+                        {
+                            name: 'timestamp',
+                            value: 'timestamp'
+                        }
+                    )
+                    .setRequired(true)
+                )
+                .addStringOption(o => o
+                    .setName('type')
+                    .setDescription('Bật hoặc tắt')
+                    .addChoices(
+                        {
+                            name: 'on_or_embed',
                             value: 'on'
                         },
                         {
-                            name: 'off',
+                            name: 'off_or_message',
                             value: 'off'
                         }
                     )
@@ -182,6 +215,8 @@ module.exports = {
             if (id === 'channel') {
                 let type = interaction.options.getString('type')
                 let channel = interaction.options.getChannel('channel')
+                let message_role = interaction.options.getString('message_role') == 'yes' ? true : false
+                let lock_channek = interaction.options.getString('lock_channel') == 'yes' ? true : false
                 if (!channel.isText()) return
                 if (!interaction.guild.me.permissionsIn(channel).has('SEND_MESSAGES'))
                     return interaction.editReply(`🛑 | Bot thiếu quyền \`SEND_MESSAGES\` trong kênh ${channel}`)
@@ -190,7 +225,7 @@ module.exports = {
                 else if (type === 'status') data.config.channels.status = channel.id
                 await data.save()
                 interaction.editReply(`✅ | Đã chỉnh config thành công`)
-                if (type == 'status' || type == 'restart') {
+                if ((type == 'status' || type == 'restart') && lock_channel == true) {
                     if (interaction.guild.me.permissions.has('MANAGE_CHANNELS')
                         && interaction.guild.me.permissionsIn(channel).has('MANAGE_CHANNELS')) {
                         channel.permissionOverwrites.edit(interaction.guild.roles.everyone, {
@@ -215,7 +250,8 @@ module.exports = {
                         }, 10 * 1000))
                     } else interaction.channel.send(`🟡 | Vui lòng khóa kênh ${channel} tránh tình trạng trôi tin nhắn!`)
                 }
-                if (type == 'status') {
+                if (message_role == false) return
+                else if (type == 'status') {
                     const embed = new MessageEmbed()
                         .setAuthor({
                             name: `${client.user.tag} Server Utils`,
@@ -343,11 +379,41 @@ module.exports = {
             } else if (id == 'role') {
                 let type = interaction.options.getString('type')
                 let role = interaction.options.getRole('role')
-                data.config.roles.restart = role.id
+                data.config.roles[type] = role.id
                 await data.save()
                 interaction.editReply('✅ | Đã chỉnh role thành công')
-            } else if (id == 'livechat_type' || id == 'timestamp' || id == 'join_leave') {
-                data.config[id == 'livechat_type' ? 'chatType' : id] = interaction.options.getString('type')
+            } else if (id == 'message') {
+                let type = interaction.options.getString('type')
+                let id = interaction.options.getString('id')
+                let channel = interaction.guild.channels.cache.get(data.config.channels[type])
+                if (!channel || !channel.isText()) return interaction.editReply(`🛑 | Không thể tìm thấy channel \`${type}\``)
+                let msg = await channel.messages.fetch(id).catch(e =>
+                    void interaction.editReply(`🛑 | Không thể tìm thấy tin nhắn với id \`${id}\``))
+                if (!msg) return
+                data.config.messages[type] = msg.id
+                await data.save()
+                let embed = []
+                embed.push(new MessageEmbed()
+                    .setTitle('Đi tới tin nhắn mới')
+                    .setURL(msg.url))
+                if (msg.content && msg.content != '') embed.push(new MessageEmbed()
+                    .setTitle(msg.content)
+                    .setAuthor({
+                        name: `${msg.author.tag}`,
+                        iconURL: msg.author.displayAvatarURL()
+                    }))
+                embed.push(...msg.embeds)
+                interaction.editReply({
+                    content: '✅ | Đã chỉnh tin nhắn thành công',
+                    embeds: embed
+                })
+            } else if (id == 'feature') {
+                let type = interaction.options.getString('type')
+                data.config[id == 'livechat_type' ? 'chatType' : id] =
+                    type == 'livechat_type'
+                        ? type == 'on'
+                            ? 'embed' : 'message'
+                        : type
                 await data.save()
                 interaction.editReply('✅ | Đã chỉnh chế độ hiển thị thành công')
             }

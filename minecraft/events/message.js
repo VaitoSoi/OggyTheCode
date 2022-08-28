@@ -1,8 +1,6 @@
 const mineflayer = require('mineflayer')
 const { MessageEmbed } = require('discord.js')
-const sendRestart = require('../modules/chat').restart
-const sendChat = require('../modules/chat').chat
-const color = require('../modules/chat').colors
+const chat = require('../modules/chat')
 
 module.exports = {
     name: 'message',
@@ -15,28 +13,28 @@ module.exports = {
      */
     async run(bot, msg, pos) {
         if (msg.toString().trim() == '') return
-        let embedColor = color.blue
+        let embedColor = chat.colors.blue
         const restartTime = /^UltimateAutoRestart » Restarting in (.+)!$/
         if (restartTime.test(msg.toString())
             && !['1s', '2s', '3s'].includes(restartTime.exec(msg.toString())[1]))
-            sendRestart(bot.client1, bot.client2, restartTime.exec(msg.toString())[1])
+            chat.restart(bot.client1, bot.client2, restartTime.exec(msg.toString())[1])
         const restartNow = /^UltimateAutoRestart » Restarting... join back soon!$/
         if (restartNow.test(msg.toString())) {
-            sendRestart(bot.client1, bot.client2, '', true)
+            chat.restart(bot.client1, bot.client2, '', true)
             bot.end('Restart')
         }
         const whisper1 = /^nhắn cho (.+)$/
         const whisper2 = /^(.+) nhắn: (.+)$/
-        if (whisper1.test(msg.toString()) || whisper2.test(msg.toString())) embedColor = color.pink
-        sendChat(bot.client1, bot.client2, new MessageEmbed()
+        if (whisper1.test(msg.toString()) || whisper2.test(msg.toString())) embedColor = chat.colors.pink
+        chat.chat(bot.client1, bot.client2, new MessageEmbed()
             .setDescription(msg.toString())
             .setColor(embedColor), false
         )
         if (msg.toString().trim().toLowerCase() == 'dùng lệnh/anarchyvn  để vào server.') {
             bot.chat('/anarchyvn');
-            sendChat(bot.client1, bot.client2, new MessageEmbed()
+            chat.chat(bot.client1, bot.client2, new MessageEmbed()
                 .setDescription('Đã nhập `/anarchyvn`')
-                .setColor(color.green), true)
+                .setColor(chat.colors.green), true)
         }
         if (!bot.client1.channels.cache.get(process.env.DM_CHANNEL)) return
         let test = false;
@@ -54,7 +52,10 @@ module.exports = {
             'Please log-in in order to use the chat or any commands!',
             /^(.+) joined the game$/,
             /^CS: (.+)$/,
-            /^UltimateAutoRestart » CONSOLE forced a restart. Restarting in (.+)$/
+            /^UltimateAutoRestart » CONSOLE forced a restart. Restarting in (.+)$/,
+            /^(.+) (has completed the challenge|reached the goal) (.+)$/,
+            /^[AFK+] (.+)$/,
+            ...chat.death_message
         ].forEach(text => {
             if (typeof text == 'object') test = text.test(msg.toString().trim()) ? true : test
             else if (typeof text == 'string') test = msg.toString().trim() == text ? true : test

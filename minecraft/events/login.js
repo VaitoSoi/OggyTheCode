@@ -13,6 +13,7 @@ module.exports = {
         clearTimeout(bot.reconnect)
         bot.login++
         bot.joinAt = Date.now()
+        bot.anti_bot = false
         let sv = ''
         if (bot.login == 1) sv = 'PIN'
         else if (bot.login == 2) sv = 'MAIN'

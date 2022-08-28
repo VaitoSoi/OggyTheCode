@@ -15,19 +15,22 @@ module.exports = {
         let action = args[1]
         let id = args[2]
         let howToUseMsg = '🟦 | Cách dùng:\n' +
+            '```\n' +
             '+ og.config create\n' +
             '+ og.config set:\n' +
-            '> og.config set channel <livechat|status|restart> <#channel|channel_id>\n' +
+            '> og.config set channel <livechat|status|restart> <#channel|channel_id> (no_lock_channel) (no_message_role)\n' +
             '> og.config set role <@role|role_id>\n' +
-            '> og.config set livechat_type <message|embed>\n' +
-            '> og.config set timestamp <on|off>\n' +
+            '> og.config set feature <livechat_type|join_leave|timestamp> <on|off>\n' +
             '+ og.config show\n' +
             '+ og.config delete\n' +
+            '```\n' +
             '❔ | Giải thích:\n' +
+            '```\n' +
+            '> <>: ép buộc | (): không cần thiết (thường dùng để tắt 1 tính năng)\n' +
             '> <choice 1|choice 2|...>: chọn 1 trong các lựa chọn (choice 1, choice 2,...)\n' +
-            '> @channel: tag 1 channel (`<#channel-id>`)\n' +
-            '> @role: tag 1 role (`<@!role-id>`)\n' +
-            '> <channel-id> và <role-id>: id của channel hoặc role'
+            '> @channel hoặc @role: tag 1 channel hoặc role (`<#channel-id>` hoặc `<@!role-id>`)\n' +
+            '> <channel-id> và <role-id>: id của channel hoặc role\n' +
+            '```\n'
         if (!action) return message.reply(
             '🔴 | Thiếu action (create, set, show, delete)\n' + howToUseMsg
         )
@@ -68,9 +71,12 @@ module.exports = {
             if (!data)
                 return message.reply('🔴 | Không có dữ liệu về cài đặt của bot.\n' +
                     '🟡 | Dùng lệnh `og.config create` để tạo cài đặt')
+            if (args[3]) return message.reply('🛑 | Thiếu `thể loại`')
             if (id === 'channel') {
                 let type = args[3]
                 let channel
+                let no_message_role = args.join(' ').toLowerCase().split(' ').includes('no_message_role')
+                let no_lock_channel = args.join(' ').toLowerCase().split(' ').includes('no_lock_channel')
                 if (isNaN(args[4])) channel = message.mentions.channels.first()
                 else channel = message.guild.channels.cache.get(args[4])
                 if (!channel.isText()) return message.reply(`🔴 | <#${channel.id}> phải là một kênh văn bản !`)
@@ -80,7 +86,7 @@ module.exports = {
                 else if (type === 'restart') data.config.channels.restart = channel.id
                 else if (type === 'status') data.config.channels.status = channel.id
                 await data.save()
-                if (type == 'status' || type == 'restart') {
+                if ((type == 'status' || type == 'restart') && no_lock_channel == false) {
                     try {
                         channel.permissionOverwrites.edit(message.guild.roles.everyone, {
                             'SEND_MESSAGES': false,
@@ -105,7 +111,8 @@ module.exports = {
                         message.channel.send(`🟡 | Vui lòng khóa kênh ${channel} tránh tình trạng trôi tin nhắn!`)
                     }
                 }
-                if (type == 'status') {
+                if (no_message_role == true) return
+                else if (type == 'status') {
                     const embed = new MessageEmbed()
                         .setAuthor({
                             name: `${client.user.tag} Server Utils`,
@@ -235,13 +242,15 @@ module.exports = {
                 data.config.chatType = args[3]
                 await data.save()
                 message.reply('✅ | Đã chỉnh chế độ hiển thị thành công')
-            } else if (id == 'livechat_type' || id == 'timestamp' || id == 'join_leave') {
-                if ((id != 'livechat_type' && !['on', 'off'].includes(args[3]))
-                    || (id == 'livechat_type' && !['message', 'embed'].includes(args[3])))
-                    return message.reply('🛑 | Chế độ hiển thị không hợp lệ')
-                data.config[id == 'livechat_type' ? 'chatType' : id] = args[3]
+            } else if (id == 'feature') {
+                let type = args[3]
+                data.config[id == 'livechat_type' ? 'chatType' : id] =
+                    type == 'livechat_type'
+                        ? type == 'on'
+                            ? 'embed' : 'message'
+                        : type
                 await data.save()
-                message.reply('✅ | Đã chỉnh chế độ hiển thị thành công')
+                interaction.editReply('✅ | Đã chỉnh chế độ hiển thị thành công')
             } else if (!id) return message.reply(
                 '🔴 | Thiếu id (channel, role, livechat_type, timestamp)\n' + howToUseMsg
             )

@@ -17,28 +17,25 @@ module.exports = {
         const table = new ascii()
 
         const client = interaction.client
-        if (bot.login == 0) interaction.editReply('🛑 | Bot đang mất kết nối với server')
-        else {
-            let players = Object.values(bot.players).map(p => p.username)
+        let players = Object.values(bot.players).map(p => p.username)
 
-            if (players.length < 15)
-                for (let i = 0; i < players.length; i += 2)
-                    table.addRow(players[i], players[i + 1])
-            else for (let i = 0; i < players.length; i += 3)
-                table.addRow(players[i], players[i + 1], players[i + 2])
+        if (players.length < 15)
+            for (let i = 0; i < players.length; i += 2)
+                table.addRow(players[i], players[i + 1])
+        else for (let i = 0; i < players.length; i += 3)
+            table.addRow(players[i], players[i + 1], players[i + 2])
 
-            let i = 0
-            interaction.editReply({
-                embeds: [
-                    new MessageEmbed()
-                        .setDescription('```' +
-                            table.toString()
-                                .split('\n')
-                                .slice(1, -1)
-                                .join('\n')
-                            + '```')
-                ]
-            })
-        }
+        let i = 0
+        interaction.editReply({
+            embeds: [
+                new MessageEmbed()
+                    .setDescription('```' +
+                        table.toString()
+                            .split('\n')
+                            .slice(1, -1)
+                            .join('\n')
+                        + '```')
+            ]
+        })
     }
 }

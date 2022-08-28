@@ -23,7 +23,7 @@ module.exports = {
             role, 'Oggy Reaction-Role'
         )
             .then((mem) => reaction.message.reply({
-                content: `Đã xóa role ${role} cho ${user}`,
+                content: `Đã xóa role ${role} cho ${mem.user}`,
                 allowedMentions: {
                     parse: ['users']
                 }

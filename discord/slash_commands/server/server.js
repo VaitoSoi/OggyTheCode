@@ -4,11 +4,7 @@ const { Bot } = require('mineflayer')
 const util = require('minecraft-server-util')
 let commandName = ''
 let i = 0
-if (process.env.MC_HOST != 'localhost') process.env.MC_HOST.split('').forEach(n => {
-    if (n.toLowerCase() === '.') {
-        return commandName = process.env.MC_HOST.split('').slice(0, i).join('')
-    } else i++
-})
+if (process.env.MC_HOST != 'localhost') commandName = process.env.MC_HOST.split('').slice(0, process.env.MC_HOST.split('').indexOf('.')).join('')
 else commandName = 'server'
 
 module.exports = {

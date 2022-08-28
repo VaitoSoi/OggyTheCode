@@ -12,12 +12,13 @@ module.exports = {
      * @param {String} reason
      */
     async run(bot, reason) {
+        if (bot.anti_bot == true) return
         bot.login = 0
         bot.joinAt = 0
         let reconnect = '3m'
         let r = reason
         let auto = true
-        if (reason.toLowerCase().split(' ')[0] == 'admin') 
+        if (reason.toLowerCase().split(' ')[0] == 'admin')
             reason.toLowerCase().split(' ').slice(1).forEach((args) => {
                 let key, value, i = 0
                 args.split('').forEach((c) => {

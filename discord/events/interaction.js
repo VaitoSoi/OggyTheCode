@@ -10,7 +10,7 @@ module.exports = {
         if (interaction.isCommand()) {
             const client = interaction.client
             let cmd = await client.slash.commands.get(interaction.commandName)
-            if (!client.slash.categories.user.includes(cmd.data.name)) return
+            if (!cmd || !client.slash.categories.user.includes(cmd.data.name)) return
             const db = require('../../models/blacklist')
             const data = await db.findOne({ id: interaction.user.id })
             if (data

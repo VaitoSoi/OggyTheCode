@@ -131,7 +131,7 @@ module.exports = {
                     content: '❕ Time out!'
                 }))
         } else {
-            let prefix = process.env.prefix
+            let prefix = process.env.PREFIX
             /*
             const db = require('../../../models/option')
             const data = await db.findOne({
@@ -142,7 +142,7 @@ module.exports = {
                 && data.config.prefix != '') prefix = data.config.prefix */
             let command = client.message.commands.get(args[1])
             const aliases = client.message.aliases.get(args[1])
-            if (!command && aliases) cmd = client.message.commands.get(aliases)
+            if (!command && aliases) command = client.message.commands.get(aliases)
             if (!command && !aliases) return message.reply(`🔴 | Không tìm thấy lệnh \`${args[1]}\``)
             const embed = new MessageEmbed()
                 .setAuthor({
