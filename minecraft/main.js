@@ -61,7 +61,7 @@ async function run(client1, client2) {
      */
     let m = '.'
     setInterval(() => {
-        if (bot.login != 0) {
+        if (Object.values(bot.players).length != 0) {
             const tps = bot.getTps() ? bot.getTps() : 20
             const player = bot.players ? Object.values(bot.players).map(p => p.username).length : 1
             const ping = bot.player ? bot.player.ping : 0
@@ -74,7 +74,7 @@ async function run(client1, client2) {
                 activities: [{ name: `TPS: ${tps} | Players: ${player} | Ping: ${ping}ms`, type: 'PLAYING' }],
                 status: discordStatus
             })
-        } else if (bot.login == 0) {
+        } else {
             if (m.length < 5) m += '.'
             else m = '.'
             client1.user.setPresence({
