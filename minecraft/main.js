@@ -13,30 +13,12 @@ const death_event = require('mineflayer-death-event')
 const fs = require('node:fs')
 
 /**
- * @param {Client} client1 
- * @param {Client} client2 
- */
-async function start(client1, client2) {
-    /**
-     * @param {fs.PathLike} path 
-     * @returns 
-     */
-    let refresh = async (path) => fs.readdirSync(path).forEach(dir => {
-        if (dir.endsWith('.js')) {
-            delete require.cache[require.resolve(`../${path}${dir}`)]
-            //console.log(`Đã làm mới ${dir}`)
-        }
-        else if (fs.lstatSync(`./minecraft/${dir}`).isDirectory()) refresh(`./minecraft/${dir}/`)
-    })
-    refresh('./minecraft/').then(() => run(client1, client2))
-}
-
-/**
  * Create mineflayer bot
  * @param {Client} client1 
  * @param {Client} client2 
+ * @param {Boolean} handler
  */
-async function run(client1, client2) {
+async function run(client1, client2, handler) {
     /**
      * 
      * Create Bot
@@ -71,7 +53,7 @@ async function run(client1, client2) {
     bot.cmds = []
     bot.reconnect = 0
     bot.joinAt = 0
-    require('./handler/event')(bot)
+    require('./handler/event')(bot, handler)
     require('./handler/command')(bot.cmds)
 
     /**
@@ -109,4 +91,4 @@ async function run(client1, client2) {
     }, 5 * 1000);
 }
 
-module.exports = start
+module.exports = run

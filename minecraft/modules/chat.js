@@ -20,9 +20,15 @@ module.exports.death_message = [
     /^(.+) was burnt to a crisp$/,
     /^(.+) was playing with magic$/,
     /^(.+) thought standing in fire was a good idea$/,
+    /^(.+) was playing with (tnt|poision)$/,
+    /^(.+) died to a wither skull$/,
+    /^(.+) withered away$/,
+    /^(.+) was pricked to death$/,
+    /^(.+) fell into the void$/,
     /^(.+) tried climbing to greater heights and fell off (.+)$/,
     /^(.+) (was slain|was blown up|was pushed into lava|was pushed off a high place) by (.+)$/,
-    /^(.+) (was slain by|murdered|killed|was ganed up on by some) (.+) (somehow using|using|by|One wacked them with) (.+)$/,
+    /^(.+) tried playing with (.+) armor with thorns$/,
+    /^(.+) (was slain by|murdered|killed|was ganed up on by some|was shot by a|was shot by|tried playing with) (.+) (somehow using|using|by|One wacked them with|One shot them with) (.+)$/,
 ]
 
 const Discord = require('discord.js')

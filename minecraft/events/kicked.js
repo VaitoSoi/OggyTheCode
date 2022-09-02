@@ -15,26 +15,30 @@ module.exports = {
         const flame_cord_1 = /^kết nối lại (.+) để vào server$/
         const flame_cord_2 = /^flamecord$/
         const flame_cord_3 = /^ nếu bạn không vào được hãy báo cáo với owner$/
-        const bot_sentry_1 = /^bot sentry$/
+        const chat = /^you are chatting too fast!$/
         let obj = JSON.parse(reason.toString())
-        console.log(obj)
+        //console.log(obj)
         if (obj.extra) {
-            let show = async (obj) => {
+            /**
+             * @param {Array} array 
+             */
+            let show = async (array) => {
                 let str = ''
-                if (!obj.extra.length || obj.extra.length == 0) str = await show(obj.extra)
-                else obj.extra.forEach(e => {
-                    if (!e.text) return
-                    e.text.split('\n').forEach(text => {
+                array.forEach(async e => {
+                    if (e.extra && e.extra.length != 0) str = await show(e.extra)
+                    else if (!e.text) return
+                    else e.text.split('\n').forEach(text => {
                         if (flame_cord_1.test(text.toString().toLowerCase())
-                            || bot_sentry_1.test(text.toString().toLowerCase())) str = 'Anti-Bot'
-                        else if (flame_cord_2.test(text.toString().toLowerCase())
-                            || flame_cord_3.test(text.toString().toLowerCase())) return
+                            || chat.test(text.toString().toLowerCase())) return str = 'Anti-Bot'
+                        /*else if (flame_cord_2.test(text.toString().toLowerCase())
+                            || flame_cord_3.test(text.toString().toLowerCase())) return*/
                         else if (text.trim() != '' && str.toLowerCase() != 'anti-bot') str += `${text}\n`
                     })
                 })
                 return str
             }
-            let reas = await show(obj)
+            let reas = obj.text != '' ? obj.text.replace('§', '') : await show(obj.extra)
+            console.log(reas)
             send(bot.client1, bot.client2,
                 new MessageEmbed()
                     .setDescription(

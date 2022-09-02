@@ -3,18 +3,16 @@ const mongoose = require('mongoose')
 let Schema = new mongoose.Schema({
     name: String,
     death: {
-        num: Number,
-        first: String,
-        last: String
+        total: Number,
+        record: Array
     },
     kill: {
-        num: Number,
-        first: String,
-        last: String
+        total: Number,
+        record: Array
     },
     date: {
-        seen: Number,
-        join: Number
+        join: Number,
+        seen: Number
     }
 })
 

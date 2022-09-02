@@ -65,10 +65,10 @@ module.exports = {
              * @param {String} emoji 
              */
             const react = (message, emoji) => {
-                message.reactions.removeAll()
-                message.guild.me.permissions.has('ADD_REACTIONS')
+                message.reactions.removeAll().catch(e => { })
+                return message.guild.me.permissions.has('ADD_REACTIONS')
                     && message.guild.me.permissionsIn(message.channel).has('ADD_REACTIONS')
-                    ? void message.react(emoji).catch(e => { }) : undefined
+                    ? void message.react(emoji).catch(e => { }).then(() => true) : undefined
             }
             const blacklistDB = require('../../models/blacklist')
             const blacklistData = await blacklistDB.findOne({
@@ -84,7 +84,7 @@ module.exports = {
                     && (blacklistData.end.toLowerCase() == 'vĩnh viễn'
                         || Math.floor(Date.now() / 1000) < Number(blacklistData.end)))
                     return react(message, '❌')
-                if (bot.login != 2) return react(message, '❌')
+                if (!bot.players) return react(message, '❌')
                 else {
                     bot.chat(`<${message.author.tag}> ${message.content.trim()}`)
                     return react(message, '✅')

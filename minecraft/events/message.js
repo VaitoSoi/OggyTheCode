@@ -1,6 +1,8 @@
 const mineflayer = require('mineflayer')
 const { MessageEmbed } = require('discord.js')
 const chat = require('../modules/chat')
+const data = require('../modules/data')
+const wait = require('node:timers/promises').setTimeout
 
 module.exports = {
     name: 'message',
@@ -31,6 +33,7 @@ module.exports = {
             .setColor(embedColor), false
         )
         if (msg.toString().trim().toLowerCase() == 'dùng lệnh/anarchyvn  để vào server.') {
+            await wait(1000)
             bot.chat('/anarchyvn');
             chat.chat(bot.client1, bot.client2, new MessageEmbed()
                 .setDescription('Đã nhập `/anarchyvn`')
@@ -55,11 +58,22 @@ module.exports = {
             /^UltimateAutoRestart » CONSOLE forced a restart. Restarting in (.+)$/,
             /^(.+) (has completed the challenge|reached the goal) (.+)$/,
             /^[AFK+] (.+)$/,
+            'Already connecting to this server!',
+            /^Exception Connecting:ReadTimeoutException : (.+)$/,
+            /^[Broadcast] (.+)$/,
             ...chat.death_message
         ].forEach(text => {
             if (typeof text == 'object') test = text.test(msg.toString().trim()) ? true : test
             else if (typeof text == 'string') test = msg.toString().trim() == text ? true : test
         })
         if (test == false) bot.client1.channels.cache.get(process.env.DM_CHANNEL).send('```' + msg.toString() + '```')
+        chat.death_message.forEach(reg => {
+            if (reg.test(msg.toString().trim())) {
+                const exce = reg.exec(msg.toString().trim())
+                const victim = exce[1]
+                const killer = exce[2]
+                return data.kill_death(msg.toString().trim(), victim, killer)
+            }
+        })
     }
 }

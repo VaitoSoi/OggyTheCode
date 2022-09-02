@@ -35,6 +35,10 @@ const start_mc = (client1, client2) => {
     const util = require('minecraft-server-util')
     const send = require('./minecraft/modules/chat').chat
     const color = require('./minecraft/modules/chat').colors
+    /**
+     * @param {String} e 
+     * @param {Number} type 
+     */
     const sendErr = (e, type) => {
         client1.executed = false
         send(client1, client2, new MessageEmbed()
@@ -50,15 +54,15 @@ const start_mc = (client1, client2) => {
             .setColor(color.yellow), true
         )
         client1.executed = true
-        clearInterval(i)
-        require('./minecraft/main')(client1, client2).catch(e => {
+        clearInterval(status_interval)
+        require('./minecraft/main')(client1, client2, true).catch(e => {
             console.log(e)
             sendErr(e, 2)
         })
     }
     const status = process.env.MC_HOST != 'localhost' ? util.status : util.statusLegacy
     let m = '.'
-    let i = setInterval(() => {
+    let status_interval = setInterval(() => {
         if (m.length < 5) m += '.'
         else m = '.'
         client1.user.setPresence({
@@ -72,7 +76,7 @@ const start_mc = (client1, client2) => {
     }, 5 * 1000)
     clearTimeout(client1.mc_timeout == 0 ? undefined : client1.mc_timeout)
     status(process.env.MC_HOST, Number(process.env.MC_PORT))
-        .then(res => execute())
+        .then(res => { try { execute() } catch (e) { sendErr(e, 2) } })
         .catch(e => sendErr(e, 1))
 }
 

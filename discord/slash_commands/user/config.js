@@ -391,7 +391,13 @@ module.exports = {
                     void interaction.editReply(`🛑 | Không thể tìm thấy tin nhắn với id \`${id}\``))
                 if (!msg) return
                 data.config.messages[type] = msg.id
-                await data.save()
+                await data.save().catch(e => {
+                    interaction.editReply(
+                        '❌ | Không thể chỉnh sửa data\n'+
+                        '🛑 | Lỗi: \n' +
+                        '```' + e + '```'
+                    )
+                })
                 let embed = []
                 embed.push(new MessageEmbed()
                     .setTitle('Đi tới tin nhắn mới')

@@ -2,9 +2,11 @@ const { CommandInteraction, MessageEmbed } = require('discord.js')
 const { SlashCommandBuilder } = require('@discordjs/builders')
 const { Bot } = require('mineflayer')
 const util = require('minecraft-server-util')
+const ascii = require('ascii-table')
 let commandName = ''
 let i = 0
-if (process.env.MC_HOST != 'localhost') commandName = process.env.MC_HOST.split('').slice(0, process.env.MC_HOST.split('').indexOf('.')).join('')
+if (process.env.MC_HOST != 'localhost')
+    commandName = process.env.MC_HOST.split('').slice(0, process.env.MC_HOST.split('').indexOf('.')).join('')
 else commandName = 'server'
 
 module.exports = {
@@ -35,14 +37,18 @@ module.exports = {
         await util.status(process.env.MC_HOST, Number(process.env.MC_PORT))
             .then((response) => {
                 const ping = Date.now() - now
+                const table = new ascii()
+                table.addRow(`🟢 Online`, ` 🙎‍♂️ Player: ${response.players.online}/${response.players.max}`)
+                table.addRow(`⌛ Ping: ${ping}ms`, `${bot.getTps() ? `⏳ TPS: ${bot.getTps()} tps` : ''}`)
                 embed
                     .setColor('GREEN')
                     .setDescription(
-                        `**Status:** 🟢 Online\n` +
-                        `**Player:** ${response.players.online}/${response.players.max}\n` +
-                        `**Version:** ${response.version.name}\n` +
-                        `**Ping:** ${ping}ms\n` +
-                        `**MOTD:** \n>>> ${response.motd.clean}\n`
+                        '```' +
+                        table.toString().split('\n').slice(1, -1).map(str => str.slice(2, -2)).join('\n') + '\n' +
+                        `Version: ${response.version.name}\n` +
+                        `MOTD:\n` +
+                        `${response.motd.clean}\n` +
+                        '```'
                     )
             })
             .catch(e => {

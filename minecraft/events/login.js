@@ -12,6 +12,7 @@ module.exports = {
     async run(bot) {
         clearTimeout(bot.reconnect)
         bot.login++
+        if (bot.login > 2) bot.login = 0
         bot.joinAt = Date.now()
         bot.anti_bot = false
         let sv = ''
