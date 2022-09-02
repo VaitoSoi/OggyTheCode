@@ -10,6 +10,26 @@ const config = {
 const { Client } = require('discord.js')
 const tpsPlugin = require('mineflayer-tps')(mineflayer)
 const death_event = require('mineflayer-death-event')
+const fs = require('node:fs')
+
+/**
+ * @param {Client} client1 
+ * @param {Client} client2 
+ */
+async function start(client1, client2) {
+    /**
+     * @param {fs.PathLike} path 
+     * @returns 
+     */
+    let refresh = async (path) => fs.readdirSync(path).forEach(dir => {
+        if (dir.endsWith('.js')) {
+            delete require.cache[require.resolve(`../${path}${dir}`)]
+            console.log(`Đã làm mới ${dir}`)
+        }
+        else if (fs.lstatSync(`./minecraft/${dir}`).isDirectory()) refresh(`./minecraft/${dir}/`)
+    })
+    refresh('./minecraft/').then(() => run(client1, client2))
+}
 
 /**
  * Create mineflayer bot
@@ -61,9 +81,9 @@ async function run(client1, client2) {
      */
     let m = '.'
     setInterval(() => {
-        if (Object.values(bot.players).length != 0) {
+        if (bot.players) {
             const tps = bot.getTps() ? bot.getTps() : 20
-            const player = bot.players ? Object.values(bot.players).map(p => p.username).length : 1
+            const player = bot.players ? Object.values(bot.players).length : 1
             const ping = bot.player ? bot.player.ping : 0
             const discordStatus = 'online'
             client1.user.setPresence({
@@ -89,4 +109,4 @@ async function run(client1, client2) {
     }, 5 * 1000);
 }
 
-module.exports = run
+module.exports = start
