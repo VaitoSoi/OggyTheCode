@@ -24,7 +24,7 @@ async function start(client1, client2) {
     let refresh = async (path) => fs.readdirSync(path).forEach(dir => {
         if (dir.endsWith('.js')) {
             delete require.cache[require.resolve(`../${path}${dir}`)]
-            console.log(`Đã làm mới ${dir}`)
+            //console.log(`Đã làm mới ${dir}`)
         }
         else if (fs.lstatSync(`./minecraft/${dir}`).isDirectory()) refresh(`./minecraft/${dir}/`)
     })
