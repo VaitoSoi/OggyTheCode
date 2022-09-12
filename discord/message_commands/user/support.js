@@ -11,6 +11,6 @@ module.exports = {
     * @param {String[]} args 
     */ 
     run: async(client, message, args) => {
-        message.reply('👇 | Support Sever link: https://discord.gg/NBsnNGDeQd')
+        message.reply('👇 | Support Sever link: https://discord.gg/htJ2kRSfPz')
     }
 }
