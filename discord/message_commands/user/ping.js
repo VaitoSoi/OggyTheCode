@@ -31,7 +31,7 @@ module.exports = {
             let wsping = client.ws.ping
             m.edit(
                 '**-----Oggy & WS & DB Ping-----**\n' +
-                `> Oggy: ${await rate(Number(ping))}\n` +
+                `> JoyPot: ${await rate(Number(ping))}\n` +
                 `> WS: ${await rate(Number(wsping))}\n` + 
                 `> Mongoose: ${await rate(Number(dbping))}\n` +
                 `**--------------------------------------**`
