@@ -9,8 +9,8 @@ const config = {
 }
 const { Client } = require('discord.js')
 const tpsPlugin = require('mineflayer-tps')(mineflayer)
-const death_event = require('mineflayer-death-event')
-const fs = require('node:fs')
+//const death_event = require('mineflayer-death-event')
+//const fs = require('node:fs')
 
 /**
  * Create mineflayer bot
@@ -38,7 +38,7 @@ async function run(client1, client2, handler) {
 
     bot.loadPlugin(tpsPlugin)
     bot.loadPlugin(require('./handler/afk'))
-    bot.loadPlugin(death_event)
+    //bot.loadPlugin(death_event)
 
     /**
      * 

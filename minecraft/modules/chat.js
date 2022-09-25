@@ -26,9 +26,12 @@ module.exports.death_message = [
     /^(.+) was pricked to death$/,
     /^(.+) fell into the void$/,
     /^(.+) tried climbing to greater heights and fell off (.+)$/,
-    /^(.+) (was slain|was blown up|was pushed into lava|was pushed off a high place) by (.+)$/,
+    /^(.+) killed (.+)'s Wolf$/,
+    /^(.+) was playing on a magma block too long$/,
+    /^(.+) stood too close to (.+)'s bed in the nether$/,
+    /^(.+) (was slain|was blown up|was pushed into lava|was pushed off a high place|was spat on|was struck) by ( |a )(.+)$/,
     /^(.+) tried playing with (.+) armor with thorns$/,
-    /^(.+) (was slain by|murdered|killed|was ganed up on by some|was shot by a|was shot by|tried playing with) (.+) (somehow using|using|by|One wacked them with|One shot them with) (.+)$/,
+    /^(.+) (was slain by|murdered|killed|was ganed up on by some|was shot by a|was shot by|tried playing with) (.+)( somehow using| using| by|! One wacked them with|! One shot them with) (.+)$/,
 ]
 
 const Discord = require('discord.js')
@@ -49,11 +52,9 @@ module.exports.chat = (client1, client2, embed, notify, join_leave) => {
      */
     const noEmbedLink = (str) =>
         str.trim().split(' ').map(arg => arg.startsWith('https://') || arg.startsWith('http://') ? `<${arg}>` : arg).join(' ')
-    client1.guilds.cache.forEach(async (guild) => {
-        const data = await db.findOne({
-            'guildid': guild.id
-        })
-        if (!data) return
+    db.find().then((datas) => datas.forEach(data => {
+        let guild = client1.guilds.cache.get(data.guildid) || client2.guilds.cache.get(data.guildid) || undefined
+        if (!guild) return
         const channel = guild.channels.cache.get(data.config.channels.livechat)
         if (!channel || !channel.isText()) return
         if (join_leave == true && (!data.config.join_leave || data.config.join_leave == 'off')) return
@@ -79,39 +80,7 @@ module.exports.chat = (client1, client2, embed, notify, join_leave) => {
                     ? `${timestamp} ${noEmbedLink(embed.description)}`
                     : `${timestamp} ${noEmbedLink(embed.title)}`
         ).catch(e => { })
-    })
-    client2.guilds.cache.forEach(async (guild) => {
-        if (guild.members.cache.get(client1.user.id)) return
-        const data = await db.findOne({
-            'guildid': guild.id
-        })
-        if (!data) return
-        const channel = guild.channels.cache.get(data.config.channels.livechat)
-        if (!channel || !channel.isText()) return
-        if (join_leave == true && (!data.config.join_leave || data.config.join_leave == 'off')) return
-        if (!guild.me.permissionsIn(channel).has('SEND_MESSAGES')) return
-        let timestamp = '', dash = '--------------------------'
-        if (data.config.timestamp && data.config.timestamp == 'on') {
-            embed.setTimestamp(); timestamp = `[<t:${Math.floor(Date.now() / 1000)}:t>]`;
-            dash = '---------------------------------------'
-        }
-        if (guild.me.permissionsIn(channel).has('EMBED_LINKS')
-            && (!data.config.chatType
-                || data.config.chatType.toLowerCase() === 'embed')) channel.send({ embeds: [embed] }).catch(e => { })
-        else channel.send(
-            notify == true
-                ? embed.description
-                    ? `\`${dash}\`\n` +
-                    `${embed.description.split('\n').map(str => `${timestamp} **Notify » ${str} **`).join('\n')}\n` +
-                    `\`${dash}\``
-                    : `\`${dash}\`\n` +
-                    `${embed.title.split('\n').map(str => `${timestamp} **Notify » ${str} **`).join('\n')}\n` +
-                    `\`${dash}\``
-                : embed.description
-                    ? `${timestamp} ${noEmbedLink(embed.description)}`
-                    : `${timestamp} ${noEmbedLink(embed.title)}`
-        ).catch(e => { })
-    })
+    }))
 }
 
 /**

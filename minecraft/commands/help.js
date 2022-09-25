@@ -22,14 +22,15 @@ module.exports = {
         if (!args[2] || !cmd) bot.chat(`Các lệnh hiện có: ${bot.cmds.map(e => e.name).join(', ')}`)
         else {
             let str = ''
-            if (Object.values(bot.players).map(p => p.username).includes(args[0])) str = `/w ${args[0]} `
+            if (Object.keys(bot.players).includes(args[0])
+                && args[0] != bot.player.username) str = `/w ${args[0]} `
             bot.chat(`${str}Name: ${cmd.name}`)
             await wait(1000)
             bot.chat(`${str}Description: ${cmd.description ? cmd.description : 'Không có mô tả'}`)
             await wait(1000)
             bot.chat(`${str}Aliases: ${cmd.aliases ? cmd.aliases.join(', ') : 'Không có tên gọi khác'}`)
             await wait(1000)
-            bot.chat(`${str}Useage: og!${cmd.name} ${cmd.usage ? cmd.usage : ''}`)
+            bot.chat(`${str}Useage: !${cmd.name} ${cmd.usage ? cmd.usage : ''}`)
         }
     }
 }

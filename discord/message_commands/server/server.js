@@ -19,7 +19,7 @@ module.exports = {
     * @param {Message} message 
     * @param {String[]} args 
     */
-    run: async (bot, client, message, args) => {
+    run: async (client, message, args, bot) => {
         const embed = new MessageEmbed()
             .setAuthor({
                 name: `${client.user.tag} Server Utils`,

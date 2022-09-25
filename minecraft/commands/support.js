@@ -12,7 +12,7 @@ module.exports = {
      */
     run: async (bot, args) => {
         let str = ''
-        if (Object.values(bot.players).map(p => p.username).includes(args[0])) str = `/w ${args[0]} `
+        if (Object.keys(bot.players).includes(args[0])) str = `/w ${args[0]} `
         bot.chat(str + 'Support Sever link: https://discord.gg/NBsnNGDeQd')
     }
 }

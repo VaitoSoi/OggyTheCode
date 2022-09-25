@@ -10,7 +10,12 @@ module.exports = {
         if (interaction.isCommand()) {
             const client = interaction.client
             let cmd = await client.slash.commands.get(interaction.commandName)
-            if (!cmd || !client.slash.categories.user.includes(cmd.data.name)) return
+            if (!cmd) return
+            if (((client.type == 'client_1' && client.executed == false)
+                || (client.type == 'client_2' && client.client1.executed == false))
+                && client.slash.categories.server.includes(cmd.data.name))
+                return interaction.reply('🛑 | Bot chưa kết nối đến server')
+            if (!client.slash.categories.user.includes(cmd.data.name)) return
             const db = require('../../models/blacklist')
             const data = await db.findOne({ id: interaction.user.id })
             if (data

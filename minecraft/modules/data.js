@@ -12,11 +12,11 @@ function create(username, death, kill, date) {
     return new db({
         name: username,
         death: {
-            total: death.total ? death.total : 0,
+            total: 0,
             record: death.record ? death.record : []
         },
         kill: {
-            total: kill.total ? kill.total : 0,
+            total: 0,
             record: kill.record ? death.record : []
         },
         date: {
@@ -47,10 +47,6 @@ async function seen(username, date) {
     let data = await db.findOne({
         name: username
     })
-    let first = {
-        total: 0,
-        record: []
-    }
     if (!data) data = create(username, {}, {}, { seen: date })
     else if (data.date.join == 0) data.date.join = date
     await data.save()
@@ -70,16 +66,16 @@ async function kill_death(message, victim, killer) {
         let data = await db.findOne({
             name: victim
         })
-        if (!data) data = create(victim, { total: 1, record: [message] }, {}, {})
-        else { data.death.total++; data.death.record.push(message) }
+        if (!data) data = create(victim, { total: 0, record: [message] }, {}, {})
+        else { data.death.record.push(message) }
         await data.save()
     }
     if (killer) {
         let data = await db.findOne({
             name: killer
         })
-        if (!data) data = create(killer, {}, { total: 1, record: [message] }, {})
-        else { data.kill.total++; data.kill.record.push(message) }
+        if (!data) data = create(killer, {}, { total: 0, record: [message] }, {})
+        else { data.kill.record.push(message) }
         await data.save()
     }
 }

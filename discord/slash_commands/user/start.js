@@ -8,7 +8,6 @@ module.exports = {
         .setDescription('Bắt đầu mọi thứ')
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
     /**
-    * 
     * @param {CommandInteraction} interaction 
     */ 
     run: async(interaction) => {

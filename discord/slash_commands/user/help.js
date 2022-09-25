@@ -1,6 +1,5 @@
-const { CommandInteraction, MessageEmbed, MessageActionRow, MessageButton, MessageSelectMenu } = require('discord.js')
+const { CommandInteraction, MessageEmbed, MessageActionRow, MessageSelectMenu } = require('discord.js')
 const { SlashCommandBuilder } = require('@discordjs/builders')
-const fs = require('node:fs')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -56,9 +55,9 @@ module.exports = {
             .setThumbnail(client.user.displayAvatarURL())
             .setDescription(
                 'Các lệnh cơ bản: \n' +
-                '> `/config`: Điều chỉnh các cài đặt của bot.\n' +
-                '> `/botinfo`: Toàn bộ thông tin về bot.\n' +
-                '> `/help`: Hiện menu này.\n' +
+                '> </config:0>: Điều chỉnh các cài đặt của bot.\n' +
+                '> </botinfo:0>: Toàn bộ thông tin về bot.\n' +
+                '> </help:0>: Hiện menu này.\n' +
                 '\n' +
                 'Các link liên quan của Oggy:\n' +
                 `[Invite Oggy](https://discord.com/oauth2/authorize?client_id=${client1}&permissions=${permissions}&scope=${scope})` + ' | ' +
@@ -77,7 +76,7 @@ module.exports = {
                                 label: '🏠 Home',
                                 description: 'Trở về trang chủ',
                                 value: 'home'
-                            }].concat(option))
+                            }, ...option])
                             .setPlaceholder('📃 Category')
                             .setDisabled(false)
                     )
@@ -112,7 +111,7 @@ module.exports = {
                     cmds.cmds.forEach((c) => {
                         const cmd = client.slash.commands.get(c)
                         if (!cmd) return
-                        embed.addFields({ name: cmd.data.name, value: cmd.data.description, inline: true })
+                        embed.addFields({ name: `</${cmd.data.name}:0>`, value: cmd.data.description, inline: true })
                     })
                     inter.update({
                         embeds: [embed]

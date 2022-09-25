@@ -1,5 +1,4 @@
 const { Client, Message, MessageEmbed, MessageActionRow, MessageSelectMenu } = require('discord.js')
-const fs = require('node:fs')
 
 module.exports = {
     name: 'help',
@@ -57,13 +56,13 @@ module.exports = {
                 .setThumbnail(client.user.displayAvatarURL())
                 .setDescription(
                     'Các lệnh cơ bản: \n' +
-                    '> `/config`: Điều chỉnh các cài đặt của bot.\n' +
-                    '> `/botinfo`: Toàn bộ thông tin về bot.\n' +
-                    '> `/help`: Hiện menu này.\n' +
+                    '> </config:0>: Điều chỉnh các cài đặt của bot.\n' +
+                    '> </botinfo:0>: Toàn bộ thông tin về bot.\n' +
+                    '> </help:0>: Hiện menu này.\n' +
                     '\n' +
                     'Các link liên quan của Oggy:\n' +
-                    `'[Invite Oggy](https://discord.com/oauth2/authorize?client_id=${client1}&permissions=${permissions}&scope=${scope})` + ' | ' +
-                    `'[Invite Oggy 2](https://discord.com/oauth2/authorize?client_id=${client2}&permissions=${permissions}&scope=${scope})\n`
+                    `[Invite Oggy](https://discord.com/oauth2/authorize?client_id=${client1}&permissions=${permissions}&scope=${scope})` + ' | ' +
+                    `[Invite Oggy 2](https://discord.com/oauth2/authorize?client_id=${client2}&permissions=${permissions}&scope=${scope})\n`
                 )
             let msg = await message.reply({
                 embeds: [

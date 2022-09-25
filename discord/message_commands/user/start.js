@@ -4,6 +4,7 @@ module.exports = {
     name: 'start',
     description: 'Sì ta e ver ry thinh',
     usage: '',
+    aliases: [],
     /**
     * 
     * @param {Client} client 

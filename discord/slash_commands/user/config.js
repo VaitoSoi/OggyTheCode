@@ -44,15 +44,15 @@ module.exports = {
                     .setRequired(true)
                 )
                 .addStringOption(o => o
-                    .setName('message_role')
+                    .setName('message_or_role')
                     .setDescription('Thêm phần lấy role hoặc nhắn tin nhắn')
                     .addChoices(
                         {
-                            name: 'yes',
+                            name: 'có',
                             value: 'yes'
                         },
                         {
-                            name: 'no',
+                            name: 'không',
                             value: 'no'
                         }
                     )
@@ -62,11 +62,11 @@ module.exports = {
                     .setDescription('Khóa kênh')
                     .addChoices(
                         {
-                            name: 'yes',
+                            name: 'có',
                             value: 'yes'
                         },
                         {
-                            name: 'no',
+                            name: 'không',
                             value: 'no'
                         }
                     )
@@ -216,7 +216,7 @@ module.exports = {
                 let type = interaction.options.getString('type')
                 let channel = interaction.options.getChannel('channel')
                 let message_role = interaction.options.getString('message_role') == 'yes' ? true : false
-                let lock_channek = interaction.options.getString('lock_channel') == 'yes' ? true : false
+                let lock_channel = interaction.options.getString('lock_channel') == 'yes' ? true : false
                 if (!channel.isText()) return
                 if (!interaction.guild.me.permissionsIn(channel).has('SEND_MESSAGES'))
                     return interaction.editReply(`🛑 | Bot thiếu quyền \`SEND_MESSAGES\` trong kênh ${channel}`)
@@ -236,7 +236,6 @@ module.exports = {
                         })
                         interaction.channel.send('✅ | Đã chỉnh role cho `@everyone`').then((msg) => setTimeout(() => {
                             msg.delete()
-                            interaction.deleteReply()
                         }, 10 * 1000))
                         channel.permissionOverwrites.edit(interaction.guild.me, {
                             'SEND_MESSAGES': true,
@@ -248,7 +247,7 @@ module.exports = {
                         interaction.channel.send('✅ | Đã chỉnh role cho bot').then((msg) => setTimeout(() => {
                             msg.delete()
                         }, 10 * 1000))
-                    } else interaction.channel.send(`🟡 | Vui lòng khóa kênh ${channel} tránh tình trạng trôi tin nhắn!`)
+                    } else interaction.channel.send(`🔴 | Không thể khóa kênh ${channel}!`)
                 }
                 if (message_role == false) return
                 else if (type == 'status') {

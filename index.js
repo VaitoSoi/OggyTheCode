@@ -1,12 +1,11 @@
-console.log('\n' +
-    '*****************************************************\n' +
-    '*                    OggyTheCode                    *\n' +
-    '*         Official code of OggyTheBot#8216          *\n' +
-    '*              Create by VaitoSoi#2220              *\n' +
-    '*  GitHub: https://github.com/VaitoSoi/OggyTheCode  *\n' +
-    '*****************************************************\n' +
-    '\n')
-
+console.log(
+    ".---------------------------------------------------.\n" +
+    "|                    OggyTheCode                    |\n" +
+    "|         Official code of OggyTheBot#8216          |\n" +
+    "|              Create by VaitoSoi#2220              |\n" +
+    "|  GitHub: https://github.com/VaitoSoi/OggyTheCode  |\n" +
+    "'---------------------------------------------------'\n"
+)
 const { Client, Collection } = require('discord.js')
 const client1 = new Client({
     intents: 131071,
@@ -26,6 +25,7 @@ const client2 = new Client({
         users: false
     }
 })
+
 /**
  * @param {Client} client1
  * @param {Client} client2
@@ -35,18 +35,20 @@ const start_mc = (client1, client2) => {
     const util = require('minecraft-server-util')
     const send = require('./minecraft/modules/chat').chat
     const color = require('./minecraft/modules/chat').colors
+    let retry = 0
     /**
      * @param {String} e 
      * @param {Number} type 
      */
     const sendErr = (e, type) => {
         client1.executed = false
-        send(client1, client2, new MessageEmbed()
+        let reconnect = retry < 10 ? '5m' : 'khi server mở :))'
+        if (retry <= 10) send(client1, client2, new MessageEmbed()
             .setDescription(`Gặp lỗi ${type == 1 ? 'khi lấy thông tin của' : 'kết nối đến'} \`${process.env.MC_HOST}\`\n` +
                 `Lỗi: \`${e}\`\n` +
-                `Kết nối lại sau 5m`)
+                `Kết nối lại sau ${reconnect}`)
             .setColor(color.red), true)
-        client1.mc_timeout = setTimeout(() => client1.start_mc(client1, client2), 5 * 60 * 1000)
+        client1.mc_timeout = setTimeout(() => { retry++; execute() }, 5 * 60 * 1000)
     }
     const execute = () => {
         send(client1, client2, new MessageEmbed()
@@ -54,15 +56,13 @@ const start_mc = (client1, client2) => {
             .setColor(color.yellow), true
         )
         client1.executed = true
+        retry = 0
         clearInterval(status_interval)
-        require('./minecraft/main')(client1, client2, true).catch(e => {
-            console.log(e)
-            sendErr(e, 2)
-        })
+        try { require('./minecraft/main')(client1, client2, true) } catch (e) { console.log(e); sendErr(e, 2) }
     }
     const status = process.env.MC_HOST != 'localhost' ? util.status : util.statusLegacy
     let m = '.'
-    let status_interval = setInterval(() => {
+    const status_interval = setInterval(() => {
         if (m.length < 5) m += '.'
         else m = '.'
         client1.user.setPresence({
@@ -76,7 +76,7 @@ const start_mc = (client1, client2) => {
     }, 5 * 1000)
     clearTimeout(client1.mc_timeout == 0 ? undefined : client1.mc_timeout)
     status(process.env.MC_HOST, Number(process.env.MC_PORT))
-        .then(res => { try { execute() } catch (e) { sendErr(e, 2) } })
+        .then(res => execute())
         .catch(e => sendErr(e, 1))
 }
 

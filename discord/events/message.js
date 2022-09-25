@@ -25,6 +25,10 @@ module.exports = {
         const aliases = client.message.aliases.get(args[0])
         if (!cmd && aliases) cmd = client.message.commands.get(aliases)
         if (!cmd && !aliases) return
+        if (((client.type == 'client_1' && client.executed == false)
+            || (client.type == 'client_2' && client.client1.executed == false))
+            && client.message.categories.server.includes(cmd.name))
+            return message.reply('🛑 | Bot chưa kết nối đến server')
         if (!client.message.categories.user.includes(cmd.name)) return
         const blacklistDB = require('../../models/blacklist')
         const blacklistData = await blacklistDB.findOne({

@@ -13,7 +13,7 @@ module.exports = {
     * @param {Message} message 
     * @param {String[]} args 
     */
-    run: async (bot, client, message, args) => {
+    run: async (client, message, args, bot) => {
         const ascii = require('ascii-table')
         const table = new ascii()
         let players = Object.values(bot.players).map(p => p.username)
