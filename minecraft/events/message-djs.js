@@ -51,25 +51,7 @@ module.exports = {
                     ? `<t:${blacklistData.end}:f> (<t:${blacklistData.end}:R>)`
                     : `\`${blacklistData.end}\``}`
             ) : react(message, '❌')
-        if (!data || message.channelId != data.config.channels.livechat) {
-            let prefix = process.env.PREFIX
-            /*
-            const prefixDB = require('../../models/option')
-            const prefixData = await prefixDB.findOne({
-                guildid: message.guildId
-            })
-            if (prefixData
-                && prefixData.config.prefix
-                && prefixData.config.prefix != '') prefix = prefixData.config.prefix*/
-            if (!message.content.startsWith(prefix)) return
-            const args = message.content.slice(prefix.length).split(/ +/g)
-            let cmd = client.message.commands.get(args[0])
-            const aliases = client.message.aliases.get(args[0])
-            if (!cmd && aliases) cmd = client.message.commands.get(aliases)
-            if (!cmd && !aliases) return
-            if (!client.message.categories.server.includes(cmd.name)) return
-            cmd.run(client, message, args, bot)
-        } else {
+        if (data && message.channelId == data.config.channels.livechat)  {
             if (!bot.players) return react(message, '❌')
             const args = message.content.split(' ')
             const start =

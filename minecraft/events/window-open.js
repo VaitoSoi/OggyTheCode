@@ -18,7 +18,7 @@ module.exports = {
                 .setTitle('Đã click vào cửa sổ `Chuyển Server`')
                 .setColor(color.green), true)
         } else if (Number(window.slots.length) == 45 || Number(window.slots.length) == 46) {
-            let pin = process.env.MC_PIN.split('').map(str => Number(str))
+            let pin = process.env.MC_PIN.split(' ').map(str => Number(str))
             if (process.env.MC_PIN.split(' ').length > 1) pin = process.env.MC_PIN.split(' ').map(str => Number(str))
             bot.simpleClick.leftMouse(pin[0])
             bot.simpleClick.leftMouse(pin[1])

@@ -10,7 +10,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('admin_user')
         .setDescription('!ADMIN ONLY!')
-        .addSubcommand(sub => sub
+        /*.addSubcommand(sub => sub
             .setName('heroku')
             .setDescription('!ADMIN ONLY! | Các lệnh liên quan đến heroku')
             .addStringOption(o => o
@@ -19,7 +19,7 @@ module.exports = {
                 .setRequired(true)
                 .addChoices({ name: 'restart_dyno', value: 'restart_dyno' })
             )
-        )
+        )*/
         .addSubcommand(sub => sub
             .setName('eval')
             .setDescription('!ADMIN ONLY! | Chạy 1 câu lệnh')
@@ -85,7 +85,7 @@ module.exports = {
         ]
         if (interaction.user.id != client.application.owner.id)
             return interaction.editReply(a[Math.floor(Math.random() * a.length)])
-        const id = interaction.options.getSubcommand()
+        /*const id = interaction.options.getSubcommand()
         const action = interaction.options.get('action') ? interaction.options.get('action').value : null
         if (id == 'heroku') {
             if (action == 'restart_dyno') {
@@ -96,12 +96,10 @@ module.exports = {
                 return heroku.delete('/apps/' + app + '/dynos/' + dyno)
                     .catch(e => interaction.editReply('Phát hiện lỗi: \n```' + e + '```'))
             }
-        } else if (id == 'eval') {
+        } else*/ if (id == 'eval') {
             try {
                 await eval(action)
-                interaction.replied
-                    ? interaction.channel.send('✅ | Eval done')
-                    : interaction.editReply('✅ | Eval done')
+                interaction.editReply('✅ | Eval done')
             } catch (error) {
                 interaction.editReply('Lỗi: ```' + error + '```')
             }

@@ -11,6 +11,7 @@ module.exports = {
      * @param {mineflayer.Player} player 
      */
     async run (bot, player) {
+        return
         require('../modules/data').seen(player.username, Math.floor(Date.now() / 1000))
         send(bot.client1, bot.client2, new discord.MessageEmbed()
             .setDescription(`${player.username} vừa thoát server`)

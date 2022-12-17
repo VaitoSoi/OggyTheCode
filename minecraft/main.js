@@ -9,6 +9,7 @@ const config = {
 }
 const { Client } = require('discord.js')
 const tpsPlugin = require('mineflayer-tps')(mineflayer)
+const path_finder = require('mineflayer-pathfinder').pathfinder
 //const death_event = require('mineflayer-death-event')
 //const fs = require('node:fs')
 
@@ -29,6 +30,7 @@ async function run(client1, client2, handler) {
         port: config.port,
         host: config.host,
         version: config.version,
+        checkTimeoutInterval: 10 * 60 * 1000
     })
     /**
      * 
@@ -37,7 +39,8 @@ async function run(client1, client2, handler) {
      */
 
     bot.loadPlugin(tpsPlugin)
-    bot.loadPlugin(require('./handler/afk'))
+    bot.loadPlugin(path_finder)
+    bot.loadPlugin(require('./modules/afk'))
     //bot.loadPlugin(death_event)
 
     /**
@@ -53,6 +56,7 @@ async function run(client1, client2, handler) {
     bot.cmds = []
     bot.reconnect = 0
     bot.joinAt = 0
+    bot.view = false
     require('./handler/event')(bot, handler)
     require('./handler/command')(bot.cmds)
 

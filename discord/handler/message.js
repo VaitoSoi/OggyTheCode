@@ -14,6 +14,7 @@ module.exports = (client) => {
         fs.readdirSync(`./discord/message_commands/${dir}/`).filter(f => f.endsWith('.js')).forEach((file) => {
             const command = require(`../message_commands/${dir}/${file}`);
             if (!command.name) return
+            if (command.name == 'setting') return
             client.message.commands.set(command.name, command)
             client.message.categories[dir].push(command.name)
             if (command.aliases

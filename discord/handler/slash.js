@@ -11,6 +11,7 @@ module.exports = (client) => {
     console.log(`[${client.type.toUpperCase()}] LOADING SLASH_COMMANDS`);
     const commands = [];
     const token = process.env[`DISCORD_TOKEN_${client.num}`]
+    const exclude = ['start', 'setting'];
 
     fs.readdirSync('./discord/slash_commands/').forEach((dir) => {
         client.slash.categories[dir] = []
@@ -18,6 +19,7 @@ module.exports = (client) => {
             const command = require(`../slash_commands/${dir}/${file}`);
             if (!command || !command.data) return
             //if (command.admin == true && client.type == 'client_2') return
+            if (exclude.includes(command.data.name)) return
             command.data.setDMPermission(false)
             commands.push(command.data.toJSON())
             client.slash.commands.set(command.data.name, command)

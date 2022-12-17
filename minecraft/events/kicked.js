@@ -15,6 +15,7 @@ module.exports = {
         const flame_cord_1 = /^kết nối lại (.+) để vào server$/
         const flame_cord_2 = /^flamecord$/
         const flame_cord_3 = /^ nếu bạn không vào được hãy báo cáo với owner$/
+        const bot_sentry = /(.+|)bot sentry(.+|)/
         const chat = /^you are chatting too fast!$/
         let obj = JSON.parse(reason.toString())
         //console.log(obj)
@@ -29,16 +30,15 @@ module.exports = {
                     else if (!e.text) return
                     else e.text.split('\n').forEach(text => {
                         if (flame_cord_1.test(text.toString().toLowerCase())
+                            || bot_sentry.test(text.toString().toLowerCase())
                             || chat.test(text.toString().toLowerCase())) return str = 'Anti-Bot'
-                        /*else if (flame_cord_2.test(text.toString().toLowerCase())
-                            || flame_cord_3.test(text.toString().toLowerCase())) return*/
                         else if (text.trim() != '' && str.toLowerCase() != 'anti-bot') str += `${text}\n`
                     })
                 })
                 return str
             }
             let reas = obj.text != '' ? obj.text.replace('§', '') : await show(obj.extra)
-            console.log(reas)
+            console.log({ reas, obj })
             send(bot.client1, bot.client2,
                 new MessageEmbed()
                     .setDescription(

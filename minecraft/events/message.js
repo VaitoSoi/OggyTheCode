@@ -39,6 +39,7 @@ module.exports = {
                 .setDescription('Đã nhập `/anarchyvn`')
                 .setColor(chat.colors.green), true)
         }
+        /*
         if (!bot.client1.channels.cache.get(process.env.DM_CHANNEL)) return
         let test = false;
         [
@@ -51,7 +52,7 @@ module.exports = {
             /^<(.+)> (.+)$/,
             'CommandWhitelist > No such command.',
             /^(.+) has made the advancement (.+)$/,
-            /^Nếu bạn yêu thích server anarchyvn.net thì đừng quên vote tại đây (.+)$/,
+            /^Shop: (.+)$/,
             'Please log-in in order to use the chat or any commands!',
             /^(.+) joined the game$/,
             /^CS: (.+)$/,
@@ -75,5 +76,6 @@ module.exports = {
                 return data.kill_death(msg.toString().trim(), victim, killer)
             }
         })
+        */
     }
 }

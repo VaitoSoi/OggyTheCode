@@ -244,7 +244,7 @@ module.exports = {
                 message.reply('✅ | Đã chỉnh chế độ hiển thị thành công')
             } else if (id == 'feature') {
                 let type = args[3]
-                data.config[id == 'livechat_type' ? 'chatType' : id] =
+                data.config.feature[id == 'livechat_type' ? 'chatType' : id] =
                     type == 'livechat_type'
                         ? type == 'on'
                             ? 'embed' : 'message'

@@ -55,22 +55,25 @@ module.exports = {
         const action = interaction.options.getString('action')
         const time = interaction.options.getString('time')
         if (id == 'mc') {
-            if (action == 'reconnect') {
-                if (bot.login != 0) interaction.editReply('🛑 | Bot đã kết nối trước đó')
-                else {
-                    clearTimeout(bot.reconnect)
-                    interaction.editReply('✅ | Reconnected')
-                    require('../../../minecraft/main')(client, client.client2)
-                }
-            } else if (action == 'restart') {
-                if (bot.login == 0) clearTimeout(bot.reconnect)
-                else bot.end(`Admin reason:restart time:${time} auto-reconnect:false`)
-                interaction.editReply('✅ | Restarted')
-                setTimeout(() => require('../../../minecraft/main')(client, client.client2), ms(time));
-            } else if (action == 'disconnect') {
-                //if (bot.login == 0) return interaction.editReply('🛑 | Bot đã mất kết nối trước đó')
-                interaction.editReply('✅ | Disconnected')
-                bot.end(`Admin reason:disconnect time:${time} auto-reconnect:true`)
+            switch (action) {
+                case 'reconnect':
+                    if (bot.login != 0) interaction.editReply('🛑 | Bot đã kết nối trước đó')
+                    else {
+                        clearTimeout(bot.reconnect)
+                        interaction.editReply('✅ | Reconnected')
+                        require('../../../minecraft/main')(client, client.client2)
+                    }
+                    break
+                case ' restart':
+                    if (bot.login == 0) clearTimeout(bot.reconnect)
+                    else bot.end(`Admin reason:restart time:${time} auto-reconnect:false`)
+                    interaction.editReply('✅ | Restarted')
+                    setTimeout(() => require('../../../minecraft/main')(client, client.client2), ms(time));
+                    break
+                case 'disconnect':
+                    interaction.editReply('✅ | Disconnected')
+                    bot.end(`Admin reason:disconnect time:${time} auto-reconnect:true`)
+                    break
             }
         } else if (id == 'eval') {
             try {

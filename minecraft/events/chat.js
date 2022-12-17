@@ -15,7 +15,7 @@ module.exports = {
         if (args[0] == '>') args = args.slice(1)
         if (!args[0]) return
         //if (username == bot.player.username) return
-        if (args[0] == bot.player.username) return bot.chat(`Prefix: ${prefix} | Dùng ${prefix}help để biết thông thông tin`)
+        if (args[0] == bot.player.username) return bot.chat(`Prefix: ${prefix} | Dùng ${prefix}help để biết thêm thông tin về các lệnh`)
         if (!args[0].startsWith(prefix)) return
         args[0] = args[0].slice(prefix.length)
         const cmd = await bot.cmds.find(cmd => cmd.name === args[0])

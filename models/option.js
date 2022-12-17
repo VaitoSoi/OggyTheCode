@@ -16,9 +16,11 @@ let Schema = new mongoose.Schema({
         roles: {
             restart: String,
         },
-        chatType: String,
-        timestamp: String,
-        join_leave: String,
+        feature: {
+            chatType: String,
+            timestamp: String,
+            join_leave: String,
+        }
         //prefix: String,
     }
 })

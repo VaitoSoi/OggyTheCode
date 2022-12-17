@@ -414,7 +414,7 @@ module.exports = {
                 })
             } else if (id == 'feature') {
                 let type = interaction.options.getString('type')
-                data.config[id == 'livechat_type' ? 'chatType' : id] =
+                data.config.feature[id == 'livechat_type' ? 'chatType' : id] =
                     type == 'livechat_type'
                         ? type == 'on'
                             ? 'embed' : 'message'

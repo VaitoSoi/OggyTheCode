@@ -57,16 +57,19 @@ module.exports.chat = (client1, client2, embed, notify, join_leave) => {
         if (!guild) return
         const channel = guild.channels.cache.get(data.config.channels.livechat)
         if (!channel || !channel.isText()) return
-        if (join_leave == true && (!data.config.join_leave || data.config.join_leave == 'off')) return
+        const join_leave = data.config.feature ? data.config.feature.join_leave : data.config.join_leave
+        if (join_leave == true && (!join_leave || join_leave == 'off')) return
         if (!guild.me.permissionsIn(channel).has('SEND_MESSAGES')) return
         let timestamp = '', dash = '--------------------------'
-        if (data.config.timestamp && data.config.timestamp == 'on') {
+        const config_timestamp = data.config.feature ? data.config.feature.timestamp : data.config.timestamp
+        if (config_timestamp && config_timestamp == 'on') {
             embed.setTimestamp(); timestamp = `[<t:${Math.floor(Date.now() / 1000)}:t>]`;
             dash = '---------------------------------------'
         }
+        const chatType = data.config.feature ? data.config.feature.chatType : data.config.chatType
         if (guild.me.permissionsIn(channel).has('EMBED_LINKS')
-            && (!data.config.chatType
-                || data.config.chatType.toLowerCase() === 'embed')) channel.send({ embeds: [embed] }).catch(e => { })
+            && (!chatType
+                || chatType.toLowerCase() === 'embed')) channel.send({ embeds: [embed] }).catch(e => { })
         else channel.send(
             notify == true
                 ? embed.description
@@ -101,30 +104,6 @@ module.exports.restart = (client1, client2, time, now) => {
         if ((Date.now() - msg.createdTimestamp) < 60 * 60 * 1000) return
         msg.delete().catch((e) => { })
     })
-    client1.guilds.cache.forEach(async (guild) => {
-        const data = await db.findOne({
-            'guildid': guild.id
-        })
-        if (!data) return
-        const channel = guild.channels.cache.get(data.config.channels.restart)
-        if (!channel || !channel.isText()) return
-        if (!guild.me.permissionsIn(channel).has('SEND_MESSAGES')) return
-        const role = guild.roles.cache.get(data.config.roles.restart)
-        if (!role) return
-        await delMess(channel, data)
-        if (!now) channel.send({
-            content: `${role} | Server sẽ khởi động trong vòng ${time} nữa...`,
-            allowedMentions: {
-                parse: ['roles']
-            }
-        })
-        else channel.send({
-            content: `${role} | Server đang khởi động lại...`,
-            allowedMentions: {
-                parse: ['roles']
-            }
-        })
-    })
     client2.guilds.cache.forEach(async (guild) => {
         if (guild.members.cache.get(client1.user.id)) return
         const data = await db.findOne({
@@ -150,4 +129,26 @@ module.exports.restart = (client1, client2, time, now) => {
             }
         })
     })
+    db.find().then((datas) => datas.forEach(async data => {
+        let guild = client1.guilds.cache.get(data.guildid) || client2.guilds.cache.get(data.guildid) || undefined
+        if (!guild) return
+        const channel = guild.channels.cache.get(data.config.channels.restart)
+        if (!channel || !channel.isText()) return
+        if (!guild.me.permissionsIn(channel).has('SEND_MESSAGES')) return
+        const role = guild.roles.cache.get(data.config.roles.restart)
+        if (!role) return
+        await delMess(channel, data)
+        if (!now) channel.send({
+            content: `${role} | Server sẽ khởi động trong vòng ${time} nữa...`,
+            allowedMentions: {
+                parse: ['roles']
+            }
+        })
+        else channel.send({
+            content: `${role} | Server đang khởi động lại...`,
+            allowedMentions: {
+                parse: ['roles']
+            }
+        })
+    }))
 }

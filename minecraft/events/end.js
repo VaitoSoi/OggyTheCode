@@ -42,6 +42,7 @@ module.exports = {
             })
         else if (reason.toLowerCase() == 'restart') reconnect = '5m'
         else if (reason.toLowerCase() == 'socketclosed') reconnect = '1m'
+        else if (reason.toLowerCase() == 'prismarine-viewer') reconnect = '30s'
         chat(bot.client1, bot.client2, new MessageEmbed()
             .setDescription(
                 `Bot đã mất kết nối với server\n` +

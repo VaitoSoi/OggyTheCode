@@ -25,6 +25,10 @@ module.exports = {
         const aliases = client.message.aliases.get(args[0])
         if (!cmd && aliases) cmd = client.message.commands.get(aliases)
         if (!cmd && !aliases) return
+        return message.reply(
+            `${client.user} đã dừng hỗ trợ Message Command\n` +
+            `Để nhận giúp đỡ vui lòng vào Support Server: https://discord.gg/NBsnNGDeQd`
+        )
         if (((client.type == 'client_1' && client.executed == false)
             || (client.type == 'client_2' && client.client1.executed == false))
             && client.message.categories.server.includes(cmd.name))
