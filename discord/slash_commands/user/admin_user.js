@@ -85,8 +85,8 @@ module.exports = {
         ]
         if (interaction.user.id != client.application.owner.id)
             return interaction.editReply(a[Math.floor(Math.random() * a.length)])
-        /*const id = interaction.options.getSubcommand()
-        const action = interaction.options.get('action') ? interaction.options.get('action').value : null
+        const id = interaction.options.getSubcommand()
+        /*const action = interaction.options.get('action') ? interaction.options.get('action').value : null
         if (id == 'heroku') {
             if (action == 'restart_dyno') {
                 const env = process.env
