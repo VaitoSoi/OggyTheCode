@@ -11,14 +11,6 @@ module.exports = {
         if (message.author.bot) return
         if (client.type == 'client_2' && message.guild.members.cache.get(client.client1.user.id)) return
         let prefix = process.env.PREFIX
-        /*
-        const prefixDB = require('../../models/option')
-        const prefixData = await prefixDB.findOne({
-            guildid: message.guildId
-        })
-        if (prefixData
-            && prefixData.config.prefix
-            && prefixData.config.prefix != '') prefix = prefixData.config.prefix*/
         if (!message.content.startsWith(prefix)) return
         const args = message.content.slice(prefix.length).split(/ +/g)
         let cmd = client.message.commands.get(args[0])

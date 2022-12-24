@@ -51,7 +51,7 @@ module.exports = {
                     ? `<t:${blacklistData.end}:f> (<t:${blacklistData.end}:R>)`
                     : `\`${blacklistData.end}\``}`
             ) : react(message, '❌')
-        if (data && message.channelId == data.config.channels.livechat)  {
+        if (data && message.channelId == data.config.channels.livechat) {
             if (!bot.players) return react(message, '❌')
             const args = message.content.split(' ')
             const start =
@@ -60,7 +60,7 @@ module.exports = {
                 || args[0] == '/msg'
                 ? `${args[0]} ${args[0] != '/r' ? `${args[1]} <${message.author.tag}>` : `<${message.author.tag}>`}` 
                 : `<${message.author.tag}>`
-            bot.chat(`${start} ${message.content.trim()}`)
+            bot.chat(`${start} ${message.content.trim().split(' ').slice(2).join(' ')}`)
             return react(message, '✅')
         }
     }

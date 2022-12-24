@@ -15,7 +15,7 @@ module.exports = {
         if (bot.login > 2) bot.login = 0
         bot.joinAt = Date.now()
         bot.anti_bot = false
-        let sv = ''
+        let sv = ' '
         if (bot.login == 1) sv = 'LOGIN'
         else if (bot.login == 2) sv = 'MAIN'
         chat(bot.client1, bot.client2, new MessageEmbed()

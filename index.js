@@ -131,15 +131,9 @@ require('mongoose').connect(
         useNewUrlParser: true,
     }
 ).then(() => console.log('[MONGOOSE] CONNECTED'))
+require('./express/main')()
 
 client1.login(process.env.DISCORD_TOKEN_1)
     .catch((e) => { console.log(`[CLIENT_1] LOGIN ERROR: ${e}`); process.exit(0) })
 client2.login(process.env.DISCORD_TOKEN_2)
     .catch((e) => { console.log(`[CLIENT_2] LOGIN ERROR: ${e}`); process.exit(0) })
-/*
-const express = require('express')
-const app = express()
-app.get('/status', (req, res) => res.send({ status: 'Online' }))
-app.listen(process.env.EXPRESS_PORT ? Number(process.env.EXPRESS_PORT) : 8000)
-console.log(`[EXPRESS] Listen on port ${process.env.EXPRESS_PORT ? Number(process.env.EXPRESS_PORT) : 8000}`)
-*/

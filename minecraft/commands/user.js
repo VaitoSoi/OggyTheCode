@@ -12,6 +12,7 @@ module.exports = {
      * @param {String[]} args 
      */
     run: async (bot, args) => {
+        return
         const db = require('../../models/players')
         const chat = args[0] == bot.player.username ? '' : `/w ${args[0]}`
         if (!args[2]) return bot.chat(`${chat} Thiếu lựa chọn 'kill' hoặc 'death'`)
