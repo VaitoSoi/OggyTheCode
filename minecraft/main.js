@@ -10,8 +10,6 @@ const config = {
 const { Client } = require('discord.js')
 const tpsPlugin = require('mineflayer-tps')(mineflayer)
 const path_finder = require('mineflayer-pathfinder').pathfinder
-//const death_event = require('mineflayer-death-event')
-//const fs = require('node:fs')
 
 /**
  * Create mineflayer bot

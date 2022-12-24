@@ -12,12 +12,15 @@ module.exports = {
     async run(bot) {
         clearTimeout(bot.reconnect)
         bot.login++
-        if (bot.login > 2) bot.login = 0
         bot.joinAt = Date.now()
         bot.anti_bot = false
         let sv = ' '
-        if (bot.login == 1) sv = 'LOGIN'
-        else if (bot.login == 2) sv = 'MAIN'
+        switch (bot.login) {
+            case 1: sv = 'PIN'; break;
+            case 2: sv = 'QUEUE'; break;
+            case 3: sv = 'MAIN'; break;
+            default: bot.login = 0; break;
+        }
         chat(bot.client1, bot.client2, new MessageEmbed()
             .setDescription(`Bot đã vào cụm \`${sv}\``)
             .setColor(color.green), true)

@@ -128,7 +128,7 @@ module.exports = {
         message.reply({ embeds: [embed] })
         if (full == true) while (embed_array.length) {
             //console.log(embed_array.length)
-            await require('node:timers/promises').setTimeout(1000)
+            await require('node:timers/promises').setTimeout(1000).catch(e => {})
             message.channel.send({ embeds: embed_array.splice(0, 10) })
                 .then(async msg => setTimeout(() => msg.delete(), 30 * 1000))
         }

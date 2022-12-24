@@ -33,13 +33,13 @@ module.exports = {
             .setColor(embedColor), false
         )
         if (msg.toString().trim().toLowerCase() == 'dùng lệnh/anarchyvn  để vào server.') {
-            await wait(1000)
+            await wait(1000).catch(e => {})
             bot.chat('/anarchyvn');
             chat.chat(bot.client1, bot.client2, new MessageEmbed()
                 .setDescription('Đã nhập `/anarchyvn`')
                 .setColor(chat.colors.green), true)
         }
         if (!bot.client1.channels.cache.get(process.env.DM_CHANNEL)) return
-        if (msg.toString().startsWith('[DM]')) bot.client1.channels.cache.get(process.env.DM_CHANNEL).send('```' + msg.toString() + '```')
+        if (msg.toString().startsWith('[ANARCHYVN]')) bot.client1.channels.cache.get(process.env.DM_CHANNEL).send('```' + msg.toString() + '```')
     }
 }

@@ -36,7 +36,7 @@ module.exports = {
     run: async (interaction, bot) => {
         const type = interaction.options.getString('type')
         const name = interaction.options.getString('user_name')
-        const full = interaction.options.getBoolean('full_message')
+        //const full = interaction.options.getBoolean('full_message')
         //console.log({ type, name, full })
         const db = require('../../../models/players')
         const data = await db.findOne({ name: name })
@@ -147,7 +147,7 @@ module.exports = {
         interaction.editReply({ embeds: [embed] })
         if (full == true) while (embed_array.length) {
             //console.log(embed_array.length)
-            await require('node:timers/promises').setTimeout(1000)
+            await require('node:timers/promises').setTimeout(1000).catch(e => {})
             interaction.channel.send({ embeds: embed_array.splice(0, 10) })
                 .then(async msg => setTimeout(() => msg.delete(), 30 * 1000))
         }

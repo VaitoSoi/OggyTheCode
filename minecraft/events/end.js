@@ -58,7 +58,7 @@ module.exports = {
                     .setDescription(`Đang kết nối lại với server....`)
                     .setColor(color.yellow), true
                 )
-                require('../main')(bot.client1, bot.client2)
+                require('../main')(bot.client1, bot.client2, false)
             }
         }, ms(reconnect));
     }

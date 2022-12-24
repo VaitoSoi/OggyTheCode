@@ -54,13 +54,15 @@ module.exports = {
         if (data && message.channelId == data.config.channels.livechat) {
             if (!bot.players) return react(message, '❌')
             const args = message.content.split(' ')
-            const start =
+            const msg =
                 args[0] == '/r'
-                || args[0] == '/w'
-                || args[0] == '/msg'
-                ? `${args[0]} ${args[0] != '/r' ? `${args[1]} <${message.author.tag}>` : `<${message.author.tag}>`}` 
-                : `<${message.author.tag}>`
-            bot.chat(`${start} ${message.content.trim().split(' ').slice(2).join(' ')}`)
+                    || args[0] == '/w'
+                    || args[0] == '/msg'
+                    ? `${args[0]} ${args[0] != '/r'
+                        ? `${args[1]} <${message.author.tag}>`
+                        : `<${message.author.tag}>`} ${message.content.trim().split(' ').slice(2).join(' ')}`
+                    : `<${message.author.tag} ${message.content.trim()}>`
+            bot.chat(msg)
             return react(message, '✅')
         }
     }

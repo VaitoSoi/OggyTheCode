@@ -25,11 +25,11 @@ module.exports = {
             if (Object.keys(bot.players).includes(args[0])
                 && args[0] != bot.player.username) str = `/w ${args[0]} `
             bot.chat(`${str}Name: ${cmd.name}`)
-            await wait(1000)
+            await wait(1000).catch(e => {})
             bot.chat(`${str}Description: ${cmd.description ? cmd.description : 'Không có mô tả'}`)
-            await wait(1000)
+            await wait(1000).catch(e => {})
             bot.chat(`${str}Aliases: ${cmd.aliases ? cmd.aliases.join(', ') : 'Không có tên gọi khác'}`)
-            await wait(1000)
+            await wait(1000).catch(e => {})
             bot.chat(`${str}Useage: !${cmd.name} ${cmd.usage ? cmd.usage : ''}`)
         }
     }

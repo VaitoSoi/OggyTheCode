@@ -76,7 +76,7 @@ const start_mc = (client1, client2) => {
     }, 5 * 1000)
     clearTimeout(client1.mc_timeout == 0 ? undefined : client1.mc_timeout)
     status(process.env.MC_HOST, Number(process.env.MC_PORT))
-        .then(res => execute())
+        .then(() => execute())
         .catch(e => sendErr(e, 1))
 }
 

@@ -27,7 +27,7 @@ module.exports = {
             )
         if (!cmd) return
         args = [username.toString()].concat(args)
-        if (username == bot.player.username) await require('node:timers/promises').setTimeout(1000)
+        if (username == bot.player.username) await require('node:timers/promises').setTimeout(1000).catch(e => {})
         cmd.run(bot, args)
     }
 }
