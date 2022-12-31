@@ -49,7 +49,7 @@ module.exports = {
                     `> **Death(s)**: ${res.data.data.deaths}`
                 );
                 break;
-            case 'seens':
+            case 'seen':
                 interaction.editReply(`Nhìn thấy \`${user_name}\` lần cuối vào <t:${Math.round(res.data.data.time/1000)}:F>`);
                 break;
             default:
