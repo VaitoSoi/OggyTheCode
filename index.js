@@ -7,6 +7,7 @@ console.log(
     "'---------------------------------------------------'\n"
 )
 const { Client, Collection } = require('discord.js')
+const ms = require('ms')
 const client1 = new Client({
     intents: 131071,
     partials: ['MESSAGE', 'REACTION', 'USER'],
@@ -40,44 +41,51 @@ const start_mc = (client1, client2) => {
      * @param {String} e 
      * @param {Number} type 
      */
-    const sendErr = (e, type) => {
-        client1.executed = false
-        let reconnect = retry < 10 ? '5m' : 'khi server mở :))'
+    const sendErr = (e, type, reconnect) => {
+        client1.executed = false;
+        let time = retry < 10 ? (reconnect ?? '5m') : '15m', err = '';
+        switch (type) {
+            case 1: err = `Gặp lỗi khi lấy thông tin của \`${process.env.MC_HOST}\``; break;
+            case 2: err = `Gặp lỗi kết nối đến \`${process.env.MC_HOST}\``; break;
+            case 3: err = `Các client chưa sẵn sàng`; break;
+            default: err = `Lỗi bất định`; break;
+        }
         if (retry <= 10) send(client1, client2, new MessageEmbed()
-            .setDescription(`Gặp lỗi ${type == 1 ? 'khi lấy thông tin của' : 'kết nối đến'} \`${process.env.MC_HOST}\`\n` +
+            .setDescription(`${err}\n` +
                 `Lỗi: \`${e}\`\n` +
-                `Kết nối lại sau ${reconnect}`)
-            .setColor(color.red), true)
-        client1.mc_timeout = setTimeout(() => { retry++; execute() }, 5 * 60 * 1000)
+                `Kết nối lại sau ${time}`)
+            .setColor(color.red), true);
+        client1.mc_timeout = setTimeout(() => { retry++; execute() }, ms(time));
     }
     const execute = () => {
+        if (!client1.isReady() || !client2.isReady()) return sendErr('clients are not ready', 3, '30s');
         send(client1, client2, new MessageEmbed()
             .setDescription(`Đang kết nối với server....`)
             .setColor(color.yellow), true
-        )
-        client1.executed = true
-        retry = 0
-        clearInterval(status_interval)
+        );
+        client1.executed = true;
+        retry = 0;
+        clearInterval(status_interval);
         try { require('./minecraft/main')(client1, client2, true) } catch (e) { console.log(e); sendErr(e, 2) }
     }
-    const status = process.env.MC_HOST != 'localhost' ? util.status : util.statusLegacy
-    let m = '.'
+    const status = process.env.MC_HOST != 'localhost' ? util.status : util.statusLegacy;
+    let m = '.';
     const status_interval = setInterval(() => {
         if (m.length < 5) m += '.'
-        else m = '.'
-        client1.user.setPresence({
+        else m = '.';
+        client1.user?.setPresence({
             activities: [{ name: `Connecting${m}`, type: 'LISTENING' }],
             status: 'idle'
-        })
-        client2.user.setPresence({
+        });
+        client2.user?.setPresence({
             activities: [{ name: `Connecting${m}`, type: 'LISTENING' }],
             status: 'idle'
-        })
-    }, 5 * 1000)
-    clearTimeout(client1.mc_timeout == 0 ? undefined : client1.mc_timeout)
+        });
+    }, 5 * 1000);
+    clearTimeout(client1.mc_timeout == 0 ? undefined : client1.mc_timeout);
     status(process.env.MC_HOST, Number(process.env.MC_PORT))
         .then(() => execute())
-        .catch(e => sendErr(e, 1))
+        .catch(e => sendErr(e, 1));
 }
 
 

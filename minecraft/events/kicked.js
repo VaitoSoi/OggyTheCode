@@ -51,6 +51,8 @@ module.exports = {
                 bot.reconnect = setTimeout(() => {
                     require('../main')(bot.client1, bot.client2)
                 }, 5 * 1000);
+            } else if (reas == 'you are already connected to this proxy!') {
+                if (bot.login == 0) clearTimeout(bot.reconnect)
             }
         } else {
             if (obj.text && obj.text.toLowerCase() == 'you are already connected to this proxy!') {

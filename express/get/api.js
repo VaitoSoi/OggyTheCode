@@ -1,13 +1,13 @@
-const { request, response } = require('express')
+const { Request, Response } = require('express')
 
 module.exports = {
     name: 'api',
     /**
      * 
-     * @param {request} req 
-     * @param {response} res 
+     * @param {Request} req 
+     * @param {Response} res 
      */
     run: (req, res) => {
-        res.send('We currently do not support api :c (đc tài trợ bởi gg dịch nên có sai thì đừng chửi nhe :))')
+        res.redirect('https://api.mo0nbot.ga/')
     }
 }
