@@ -21,11 +21,11 @@ module.exports = {
          * @param {Discord.Message} message 
          * @param {String} emoji 
          */
-        const react = (message, emoji) => {
-            message.reactions.removeAll().catch(e => { })
-            return message.guild.me.permissions.has('ADD_REACTIONS')
-                && message.guild.me.permissionsIn(message.channel).has('ADD_REACTIONS')
-                ? void message.react(emoji).catch(e => { }).then(() => true) : undefined
+        const react = async (message, emoji) => {
+            const msg = await message.reactions.removeAll().catch(e => { }) || message
+            return msg.guild.me.permissions.has('ADD_REACTIONS')
+                && msg.guild.me.permissionsIn(message.channel).has('ADD_REACTIONS')
+                ? void msg.react(emoji).catch(e => { }) : undefined
         }
         const blacklistDB = require('../../models/blacklist')
         const blacklistData = await blacklistDB.findOne({
@@ -53,6 +53,7 @@ module.exports = {
             ) : react(message, '❌')
         if (data && message.channelId == data.config.channels.livechat) {
             if (!bot.players) return react(message, '❌')
+            if (Date.now() - bot.lastChat < 10000) return react(message, '❌')
             const args = message.content.split(' ')
             const msg =
                 args[0] == '/r'
@@ -61,8 +62,9 @@ module.exports = {
                     ? `${args[0]} ${args[0] != '/r'
                         ? `${args[1]} <${message.author.tag}>`
                         : `<${message.author.tag}>`} ${message.content.trim().split(' ').slice(2).join(' ')}`
-                    : `<${message.author.tag} ${message.content.trim()}>`
+                    : `<${message.author.tag}> ${message.content.trim()}`
             bot.chat(msg)
+            bot.lastChat = Date.now()
             return react(message, '✅')
         }
     }

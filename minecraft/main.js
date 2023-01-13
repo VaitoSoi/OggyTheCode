@@ -46,7 +46,7 @@ async function run(client1, client2, handler) {
      * Event Handler
      * 
      */
-
+    bot.lastChat = Date.now()
     bot.readyAt = Math.floor(Date.now() / 1000)
     bot.client1 = client1
     bot.client2 = client2
@@ -66,9 +66,10 @@ async function run(client1, client2, handler) {
     let m = '.'
     setInterval(() => {
         if (bot.players) {
-            const tps = bot.getTps() ? bot.getTps() : 20
-            const player = bot.players ? Object.values(bot.players).length : 1
-            const ping = bot.player ? bot.player.ping : 0
+            if (!bot.getTps() || !bot.players || !bot.player) return
+            const tps = bot.getTps()
+            const player = Object.keys(bot.players).length
+            const ping = bot.player.ping
             const discordStatus = 'online'
             client1.user.setPresence({
                 activities: [{ name: `TPS: ${tps} | Players: ${player} | Ping: ${ping}ms`, type: 'PLAYING' }],

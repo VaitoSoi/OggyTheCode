@@ -13,8 +13,8 @@ const client1 = new Client({
     partials: ['MESSAGE', 'REACTION', 'USER'],
     allowedMentions: {
         repliedUser: false,
-        roles: false,
-        users: false
+        roles: [],
+        users: []
     }
 })
 const client2 = new Client({
@@ -22,8 +22,8 @@ const client2 = new Client({
     partials: ['MESSAGE', 'REACTION', 'USER'],
     allowedMentions: {
         repliedUser: false,
-        roles: false,
-        users: false
+        roles: [],
+        users: []
     }
 })
 
