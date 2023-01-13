@@ -39,7 +39,7 @@ module.exports = {
                 .setDescription('Đã nhập `/anarchyvn`')
                 .setColor(chat.colors.green), true)
         }
-        if (!bot.client1.channels.cache.get(process.env.DM_CHANNEL)) return
-        if (msg.toString().startsWith('[ANARCHYVN]')) bot.client1.channels.cache.get(process.env.DM_CHANNEL).send('```' + msg.toString() + '```')
+        //if (!bot.client1.channels.cache.get(process.env.DM_CHANNEL)) return
+        //if (msg.toString().startsWith('[ANARCHYVN]')) bot.client1.channels.cache.get(process.env.DM_CHANNEL).send('```' + msg.toString() + '```').catch(e => {})
     }
 }

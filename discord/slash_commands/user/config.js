@@ -182,6 +182,7 @@ module.exports = {
             'guildid': interaction.guildId
         })
         if (action == 'create') {
+            if (!(await interaction.member.permissions.has('ADMINISTRATOR'))) return interaction.editReply('🔴 Bạn không có quyền `ADMINISTRATOR`')
             if (data)
                 return interaction.editReply('🟡 | Đã có cài đặt!')
             else {
@@ -209,6 +210,7 @@ module.exports = {
                 interaction.editReply('✅ | Đã tạo cài đặt')
             }
         } else if (action == 'set') {
+            if (!(await interaction.member.permissions.has('ADMINISTRATOR'))) return interaction.editReply('🔴 Bạn không có quyền `ADMINISTRATOR`')
             if (!data)
                 return interaction.editReply('🔴 | Không có dữ liệu về cài đặt của bot.\n' +
                     '🟡 | Dùng lệnh `/config create` để tạo cài đặt')

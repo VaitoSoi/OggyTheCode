@@ -44,7 +44,7 @@ module.exports = {
                 break;
             case 'stats': 
                 interaction.editReply(
-                    `Thông tin về số lần giết và chết của \`${user_name}\`\n:` +
+                    `Thông tin về số lần giết và chết của \`${user_name}\`:\n` +
                     `> **Kill(s)**: ${res.data.data.kills}\n` +
                     `> **Death(s)**: ${res.data.data.deaths}`
                 );

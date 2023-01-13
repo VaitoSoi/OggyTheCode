@@ -19,7 +19,7 @@ module.exports = {
                 .setColor(color.green), true)
         } else if (Number(window.slots.length) == 45 || Number(window.slots.length) == 46) {
             let pin = process.env.MC_PIN.split(' ').map(str => Number(str))
-            if (process.env.MC_PIN.split(' ').length > 1) pin = process.env.MC_PIN.split(' ').map(str => Number(str))
+            if (process.env.MC_PIN.split(' ').length <= 1) pin = process.env.MC_PIN.split('').map(str => Number(str))
             bot.simpleClick.leftMouse(pin[0])
             bot.simpleClick.leftMouse(pin[1])
             bot.simpleClick.leftMouse(pin[2])
