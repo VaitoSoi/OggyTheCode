@@ -8,6 +8,6 @@ module.exports = {
      * @param {Response} res 
      */
     run: (req, res) => {
-        res.redirect('https://github.com/VaitoSoi/oggy-docs')
+        res.redirect('https://github.com/VaitoSoi/OggyTheCode/tree/main/docs')
     }
 }
