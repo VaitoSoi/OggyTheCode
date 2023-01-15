@@ -1,13 +1,13 @@
 const { Request, Response } = require('express')
 
 module.exports = {
-    name: 'api',
+    name: 'docs',
     /**
      * 
      * @param {Request} req 
      * @param {Response} res 
      */
     run: (req, res) => {
-        res.redirect('https://oggy-api.vaitosoi.repl.co/')
+        res.redirect('https://github.com/VaitoSoi/oggy-docs')
     }
 }

@@ -9,6 +9,6 @@ module.exports = {
      * @param {response} res 
      */
     run: (req, res) => {
-        res.send('The official code of OggyTheBot#8210 and OggyTheBot 2#8728')
+        res.sendFile('main.html', { root: './express/' })
     }
 }

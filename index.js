@@ -120,10 +120,11 @@ client2.client1 = client1
 client2.num = '2'
 client2.setMaxListeners(15)
 
+module.exports = { client1, client2 }
 
 require('dotenv').config('./.env')
 process.env.TZ = 'Asia/Bangkok'
-
+process.env.started = false
 
 require('./discord/handler/event')(client1)
 require('./discord/handler/message')(client1)

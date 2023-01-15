@@ -18,6 +18,8 @@ const path_finder = require('mineflayer-pathfinder').pathfinder
  * @param {Boolean} handler
  */
 async function run(client1, client2, handler) {
+    if (process.env.started == true) return
+    process.env.started = true;
     /**
      * 
      * Create Bot

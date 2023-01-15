@@ -15,6 +15,7 @@ module.exports = {
         if (bot.anti_bot == true) return
         bot.login = 0
         bot.joinAt = 0
+        process.env.started = false
         let reconnect = '3m'
         let r = reason
         let auto = true
