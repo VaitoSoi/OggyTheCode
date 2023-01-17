@@ -7,6 +7,7 @@ module.exports.colors = {
     "green": "#87ff36"
 }
 
+/*
 module.exports.death_message = [
     /^(.+) died in a unique way$/,
     /^(.+) flew into a wall$/,
@@ -33,9 +34,9 @@ module.exports.death_message = [
     /^(.+) tried playing with (.+) armor with thorns$/,
     /^(.+) (was slain by|murdered|killed|was ganed up on by some|was shot by a|was shot by|tried playing with) (.+)( somehow using| using| by|! One wacked them with|! One shot them with) (.+)$/,
 ]
+*/
 
 const Discord = require('discord.js')
-
 /**
  * Send to all server
  * @param {Discord.Client} client1 
@@ -43,6 +44,7 @@ const Discord = require('discord.js')
  * @param {Discord.MessageEmbed} embed 
  * @param {Boolean | undefined} notify
  * @param {Boolean | undefined} join_leave
+ * @returns {void}
  */
 module.exports.chat = (client1, client2, embed, notify, join_leave) => {
     const db = require('../../models/option')

@@ -63,7 +63,7 @@ module.exports = {
                 },
                 {
                     name: '**Bot\'s Invite Link**',
-                    value: `[Invite Link](https://discord.com/oauth2/authorize?client_id=${client.user.id}1&permissions=93264&scope=bot+applications.commands&utm_source=https://discord.com)`,
+                    value: `[Invite Link](https://oggy-bot-1.onrender.com/invite?id${client.user.id})`,
                     inline: true
                 },
                 {

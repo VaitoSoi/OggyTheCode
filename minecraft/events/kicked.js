@@ -38,7 +38,7 @@ module.exports = {
                 return str
             }
             let reas = obj.text != '' ? obj.text.replace('§', '') : await show(obj.extra)
-            console.log({ reas, obj })
+            console.log({ reas, obj: obj.extra })
             send(bot.client1, bot.client2,
                 new MessageEmbed()
                     .setDescription(

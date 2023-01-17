@@ -53,8 +53,13 @@ module.exports = {
             ) : react(message, '❌')
         if (data && message.channelId == data.config.channels.livechat) {
             if (!bot.players) return react(message, '❌')
-            if (Date.now() - bot.lastChat < 10000) return react(message, '❌')
+            if (Date.now() - bot.lastChat < 5000) return react(message, '❌')
             const args = message.content.split(' ')
+            /**
+             * @param {max} Number 
+             * @returns {string}
+             */
+            const random = (max) => Math.floor(Math.random() * max)
             const msg =
                 args[0] == '/r'
                     || args[0] == '/w'
@@ -62,7 +67,7 @@ module.exports = {
                     ? `${args[0]} ${args[0] != '/r'
                         ? `${args[1]} <${message.author.tag}>`
                         : `<${message.author.tag}>`} ${message.content.trim().split(' ').slice(2).join(' ')}`
-                    : `<${message.author.tag}> ${message.content.trim()}`
+                    : `<${message.author.tag}> ${message.content.trim()} [AS_${random(1000)}]`
             bot.chat(msg)
             bot.lastChat = Date.now()
             return react(message, '✅')

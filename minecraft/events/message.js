@@ -28,12 +28,18 @@ module.exports = {
         const whisper1 = /^nhắn cho (.+)$/
         const whisper2 = /^(.+) nhắn: (.+)$/
         if (whisper1.test(msg.toString()) || whisper2.test(msg.toString())) embedColor = chat.colors.pink
+        if (msg.toString().startsWith('[ANARCHYVN]')) embedColor = chat.colors.red
+        if (msg.toString() == 'đang vào AnarchyVN...'
+            || msg.toString() == 'Connecting to the server...') embedColor = chat.colors.yellow
+        if (msg.toString() == 'Please log-in in order to use the chat or any commands!'
+            || msg.toString() == 'Oops something went wrong... Putting you back in queue.'
+            || msg.toString() == 'Already connecting to this server!') embedColor = chat.colors.red
         chat.chat(bot.client1, bot.client2, new MessageEmbed()
             .setDescription(msg.toString())
             .setColor(embedColor), false
         )
         if (msg.toString().trim().toLowerCase() == 'dùng lệnh/anarchyvn  để vào server.') {
-            await wait(1000).catch(e => {})
+            await wait(1000).catch(e => { })
             bot.chat('/anarchyvn');
             chat.chat(bot.client1, bot.client2, new MessageEmbed()
                 .setDescription('Đã nhập `/anarchyvn`')

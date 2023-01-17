@@ -1,8 +1,9 @@
 console.log(
     ".---------------------------------------------------.\n" +
     "|                    OggyTheCode                    |\n" +
-    "|         Official code of OggyTheBot#8216          |\n" +
+    "|         Official code of OggyTheBot#8210          |\n" +
     "|              Create by VaitoSoi#2220              |\n" +
+    "|            Supporter: toquyen8928#9463            |\n" +
     "|  GitHub: https://github.com/VaitoSoi/OggyTheCode  |\n" +
     "'---------------------------------------------------'\n"
 )

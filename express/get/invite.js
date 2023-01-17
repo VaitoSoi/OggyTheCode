@@ -10,10 +10,16 @@ module.exports = {
     run: (req, res) => {
         let req_id
         const { client1, client2 } = require('../../index')
-        switch (req.query.instance) {
-            case 'client1': req_id = client1.user.id; break
-            case 'client2': req_id = client2.user.id; break
-        }
+        if (req.query.instance) 
+            switch (req.query.instance) {
+                case 'client1': req_id = client1.user.id; break
+                case 'client2': req_id = client2.user.id; break
+            }
+        else if (req.query.id)
+            switch (req.query.id) {
+                case client1.user.id: req_id = client1.user.id; break
+                case client2.user.id: req_id = client2.user.id; break
+            }
         const id = req_id || client1.user.id
         const permissions = '93264'
         const scope = 'bot+applications.commands'

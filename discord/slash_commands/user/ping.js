@@ -1,4 +1,4 @@
-const { CommandInteraction } = require('discord.js')
+const { CommandInteraction, MessageEmbed } = require('discord.js')
 const { SlashCommandBuilder } = require('@discordjs/builders')
 
 module.exports = {
@@ -8,8 +8,8 @@ module.exports = {
     /**
     * 
     * @param {CommandInteraction} interaction 
-    */ 
-    run: async(interaction) => {
+    */
+    run: async (interaction) => {
         const client = interaction.client
         /**
          * 
@@ -21,24 +21,52 @@ module.exports = {
         const data = require('../../../models/ping').find()
         await data;
         dbping = Date.now() - now
-        async function rate (num) {
+        /**
+         * @param {Number} ping
+         * @returns {String} 
+         */
+        function rate(ping) {
             let str = ''
-            if (num >= 0 && num <= 250) str = '🟢'
-            else if (num > 250 && num <= 500) str = '🟡'
-            else if (num > 500 && num <= 1000) str = '🟠'
-            else if (num > 1000) str = '🔴'
-            return str + ' ' + num + 'ms'
+            if (ping >= 0 && ping <= 250) str = '🟢'
+            else if (ping > 250 && ping <= 500) str = '🟡'
+            else if (ping > 500 && ping <= 1000) str = '🟠'
+            else if (ping > 1000) str = '🔴'
+            return str + ' ' + ping + 'ms'
         }
-        interaction.followUp('Checking...').then(async (m) => {
-            let ping = m.createdTimestamp - interaction.createdTimestamp
-            , wsping = client.ws.ping
-            m.edit(
-                '**-----Oggy & WS & DB Ping-----**\n' +
-                `Oggy: ${await rate(Number(ping))}\n` +
-                `WS: ${await rate(Number(wsping))}\n` + 
-                `Mongoose: ${await rate(Number(dbping))}\n` +
-                `**-------------------------------------**`
-            )
+        /**
+         * @param {Number} ping 
+         * @returns {String}
+         */
+        function color(ping) {
+            let str = ''
+            if (ping >= 0 && ping <= 250) str = '#87ff36'
+            else if (ping > 250 && ping <= 500) str = '#FAEA48'
+            else if (ping > 500 && ping <= 1000) str = '#F79400'
+            else if (ping > 1000) str = '#FA2314'
+            return str
+        }
+        interaction.channel.send('Checking...').then(async (m) => {
+            const ping = m.createdTimestamp - interaction.createdTimestamp,
+                wsping = client.ws.ping,
+                average = Math.floor((ping + wsping + dbping) / 3)
+            await m.delete()
+            interaction.editReply({
+                embeds: [
+                    new MessageEmbed()
+                        .setTitle('```     Ping của Oggy & WS & DB     ```')
+                        .setDescription(
+                            `Oggy: ${rate(ping)}\n` +
+                            `WS: ${rate(wsping)}\n` +
+                            `Mongoose: ${rate(dbping)}\n` +
+                            `Average: ${rate(average)}`
+                        )
+                        .setColor(color(average))
+                        .setTimestamp()
+                        .setFooter({
+                            text: 'Đo vào'
+                        })
+                ]
+            })
         })
     }
 }

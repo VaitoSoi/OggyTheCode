@@ -40,7 +40,7 @@ module.exports = {
                 interaction.editReply(`Dữ liệu của \`${user_name}\` bắt đầu ghi vào <t:${Math.round(res.data.data.time / 1000)}:F>`);
                 break;
             case 'playtime':
-                interaction.editReply(`Tổng thời gian onliine của \`${user_name}\` là \`${ms(res.data.data.time)}\``);
+                interaction.editReply(`Tổng thời gian online của \`${user_name}\` là \`${ms(res.data.data.time)}\``);
                 break;
             case 'stats': 
                 interaction.editReply(
