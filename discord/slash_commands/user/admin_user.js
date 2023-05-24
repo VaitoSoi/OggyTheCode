@@ -1,9 +1,11 @@
 const { CommandInteraction, MessageEmbed } = require('discord.js')
 const { SlashCommandBuilder } = require('@discordjs/builders')
+/*
 const heroku_client = require('heroku-client')
 const heroku = new heroku_client({
     token: process.env.HEROKU_TOKEN
 })
+*/
 const ms = require('ms')
 
 module.exports = {
@@ -96,7 +98,8 @@ module.exports = {
                 return heroku.delete('/apps/' + app + '/dynos/' + dyno)
                     .catch(e => interaction.editReply('Phát hiện lỗi: \n```' + e + '```'))
             }
-        } else*/ if (id == 'eval') {
+        } else*/ 
+        if (id == 'eval') {
             try {
                 await eval(action)
                 interaction.editReply('✅ | Eval done')
