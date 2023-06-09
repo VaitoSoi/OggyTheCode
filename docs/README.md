@@ -1,8 +1,8 @@
-# Các tài liệu của Oggy
-1. [Hướng dẫn setup Oggy và các kênh chức năng](./hdsd.md)
-2. [Thông tin chi tiết về các lệnh của Oggy](./docs.md)
-- **Lưu ý**: Các tài liệu đều có thể dùng cho `OggyTheBot` và `OggyTheBot 2`
-### Các link liên quan:
-- [Link invite OggyTheBot#8210](https://oggy-bot-1.onrender.com/invite?instance=client1)
-- [Link invite OggyTheBot 2#8728](https://oggy-bot-1.onrender.com/invite?instance=client2)
-- [link Support Server](https://oggy-bot-1.onrender.com/support)
+# Hướng dẫn sử dụng OggyTheCode
+
+1. [Hướng dẫn setup Oggy](./user.md)
+2. [Hướng dẫn dùng code Oggy](./devoloper.md)
+
+**Lưu ý: Vui lòng để credit khi bạn sử dụng code Oggy cho các bot khác**
+
+Nếu còn thắc mắc thì hãy vào support theo link sau: https://discord.com/invite/NBsnNGDeQd

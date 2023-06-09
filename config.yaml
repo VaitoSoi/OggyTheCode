@@ -1,0 +1,73 @@
+# Các cài đặt liên quan đến Discord
+discord:
+  # Các Token của bot
+  token:
+    client_1: # Của bot thứ nhất (bắt buộc)
+    client_2: # Của bot thứ hai (không cần thiết)
+  # Các ID của kênh
+  channel:
+    log: # Của kênh để nhận các thông báo khi có lệnh được thực thi
+  # Các chỉnh sửa liên quan đến các câu lệnh
+  command:
+    exclude: [
+        "eval",
+        "log",
+        # ...
+      ] # Các câu lệnh sẽ không xuất hiện
+  owner:
+    id: # ID của onwer của bot
+
+# Các cài đặt liên quan đến Minecraft
+minecraft:
+  # Tài khoản của bot
+  account:
+    username: player # Có thể là tên hoặc mail đã đăng ký Minecraft bản quyền
+    password: # Là mật khẩu của mail ở trên, bỏ trống nếu là tài khoản crack
+  # Các cài đặt liên quan đến tài khoản trong server
+  # Bỏ qua nếu server đều không hỗ trợ hay phương thức đăng nhập này
+  ingame:
+    pin: 0 0 0 0 # Pin của bot
+    # pinretry: # Số lần delay sau khi nhập PIN
+    pass: igpass # Pass trong server của bot (đang nhập theo kiểu '/login <pass>')
+  # Các cài đặt liên quan đến Server
+  server:
+    ip: hypixel.com # IP của máy chủ
+    server: 1.16.5 # Version của máy chủ (hiện tại chỉ hỗ trợ phiên bản từ 1.8 - 1.19)
+    port: 25565 # Cổng của máy chủ (mặc định là 25565)
+    reconnectTimeout: 2m # Thời gian để bot kết nối lại với server khi bị kick (viết theo định dạng h, m, s; vd: 5m)
+    chatTimeout: 2m # Thời gian giữa các tin nhắn (viết theo định dạng h, m, s; vd: 5m)
+    # Là cách login vào server
+    # Có 3 dạng:
+    #  + cratingTable (nhập mã PIN)
+    #  + chatInput (nhập mật khẩu vào thanh chat, vd: /login <pass>)
+    #  + auth (là server cần tải khoản có bản quyền)
+    loginType: chatInput
+
+# Các cài đặt liên quan đến thanh trạng thái của Discord Bot
+status:
+  # Kiểu trạng thái, có 2 dạng:
+  #  + discord (các thay đổi trạng thái theo văn bản cho trước)
+  #  + minecraft (thay đổi theo tình trạng kết nối đến server)
+  type: discord
+  # Khi để type là discord
+  discord:
+    text: [
+        "OggyTheCode made by VaitoSoi#2200", # Nên giữ :)
+        # ...
+      ] # Các dòng văn bản để hiễn thị trên thanh trạng thái
+    status: online # Trạng thái để hiển thị, cỏ thể là: online, dnd, idle, invisible
+    updateInterval: 5m # Thời gian đến cập nhật thanh trạng thái (viết theo định dạng h, m, s; vd: 5m)
+  # Khi để type là minecraft
+  minecraft:
+    # Các trạng thái có thể là: online, dnd, idle, invisible
+    connect: online # Trạng thái khi bot đã kết nối đến server
+    disconnect: idle # Trạng thái khi bot đang mất kết nối với server
+
+# Cài đặt liên quan đến Database
+# Lưu ý: Hiện tại chỉ hỗ trợ MongoDB
+database:
+  link: # URL để kết nối với database
+
+# Không cần quan tâm đâu :v
+express:
+  port: 8000
