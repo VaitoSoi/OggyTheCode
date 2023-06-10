@@ -160,9 +160,9 @@ export class Oggy {
                     if (!this.bot)
                         client.user.setPresence({ activities: [{ name: 'Bot is offline...' }], status: this.config.status.minecraft.disconnect })
                     else {
-                        const tps = (<any>this.bot).getTps()
-                        const ping = this.bot.player.ping
-                        const players = Object.keys(this.bot.players).length
+                        const tps = (<any>this.bot).getTps() || 20
+                        const ping = this.bot.player?.ping ?? 100
+                        const players = Object.keys(this.bot.players ?? {}).length || 1
                         const status = this.config.status.minecraft.connect
                         client.user.setPresence({ activities: [{ name: `TPS: ${tps} | ${ping}ms | ${players} players` }], status })
                     }
