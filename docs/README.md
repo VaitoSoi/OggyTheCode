@@ -1,7 +1,7 @@
 # Hướng dẫn sử dụng OggyTheCode
 
 1. [Hướng dẫn setup Oggy](./user.md)
-2. [Hướng dẫn dùng code Oggy](./devoloper.md)
+2. [Hướng dẫn dùng code Oggy](./developer.md)
 
 **Lưu ý: Vui lòng để credit khi bạn sử dụng code Oggy cho các bot khác**
 
