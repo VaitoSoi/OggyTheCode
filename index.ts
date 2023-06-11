@@ -23,9 +23,11 @@ if (!process.argv[2] || process.argv[2] == 'env' || envReg.test(process.argv[2])
                     ? (envReg.exec(process.argv[0]) ?? ['', 'config.env'])[1]
                     : 'config.env'
             )
-    //if (!existsSync(path)) throw new Error(`file '${path}' doesn't exist`)
-    console.log(`[SYSTEM] Loading config from env file '${path}'`)
-    dotenv.config({ path })
+    if (!existsSync(path)) console.log('[SYSTEM] Loading config from local environment')
+    else {
+        console.log(`[SYSTEM] Loading config from env file '${path}'`)
+        dotenv.config({ path })
+    }
     config = new ENV(process.env)
 } else if (process.argv[2] == 'yaml' || yamlReg.test(process.argv[2])) {
     const path =

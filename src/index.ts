@@ -26,7 +26,9 @@ interface Package {
     github: string;
     author: string;
     license: string;
-    dependencies: Object;
+    dependencies: {
+        [key: string]: string
+    };
     type: string;
 }
 interface Data {
@@ -432,7 +434,8 @@ interface DiscordConfig {
         client_2: string;
     };
     channel: {
-        log: string;
+        command_log: string;
+        error_log: string;
     };
     command: {
         exclude: Array<string>;
@@ -491,7 +494,8 @@ export class ENV {
                 client_2: env.DISCORD_TOKEN_2 ?? '',
             },
             channel: {
-                log: env.DISCORD_CHANNEL_LOG ?? ''
+                command_log: env.DISCORD_CHANNEL_COMMANDLOG ?? '',
+                error_log: env.DISCORD_CHANNEL_ERRORLOG ?? ''
             },
             command: {
                 exclude: (env.DISCORD_COMMAND_EXCLUDE?.startsWith('[') && env.DISCORD_COMMAND_EXCLUDE?.endsWith(']')
@@ -513,7 +517,7 @@ export class ENV {
                 pass: env.MINECRAFT_IG_PASS ?? 'igpass'
             },
             server: {
-                ip: env.MINECRAFT_SERVER_IP ?? '2y2c.asia',
+                ip: env.MINECRAFT_SERVER_IP ?? 'hypixel',
                 version: env.MINECRAFT_SERVER_VERSION ?? '1.16.5',
                 port: Number(env.MINECRAFT_SERVER_PORT) ?? 25565,
                 reconnectTimeout: !!env.MINECRAFT_SERVER_RECONNECTTIMEOUT ? (isNaN(env.MINECRAFT_SERVER_RECONNECTTIMEOUT)
@@ -522,14 +526,14 @@ export class ENV {
                 loginType: env.MINECRAFT_SERVER_LOGINTYPE ?? 'chatInput',
                 chatTimeout: env.MINECRAFT_SERVER_CHATTIMEOUT ? (isNaN(env.MINECRAFT_SERVER_CHATTIMEOUT)
                     ? ms(<string>env.MINECRAFT_SERVER_CHATTIMEOUT)
-                    : Number(env.MINECRAFT_SERVER_CHATTIMEOUT)) : 5 * 60 * 1000
+                    : Number(env.MINECRAFT_SERVER_CHATTIMEOUT)) : 30 * 1000
             }
         }
         this.status = {
             type: env.STATUS_TYPE ?? 'discord',
             updateInterval: !!env.STATUS_UPDATEINTERVAL ? (isNaN(env.STATUS_UPDATEINTERVAL)
                 ? ms(<string>env.STATUS_UPDATEINTERVAL)
-                : Number(env.STATUS_UPDATEINTERVAL)) : 5 * 60 * 1000,
+                : Number(env.STATUS_UPDATEINTERVAL)) : 60 * 1000,
             discord: {
                 text: (env.STATUS_DISCORD_TEXT?.startsWith('[') && env?.STATUS_DISCORD_TEXT.endsWith(']')
                     ? env.STATUS_DISCORD_TEXT?.slice(1, -1).split(',')
@@ -563,7 +567,8 @@ export class YAML {
                 client_2: yaml.discord.token_2 ?? '',
             },
             channel: {
-                log: yaml.discord.channel.log ?? ''
+                command_log: yaml.discord.channel.command_log ?? '',
+                error_log: yaml.discord.channel.error_log ?? ''
             },
             command: {
                 exclude: yaml.discord.command.exclude ?? [],

@@ -1,8 +1,8 @@
 # Hướng dẫn set up Oggy
 
-**Có 2 cách để Set Up Oggy**
+## **Có 2 cách để Set Up Oggy**
 
-```1. Dùng lệnh /setup:```
+### 1. Dùng lệnh /setup:
 
 * Nhập lệnh `/setup`.
 
@@ -29,36 +29,36 @@
 * Sau khi đã cài đặt mọi thứ thì, bạn chọn `Close Menu` để dóng menu.
 
 * Waila, bạn đã sẵn sàng để dùng bot rồi đấy 😊.
-    
-```2. Dùng tổ hợp các lệnh khác:```
+
+### 2. Dùng tổ hợp các lệnh khác:
 
 * Cuộc đời quá dễ và bạn muốn đi đường vòng, đừng lo vì đã có Oggy.
 
-    1. Kiểm tra Quyền:
+#### 1. Kiểm tra Quyền:
 
-    * Nhập lệnh `/permission`.
+* Nhập lệnh `/permission`.
 
-        ![Permission Command](../image/docs/user/PermissionCommand.png)
+    ![Permission Command](../image/docs/user/PermissionCommand.png)
     
-    * Nó sẽ hiện lên menu như thế này:
+* Nó sẽ hiện lên menu như thế này:
 
-        ![Permission Menu](../image/docs/user/PermissionMenu.png)
+    ![Permission Menu](../image/docs/user/PermissionMenu.png)
 
-    * Hãy cố gắng cho bot có đủ quyền.
+* ! Hãy cố gắng cho bot có đủ quyền để bot có thể chạy một cách trơn tru nhất có thể..
     
-    * Nếu tại ô `Các quyền tại kênh ...` hiện dòng `Chưa cài đặt ...` thì là do bạn chưa cài đặt kênh đấy :)), lát nữa ta sẽ bàn sau.
+* Nếu tại ô `Các quyền tại kênh ...` hiện dòng `Chưa cài đặt ...` thì là do bạn chưa cài đặt kênh đấy :)), lát nữa ta sẽ bàn sau.
 
-    2. Set Up Config:
+#### 2. Set Up Config:
 
-    * Để tránh gây hoang mang thì `config` với `CSDL` ở đây đều mang nghĩa là cài đặt của guild của bạn.
+* Để tránh gây hoang mang thì `config` với `CSDL` ở đây đều mang nghĩa là cài đặt của guild của bạn.
     
-        a) Tạo config:
+1. Tạo config:
         
-        * Nhập lệnh `/config create`.
+    * Nhập lệnh `/config create`.
 
-            ![Config Create Command](../image/docs/user/ConfigCreateCommand.png)
+        ![Config Create Command](../image/docs/user/ConfigCreateCommand.png)
 
-        * Bot sẽ trả về 2 trường hợp:
+    * Bot sẽ trả về 2 trường hợp:
         
         1. Nếu bot trả về kết quả này thì bạn đã thành công rồi đấy (Các thông số sẽ khác nhau tùy vào guild):
 
@@ -68,15 +68,15 @@
 
             ![Config Created](../image/docs/user/ConfigCreated.png)
 
-        b) Set Up Channel:
+2. Set Up Channel:
 
-        * Dùng lệnh `/config edit channel <type> <channel> [feature]`:
-            
-            * <type>: Loại kênh muốn set up.
+    * Dùng lệnh `/config edit channel <type> <channel> [feature]`:
 
-            * <channel>: Kênh muốn set up.
+        * <type>: Loại kênh muốn set up.
 
-            * [feature]: Bật các tính năng lên (mặc định: True, cứ để yên nếu muốn bot chạy bình thường).
+        * <channel>: Kênh muốn set up.
+
+        * [feature]: Bật các tính năng lên (mặc định: True, cứ để yên nếu muốn bot chạy bình thường).
 
             ![Config Edit Channel Command](../image/docs/user/ConfigEditChannelCommand.png)
 
@@ -84,52 +84,54 @@
 
             ![Config Edit Channel Example](../image/docs/user/ConfigEditChannelExample.png)
 
-            Và bot sẽ trả về như sau:
+        * Và bot sẽ trả về như sau:
 
             ![Config Edit Channel Sucessfully](../image/docs/user/ConfigEditChannelSuccessfully.png)
 
-        c) Kiểm tra kênh:
+3. Kiểm tra kênh:
 
-        * Khi bạn đã setup kênh xong nhưng sợ sai, đừng lo vì đã có Oggy.
+    * Khi bạn đã setup kênh xong nhưng sợ sai, đừng lo vì đã có Oggy.
 
-        * Nhập lệnh `/config show`:
+    * Nhập lệnh `/config show`:
 
-            ![Config Show Command](../image/docs/user/ConfigShowCommand.png)
+        ![Config Show Command](../image/docs/user/ConfigShowCommand.png)
 
-        * Sau khi nhập lệnh thì bot sẽ trả về menu hiện thông số của config của guild hiện tại:
+    * Sau khi nhập lệnh thì bot sẽ trả về menu hiện thông số của config của guild hiện tại:
 
-            ![Config Show Menu](../image/docs/user/ConfigShowMenu.png)
+        ![Config Show Menu](../image/docs/user/ConfigShowMenu.png)
 
-        d) Xóa config
+4. Xóa config
 
-        * Nếu bạn không muốn sài bot nữa, thì đừng lo vì đã có Oggy :)
+    * Nếu bạn không muốn sài bot nữa, thì đừng lo vì đã có Oggy :)
 
-        * Sẽ có 2 trường hợp:
+    * Sẽ có 2 trường hợp:
 
-            1. Xóa toàn bộ config, ta dùng lệnh `/config delete all`:
+    1. Xóa toàn bộ config:
+        * Ta dùng lệnh `/config delete all`:
 
+            ![Config Delete All](../image/docs/user/ConfigDeleteAllCommand.png)
 
-                ![Config Delete All](../image/docs/user/ConfigDeleteAllCommand.png)
+        * Khi gửi lệnh thì bot sẽ trả lại tin nhắn sau để xác nhận: 
 
-                Khi gửi lệnh thì bot sẽ trả lại tin nhắn sau để xác nhận: 
+            ![Config Delete Question](../image/docs/user/ConfigDeleteQuestion.png)
 
-                ![Config Delete Question](../image/docs/user/ConfigDeleteQuestion.png)
+        * Chọn `✅ Có`, bot sẽ nhắn như sau:
 
-                Chọn `✅ Có`, bot sẽ nhắn như sau:
+            ![Config Delete All Successfully](../image/docs/user/ConfigDeleteAllSuccessfully.png)
 
-                ![Config Delete All Successfully](../image/docs/user/ConfigDeleteAllSuccessfully.png)
+    2. Xóa một kênh chỉ định hoặc toàn bộ kênh:
 
-            2. Xóa một kênh chỉ định hoặc toàn bộ kênh, ta dùng lệnh `/config delete channel <type>`: 
+        * Ta dùng lệnh `/config delete channel <type>`: 
 
-                ![Config Delete Channel Command](../image/docs/user/ConfigDeleteChannelCommand.png)
+            ![Config Delete Channel Command](../image/docs/user/ConfigDeleteChannelCommand.png)
 
-                Bot sẽ hỏi để xác nhận, bạn chọn `✅ Có`:
+        * Bot sẽ hỏi để xác nhận, bạn chọn `✅ Có`:
 
-                ![Config Delete Question](../image/docs/user/ConfigDeleteQuestion.png)
+            ![Config Delete Question](../image/docs/user/ConfigDeleteQuestion.png)
 
-                Sau khi xác nhận thì bot sẽ nhắn như sau: 
+        * Sau khi xác nhận thì bot sẽ nhắn như sau: 
 
-                ![Config Delete Channel Successful](../image/docs/user/ConfigDeleteChannelSuccessfully.png)
+            ![Config Delete Channel Successful](../image/docs/user/ConfigDeleteChannelSuccessfully.png)
 
 ```3. Các câu hỏi và lưu ý:```
 

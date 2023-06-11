@@ -6,7 +6,8 @@ discord:
     client_2: # Của bot thứ hai (không cần thiết)
   # Các ID của kênh
   channel:
-    log: # Của kênh để nhận các thông báo khi có lệnh được thực thi
+    command_log: # ID của kênh nhận các thông báo khi có lệnh được thực thi
+    error_log: # ID của kênh nhận các thông báo lỗi
   # Các chỉnh sửa liên quan đến các câu lệnh
   command:
     exclude: [

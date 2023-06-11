@@ -1,7 +1,6 @@
 import { Interaction, Events, InteractionType, ChannelType, EmbedBuilder, ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js'
 import { EventBuilder } from '../../index'
 import { status, JavaStatusOptions } from 'minecraft-server-util'
-import ms from 'ms'
 
 export default new EventBuilder()
     .setName(Events.InteractionCreate)
@@ -13,13 +12,59 @@ export default new EventBuilder()
             await interaction.deferReply()
             Promise.resolve(cmd.run(<ChatInputCommandInteraction>interaction, config))
                 .then(() => { })
-                .catch(console.error)
+                .catch(async function (error) {
+                    console.error(error)
+                    const logChannel =
+                        config.client_1.channels.cache.get(config.config.discord.channel.error_log) ??
+                        config.client_2.channels.cache.get(config.config.discord.channel.error_log)
+                    const command: string = `${interaction.commandName} ${[...interaction.options.data].shift()?.name ?? ''} ${[...interaction.options.data].shift()?.options?.shift()?.name ?? ''}`
+                    if (!!logChannel && logChannel?.type == ChannelType.GuildText)
+                        return void logChannel?.send({
+                            embeds: [
+                                new EmbedBuilder()
+                                    .setAuthor({
+                                        name: `${interaction.client.user.tag} Command Error`,
+                                        iconURL: interaction.client.user.avatarURL() ?? undefined
+                                    })
+                                    .setTitle('Vừa có một lỗi xuất hiện')
+                                    .addFields(
+                                        {
+                                            name: 'Thông tin',
+                                            value:
+                                                'Lệnh:\n' +
+                                                'Người dùng:\n' +
+                                                'Guild:\n',
+                                            inline: true
+                                        },
+                                        {
+                                            name: 'Giá trị',
+                                            value:
+                                                `${command}\n` +
+                                                `${interaction.user.tag}\n` +
+                                                `${interaction.guild?.name}`,
+                                            inline: true
+                                        },
+                                        {
+                                            name: 'Full error',
+                                            value: '```' + error + '```',
+                                            inline: false
+                                        }
+                                    )
+                                    .setFooter({
+                                        text: `OggyTheCode ${config.package.version}`,
+                                        iconURL: `https://github.com/${config.package.github}.png`
+                                    })
+                                    .setTimestamp()
+                                    .setColor((await interaction.guild?.fetch())?.members.me?.displayHexColor ?? 'Red')
+                            ]
+                        })
+                })
                 .finally(async function () {
                     const logChannel =
-                        config.client_1.channels.cache.get(config.config.discord.channel.log) ??
-                        config.client_2.channels.cache.get(config.config.discord.channel.log)
+                        config.client_1.channels.cache.get(config.config.discord.channel.command_log) ??
+                        config.client_2.channels.cache.get(config.config.discord.channel.command_log)
                     const command: string = `${interaction.commandName} ${[...interaction.options.data].shift()?.name ?? ''} ${[...interaction.options.data].shift()?.options?.shift()?.name ?? ''}`
-                    if (logChannel?.type == ChannelType.GuildText)
+                    if (!!logChannel && logChannel?.type == ChannelType.GuildText)
                         return void logChannel?.send({
                             embeds: [
                                 new EmbedBuilder()
