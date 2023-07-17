@@ -92,60 +92,58 @@ export default new SlashCommandBuilderWithData()
         )
         switch (interaction.options.getSubcommandGroup() || interaction.options.getSubcommand()) {
             case 'create':
-                if (data) void await interaction.editReply(
+                if (data) return void await interaction.editReply(
                     '🟢 Đã có cơ sở dữ liệu từ trước\n' +
                     '🔵 Dùng lệnh `/config edit` để chỉnh sửa cơ sở dữ liệu'
                 )
-                else {
-                    data = new option({
-                        guildid: interaction.guildId,
-                        guildname: interaction.guild?.name,
-                        config: {
-                            channels: {
-                                livechat: '',
-                                status: '',
-                                restart: '',
-                            }
+                data = new option({
+                    guildid: interaction.guildId,
+                    guildname: interaction.guild?.name,
+                    config: {
+                        channels: {
+                            livechat: '',
+                            status: '',
+                            restart: '',
                         }
-                    })
-                    await data.save()
-                    void await interaction.editReply({
-                        embeds: [
-                            databaseEmbed
-                                .setTitle('Đã tạo cơ sở dữ liệu')
-                                .setDescription(
-                                    `✅ Đã tạo cơ sở dữ liệu cho \`${interaction.guild?.name}\` (${interaction.guildId})\n` +
-                                    `ℹ Thông tin chi tiết về các thông số trong CSDL vừa tạo:`
-                                )
-                                .addFields(
-                                    {
-                                        name: 'Các thông số',
-                                        value:
-                                            'guildid\n' +
-                                            'guildname\n' +
-                                            'config.channels.livechat\n' +
-                                            'config.channels.status\n' +
-                                            'config.channels.restart',
-                                        inline: true
-                                    },
-                                    {
-                                        name: 'Các giá trị',
-                                        value:
-                                            data.guildid + '\n' +
-                                            data.guildname + '\n' +
-                                            (data.config?.channels?.livechat || 'undefined') + '\n' +
-                                            (data.config?.channels?.status || 'undefined') + '\n' +
-                                            (data.config?.channels?.restart || 'undefined'),
-                                        inline: true
-                                    }
-                                )
-                        ]
-                    })
-                }
+                    }
+                })
+                await data.save()
+                void await interaction.editReply({
+                    embeds: [
+                        databaseEmbed
+                            .setTitle('Đã tạo cơ sở dữ liệu')
+                            .setDescription(
+                                `✅ Đã tạo cơ sở dữ liệu cho \`${interaction.guild?.name}\` (${interaction.guildId})\n` +
+                                `ℹ Thông tin chi tiết về các thông số trong CSDL vừa tạo:`
+                            )
+                            .addFields(
+                                {
+                                    name: 'Các thông số',
+                                    value:
+                                        'guildid\n' +
+                                        'guildname\n' +
+                                        'config.channels.livechat\n' +
+                                        'config.channels.status\n' +
+                                        'config.channels.restart',
+                                    inline: true
+                                },
+                                {
+                                    name: 'Các giá trị',
+                                    value:
+                                        data.guildid + '\n' +
+                                        data.guildname + '\n' +
+                                        (data.config?.channels?.livechat || 'undefined') + '\n' +
+                                        (data.config?.channels?.status || 'undefined') + '\n' +
+                                        (data.config?.channels?.restart || 'undefined'),
+                                    inline: true
+                                }
+                            )
+                    ]
+                })
                 break;
             case 'edit':
-                if (!data) void noData()
-                else switch (interaction.options.getSubcommand()) {
+                if (!data) return void noData()
+                switch (interaction.options.getSubcommand()) {
                     case 'channel':
                         const channel = interaction.options.getChannel<ChannelType.GuildText>('channel', true)
                         const type = interaction.options.getString('type') ?? 'livechat';
@@ -159,14 +157,17 @@ export default new SlashCommandBuilderWithData()
                                 if (channel.permissionsFor(await channel.guild.members.fetchMe())?.has(PermissionFlagsBits.ManageChannels))
                                     channel.setRateLimitPerUser(10, 'Bật chế độ nhắn chậm tránh việc bot bị mute')
                                         .then(
-                                            () => void interaction.channel?.send(`✅ Đã chỉnh chế độ nhắn chậm thành công`),
+                                            () => void interaction.channel?.send(
+                                                `✅ Đã chỉnh chế độ nhắn chậm thành công.\n` +
+                                                `⏳ Thời gian: 10s`
+                                            ),
                                             (reason) => void interaction.channel?.send(
                                                 `🔴 Không thể chỉnh chế độ nhắn chậm\n` +
                                                 `ℹ Lý do: ${reason}`
                                             )
                                         )
                                         .catch(() => void interaction.channel?.send(`🔴 Không thể chỉnh chế độ nhắn chậm`))
-                                else interaction.channel?.send('❌ Bot không có quyền để chỉnh sửa kênh')
+                                else interaction.channel?.send('❌ Bot không có quyền để chỉnh sửa kênh để chỉnh chế độ nhắn chậm.')
                                 break
                             case 'status':
                                 const embed = new EmbedBuilder()
@@ -255,7 +256,7 @@ export default new SlashCommandBuilderWithData()
                 }
                 break;
             case 'show':
-                if (!data) void noData()
+                if (!data) return void noData()
                 else {
                     void await interaction.editReply({
                         embeds: [
@@ -275,7 +276,7 @@ export default new SlashCommandBuilderWithData()
                                     {
                                         name: 'Các giá trị',
                                         value:
-                                            `${data.guildid}\n`+
+                                            `${data.guildid}\n` +
                                             `${data.guildname}\n` +
                                             `<#${data.config?.channels?.livechat || 'undefined'}> (${data.config?.channels?.livechat || 'undefined'})\n` +
                                             `<#${data.config?.channels?.status || 'undefined'}> (${data.config?.channels?.status || 'undefined'})\n` +

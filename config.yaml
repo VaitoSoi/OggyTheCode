@@ -9,7 +9,7 @@ discord:
     command_log: # ID của kênh nhận các thông báo khi có lệnh được thực thi
     error_log: # ID của kênh nhận các thông báo lỗi
   # Các chỉnh sửa liên quan đến các câu lệnh
-  command:
+  commands:
     exclude: [
         "eval",
         "log",
@@ -28,7 +28,6 @@ minecraft:
   # Bỏ qua nếu server đều không hỗ trợ hay phương thức đăng nhập này
   ingame:
     pin: 0 0 0 0 # Pin của bot
-    # pinretry: # Số lần delay sau khi nhập PIN
     pass: igpass # Pass trong server của bot (đang nhập theo kiểu '/login <pass>')
   # Các cài đặt liên quan đến Server
   server:
@@ -37,12 +36,18 @@ minecraft:
     port: 25565 # Cổng của máy chủ (mặc định là 25565)
     reconnectTimeout: 2m # Thời gian để bot kết nối lại với server khi bị kick (viết theo định dạng h, m, s; vd: 5m)
     chatTimeout: 2m # Thời gian giữa các tin nhắn (viết theo định dạng h, m, s; vd: 5m)
-    # Là cách login vào server
-    # Có 3 dạng:
-    #  + cratingTable (nhập mã PIN)
-    #  + chatInput (nhập mật khẩu vào thanh chat, vd: /login <pass>)
-    #  + auth (là server cần tải khoản có bản quyền)
-    loginType: chatInput
+    login:
+      # Cách login vào server
+      # Có 3 giá trị:
+      #  + pin (nhập mã PIN)
+      #  + chatInput (nhập mật khẩu vào thanh chat, vd: /login <pass>)
+      #  + auth (là server cần tải khoản có bản quyền)
+      type: pin
+      # Các thông số dưới có 2 dạng:
+      # + Một chuỗi (vd: 'nhập /login để vào server') hoặc một con số (vd: 63)
+      # + Một mảng chứa chuỗi (vd: ['nhập /login để vào server']) hoặc chứa số (vd: [63, 64])
+      chatSign: # Các tin nhắn để cho bot biết để nhập Pass
+      windowSlot: 63 # Số lượng ô trong cửa sổ hiện lên để cho bot nhập pin
 
 # Các cài đặt liên quan đến thanh trạng thái của Discord Bot
 status:
@@ -72,3 +77,16 @@ database:
 # Không cần quan tâm đâu :v
 express:
   port: 8000
+
+# Dành riêng cho các lập trình viên.
+# Nó đụng chạm trực tiếp đến cách bot hoạt động nên hãy cẩn thận.
+developer:
+  timezone: # Múi giờ của bot, mặc định theo hệ thống (xem thêm tại đây: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+  handlerPath: # Đường dẫn vào các file command và event
+    commands: # Đường dẫn vào các file command
+      discord: # Của Discord
+      mineflayer: # của mineflayer
+    events: # Đường dẫn vào các file event
+      discord: # Của Discord
+      mineflayer: # của mineflayer
+  customScript: # Đường dẫn vào file custom script của bot

@@ -9,15 +9,7 @@ export class Compiler {
         this.oggy = oggy
         this.commands = new Collection()
     }
-    run(script: string[]) {
-        for (let cmd in script) {
-            const args = script[cmd].split(' ')
-            const command = this.commands.get(args.shift() || '')
-            if (!command) return console.error(`[CUSTOM SCRIPT] [ERROR] Can't find command "${args[0]}" at line ${cmd}`)
-            Promise.resolve(command.run())
-                .then(() => { })
-                .catch((e: Error) => console.error(`[CUSTOM SCRIPT] [${command.name}] ${e.name}`))
-        }
+    run(script: string) {
     }
     async commandHandler() {
         const files = fs.readdirSync('./src/compiler/commands')

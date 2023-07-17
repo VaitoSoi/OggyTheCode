@@ -2,4 +2,6 @@ import { EventBuilder, MineflayerEvents } from "../..";
 
 export default new EventBuilder()
     .setName(MineflayerEvents.Chat)
-    .setRun((client, username, message) => undefined /*console.log(`<${username}> ${message}`)*/)
+    .setRun((client, username, message) => {
+        
+    })

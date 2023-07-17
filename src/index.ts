@@ -5,6 +5,7 @@ import mongoose from 'mongoose'
 import _package from '../package.json';
 import ms from 'ms'
 import express from './web/index'
+import fs from 'fs'
 
 // Import Mineflayer plugins
 import afk from './plugins/default/afk'
@@ -12,8 +13,9 @@ import tps from './plugins/default/tps'
 import custom_bot from './plugins/default/custom_bot'
 
 // Import handler modules
-import eventsHandler from './handlers/events'
-import commandHandler from './handlers/command'
+import { DiscordEventsHandler, MineflayerEventsHandler } from './handlers/events'
+import { DiscordCommandHandler, MineflayerCommandHandler } from './handlers/command'
+
 
 /*
  * Main Client 
@@ -40,9 +42,14 @@ interface Data {
         client_2: any
     }
 }
-interface Plugins {
-    mineflayer: Discord.Collection<string, (oggy: Oggy) => Callback<any>>,
-    discord: Discord.Collection<string, (oggy: Oggy) => Callback<any>>,
+interface Commands {
+    discord: {
+        collections: Discord.Collection<string, SlashCommandBuilder | SlashCommandBuilderWithData>,
+        json: Array<Discord.RESTPostAPIChatInputApplicationCommandsJSONBody>
+    },
+    mineflayer: {
+        collections: Discord.Collection<string, MineflayerCommandBuilder>
+    }
 }
 export class Oggy {
     config: ENV | YAML;
@@ -51,14 +58,19 @@ export class Oggy {
     bot?: Mineflayer.Bot;
     package: Package;
     data: Data
-    commands: Discord.Collection<string, SlashCommandBuilder | SlashCommandBuilderWithData>;
-    commandsJson: Array<Discord.RESTPostAPIChatInputApplicationCommandsJSONBody>;
-    plugins: Plugins;
+    commands: Commands
     express: express
     constructor(config: ENV | YAML) {
         this.config = config
-        this.commands = new Discord.Collection()
-        this.commandsJson = []
+        this.commands = {
+            discord: {
+                collections: new Discord.Collection(),
+                json: []
+            },
+            mineflayer: {
+                collections: new Discord.Collection()
+            }
+        }
         this.package = _package
         this.data = {
             loginAt: 0,
@@ -68,10 +80,6 @@ export class Oggy {
                 client_1: 0,
                 client_2: 0
             }
-        }
-        this.plugins = {
-            mineflayer: new Discord.Collection(),
-            discord: new Discord.Collection(),
         }
         const clientConfig = {
             intents: [
@@ -93,7 +101,8 @@ export class Oggy {
     }
     async start(): Promise<void> {
         process.on('rejectionHandled', (error) => console.error(error))
-        await commandHandler(this)
+        await DiscordCommandHandler(this)
+        await MineflayerCommandHandler(this)
         this.discord_login(this.client_1, this.config.discord.token.client_1, 1)
         if (this.config.discord.token.client_2)
             this.discord_login(this.client_2, this.config.discord.token.client_2, 2)
@@ -108,13 +117,13 @@ export class Oggy {
         client.on(Discord.Events.Warn, console.error);
         client.on(Discord.Events.ClientReady, async (client) => {
             console.log(`[DISCORD.JS] [${client.user.tag}] User is ready`)
-            eventsHandler({ client, mode: EventHandlerMode.Discord, oggy: this })
+            DiscordEventsHandler({ client, oggy: this })
             const rest = new Discord.REST().setToken(token)
             const data = await rest.put(
                 Discord.Routes.applicationCommands(client.user.id),
-                { body: this.commandsJson },
+                { body: this.commands.discord.json },
             );
-            console.log(`[DISCORD.JS] [${client.user.tag}] Registered ${(<Array<Discord.RESTPostAPIChatInputApplicationCommandsJSONBody>>data).length ?? 0}/${this.commandsJson.length} application (/) commands.`);
+            console.log(`[DISCORD.JS] [${client.user.tag}] Registered ${(<Array<Discord.RESTPostAPIChatInputApplicationCommandsJSONBody>>data).length ?? 0}/${this.commands.discord.json.length} application (/) commands.`);
             this.startStatusInterval(client, type)
         })
     }
@@ -128,7 +137,7 @@ export class Oggy {
             hideErrors: true
         }
         this.bot = Mineflayer.createBot(option)
-        eventsHandler({ bot: this.bot, mode: EventHandlerMode.Mineflayer, oggy: this })
+        MineflayerEventsHandler({ bot: this.bot, oggy: this })
         custom_bot(this.bot, this)
         this.bot.loadPlugins([afk, tps]);
         this.bot.once('spawn', () => {
@@ -142,7 +151,7 @@ export class Oggy {
             )
         );
     }
-    private startStatusInterval (client: Discord.Client<true>, client_enum: number = 1): void {
+    private startStatusInterval(client: Discord.Client<true>, client_enum: number = 1): void {
         clearInterval(this.data.statusInterval[client_enum == 1 ? 'client_1' : 'client_2'])
         const type = this.config.status.type
         switch (type) {
@@ -174,6 +183,7 @@ export class Oggy {
     }
 }
 
+
 /*
  * Minecraft Thing
  */
@@ -182,6 +192,7 @@ export const Cluster = [
     'Queue',
     'Main'
 ]
+
 
 /*
  * Command Builder 
@@ -237,20 +248,20 @@ export class SlashCommandBuilderWithData {
     }
 }
 
-interface MinecraftCommandBuilderOption {
+interface MineflayerCommandBuilderOption {
     name: string;
     description: string;
     usage: string
     aliases: Array<string>
     run: (args: Array<string>, bot: Mineflayer.Bot) => Callback<void | any>
 }
-export class MinecraftCommandBuilder {
+export class MineflayerCommandBuilder {
     name: string;
     description: string;
     usage: string
     aliases: Array<string>
     run: (args: Array<string>, bot: Mineflayer.Bot) => Callback<void | any>
-    constructor(option?: MinecraftCommandBuilderOption) {
+    constructor(option?: MineflayerCommandBuilderOption) {
         this.name = option?.name || 'Ủa sao có lệnh nì hay vậy :)?'
         this.description = option?.description ?? 'Lệnh không có miêu tả'
         this.usage = option?.usage ?? 'Lệnh không có cách dùng'
@@ -292,6 +303,7 @@ export class CompilerCommandBuilder {
         this.run = run; return this
     }
 }
+
 
 /*
  * Event Builder
@@ -389,15 +401,12 @@ export enum MineflayerEvents {
     "PhysicsTick" = "physicsTick",
     "Particle" = "particle",
 }
-export enum EventHandlerMode {
-    Both = 0,
-    Discord = 1,
-    Mineflayer = 2
+export interface DiscordEventHandlerOption {
+    client: Discord.Client;
+    oggy: Oggy;
 }
-export interface EventHandlerConfig {
-    client?: Discord.Client;
-    bot?: Mineflayer.Bot;
-    mode: EventHandlerMode;
+export interface MineflayerEventHandlerOption {
+    bot: Mineflayer.Bot;
     oggy: Oggy;
 }
 interface EventConfig {
@@ -408,7 +417,7 @@ interface EventConfig {
 export class EventBuilder {
     name: DiscordEvents | MineflayerEvents | string;
     once: Boolean;
-    run: (...args: any[]) => Callback<void>;
+    run: (client: Oggy, ...args: any[]) => Callback<void>;
     constructor(config?: EventConfig) {
         this.name = config?.name || '';
         this.once = config?.once || false;
@@ -425,9 +434,11 @@ export class EventBuilder {
     };
 }
 
+
 /*
  * Bot Config
  */
+
 interface DiscordConfig {
     token: {
         client_1: string;
@@ -437,13 +448,14 @@ interface DiscordConfig {
         command_log: string;
         error_log: string;
     };
-    command: {
+    commands: {
         exclude: Array<string>;
     };
     owner: {
         id: string;
     };
 }
+
 interface MinecraftConfig {
     account: {
         username: string;
@@ -451,7 +463,6 @@ interface MinecraftConfig {
     };
     ingame: {
         pin: string;
-        // PinRetry: number;
         pass: string;
     }
     server: {
@@ -461,8 +472,10 @@ interface MinecraftConfig {
         reconnectTimeout: number;
         chatTimeout: number;
         loginType: 'cratingTable' | 'chatInput' | 'auth';
+        prefix: string;
     }
 }
+
 interface StatusConfig {
     type: 'discord' | 'minecraft';
     updateInterval: number;
@@ -475,18 +488,36 @@ interface StatusConfig {
         disconnect: Discord.PresenceStatusData;
     };
 }
+
 interface DatabaseConfig {
     link: string;
 }
+
 interface ExpressConfig {
     port: number
 }
+
+interface DefaultPath {
+    discord: fs.PathLike,
+    mineflayer: fs.PathLike
+}
+interface DevoloperConfig {
+    timezone: string,
+    handlerPath: {
+        events: DefaultPath
+        commands: DefaultPath
+    },
+    plugins: string[],
+    customScript: fs.PathLike
+}
+
 export class ENV {
     readonly discord: DiscordConfig
     readonly minecraft: MinecraftConfig
     readonly status: StatusConfig
     readonly database: DatabaseConfig
     readonly express: ExpressConfig
+    readonly developer: DevoloperConfig
     constructor(env: any) {
         this.discord = {
             token: {
@@ -497,10 +528,10 @@ export class ENV {
                 command_log: env.DISCORD_CHANNEL_COMMANDLOG ?? '',
                 error_log: env.DISCORD_CHANNEL_ERRORLOG ?? ''
             },
-            command: {
-                exclude: (env.DISCORD_COMMAND_EXCLUDE?.startsWith('[') && env.DISCORD_COMMAND_EXCLUDE?.endsWith(']')
-                    ? env.DISCORD_COMMAND_EXCLUDE?.slice(1, -1).split(',')
-                    : env.DISCORD_COMMAND_EXCLUDE?.split(',')) ?? [],
+            commands: {
+                exclude: (env.DISCORD_COMMANDS_EXCLUDE?.startsWith('[') && env.DISCORD_COMMANDS_EXCLUDE?.endsWith(']')
+                    ? env.DISCORD_COMMANDS_EXCLUDE?.slice(1, -1).split(',')
+                    : env.DISCORD_COMMANDS_EXCLUDE?.split(',')) ?? [],
             },
             owner: {
                 id: env.DISCORD_OWNER_ID ?? ''
@@ -526,7 +557,8 @@ export class ENV {
                 loginType: env.MINECRAFT_SERVER_LOGINTYPE ?? 'chatInput',
                 chatTimeout: env.MINECRAFT_SERVER_CHATTIMEOUT ? (isNaN(env.MINECRAFT_SERVER_CHATTIMEOUT)
                     ? ms(<string>env.MINECRAFT_SERVER_CHATTIMEOUT)
-                    : Number(env.MINECRAFT_SERVER_CHATTIMEOUT)) : 30 * 1000
+                    : Number(env.MINECRAFT_SERVER_CHATTIMEOUT)) : 30 * 1000,
+                prefix: env.MINECRAFT_SERVER_PREFIX ?? 'og.'
             }
         }
         this.status = {
@@ -551,6 +583,23 @@ export class ENV {
         this.express = {
             port: env.EXPRESS_PORT ?? 8000
         }
+        this.developer = {
+            handlerPath: {
+                commands: {
+                    discord: env.DEVELOPER_HANDLERPATH_COMMANDS_DISCORD ?? 'src/commands/discord',
+                    mineflayer: env.DEVELOPER_HANDLERPATH_COMMANDS_MINEFLAYER ?? 'src/commands/mineflayer'
+                },
+                events: {
+                    discord: env.DEVELOPER_HANDLERPATH_EVENTS_DISCORD ?? 'src/events/discord',
+                    mineflayer: env.DEVELOPER_HANDLERPATH_EVENTS_MINEFLAYER ?? 'src/events/mineflayer'
+                }
+            },
+            plugins: (env.DEVELOPER_PLUGINS?.startsWith('[') && env?.DEVELOPER_PLUGINS.endsWith(']')
+                ? <string[]>JSON.parse(env.DEVELOPER_PLUGINS)
+                : env.DEVELOPER_PLUGINS?.split(',')) ?? [],
+            customScript: env.DEVELOPER_CUSTOMSCRIPT ?? '',
+            timezone: env.DEVELOPER_TIMEZONE ?? process.env.TZ,
+        }
     }
 }
 
@@ -560,6 +609,7 @@ export class YAML {
     readonly status: StatusConfig
     readonly database: DatabaseConfig
     readonly express: ExpressConfig
+    readonly developer: DevoloperConfig
     constructor(yaml: any) {
         this.discord = {
             token: {
@@ -570,8 +620,8 @@ export class YAML {
                 command_log: yaml.discord.channel.command_log ?? '',
                 error_log: yaml.discord.channel.error_log ?? ''
             },
-            command: {
-                exclude: yaml.discord.command.exclude ?? [],
+            commands: {
+                exclude: yaml.discord.commands.exclude ?? [],
             },
             owner: {
                 id: yaml.discord.owner.id ?? ''
@@ -597,7 +647,8 @@ export class YAML {
                 loginType: yaml.minecraft.server.loginType ?? 'chatInput',
                 chatTimeout: !!yaml.minecraft.server.chatTimeout ? (isNaN(yaml.minecraft.server.chatTimeout)
                     ? ms(<string>yaml.minecraft.server.chatTimeout)
-                    : Number(yaml.minecraft.server.chatTimeout)) : 5 * 60 * 1000
+                    : Number(yaml.minecraft.server.chatTimeout)) : 5 * 60 * 1000,
+                prefix: yaml.minecraft.server.prefix ?? 'og.'
             }
         }
         this.status = {
@@ -619,6 +670,23 @@ export class YAML {
         }
         this.express = {
             port: yaml.express.port ?? 8000
+        }
+        this.developer = {
+            handlerPath: {
+                commands: {
+                    discord: yaml.developer.handlerPath.commands.discord ?? 'src/commands/discord',
+                    mineflayer: yaml.developer.handlerPath.commands.mineflayer ?? 'src/commands/mineflayer'
+                },
+                events: {
+                    discord: yaml.developer.handlerPath.events.discord ?? 'src/events/discord',
+                    mineflayer: yaml.developer.handlerPath.events.mineflayer ?? 'src/events/mineflayer'
+                }
+            },
+            plugins: (yaml.developer.plugins?.startsWith('[') && yaml?.developer.plugins.endsWith(']')
+                ? <string[]>JSON.parse(yaml.developer.plugins)
+                : yaml.developer.plugins?.split(',')) ?? [],
+            customScript: yaml.developer.customScript ?? '',
+            timezone: yaml.developer.timezone ?? process.env.TZ,
         }
     }
 }

@@ -1,5 +1,7 @@
 # Hướng dẫn set up Oggy
 
+**Lưu ý: Hướng dẫn này áp dụng cho các bot khác đang sử dụng OggyTheCode vì bot chính đã shutdown**
+
 ## **Có 2 cách để Set Up Oggy**
 
 ### 1. Dùng lệnh /setup:
@@ -72,9 +74,9 @@
 
     * Dùng lệnh `/config edit channel <type> <channel> [feature]`:
 
-        * <type>: Loại kênh muốn set up.
+        * \<type>: Loại kênh muốn set up.
 
-        * <channel>: Kênh muốn set up.
+        * \<channel>: Kênh muốn set up.
 
         * [feature]: Bật các tính năng lên (mặc định: True, cứ để yên nếu muốn bot chạy bình thường).
 

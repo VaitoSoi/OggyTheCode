@@ -250,8 +250,5 @@ export default new SlashCommandBuilder()
                 case 'delete': collector.stop(); break
             }
         })
-        collector.on('end', () => void msg.edit({
-            content: '⌛ Time out !',
-            components: []
-        }))
+        collector.on('end', () => void msg.delete())
     })

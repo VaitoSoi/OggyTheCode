@@ -12,14 +12,13 @@ export default class {
     public listen(port: number = 8000): void {
         this.express.get('/', (req, res) => res.redirect('https://discord.gg/NBsnNGDeQd'))
         this.express.get('/invite', (req, res) => {
-            let id: string | undefined;
+            let id: string | undefined = this.oggy.client_1.user?.id;
             switch (req.query.instance) {
                 case 'client1': id = this.oggy.client_1.user?.id; break
-                case 'client1': id = this.oggy.client_1.user?.id; break
-                default: id = this.oggy.client_2.user?.id; break
+                case 'client2': id = this.oggy.client_2.user?.id; break
             }
             const permissions = req.query.permission || '93264'
-            const scope = 'bot+applications.commands'
+            const scope = req.query.permission || 'bot+applications.commands'
             res.redirect(`https://discord.com/oauth2/authorize?client_id=${id}&permissions=${permissions}&scope=${scope}`)
         })
         this.express.get('/docs', (req, res) => res.redirect('https://github.com/VaitoSoi/OggyTheCode/tree/main/docs'))
