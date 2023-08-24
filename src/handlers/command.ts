@@ -1,4 +1,4 @@
-import { Oggy, SlashCommandBuilder, SlashCommandBuilderWithData, MineflayerCommandBuilder } from '../index'
+import { Oggy, SlashCommandBuilder, SlashCommandBuilderWithData, MineflayerCommandBuilder } from '../lib/index'
 import fs from 'node:fs'
 
 export async function DiscordCommandHandler (client: Oggy): Promise<void> {

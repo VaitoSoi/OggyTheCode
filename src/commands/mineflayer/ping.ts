@@ -1,4 +1,4 @@
-import { MineflayerCommandBuilder } from "../../index";
+import { MineflayerCommandBuilder } from "../../lib/index";
 
 export default new MineflayerCommandBuilder()
     .setName('ping')

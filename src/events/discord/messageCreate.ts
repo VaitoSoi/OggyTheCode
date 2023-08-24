@@ -1,5 +1,5 @@
 import { Events, Message } from "discord.js";
-import { EventBuilder } from "../..";
+import { EventBuilder } from "../../lib";
 import option from "../../database/option";
 
 export default new EventBuilder()

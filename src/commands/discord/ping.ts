@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from '../../index'
+import { SlashCommandBuilder } from '../../lib/index'
 
 export default new SlashCommandBuilder()
     .setName('ping')

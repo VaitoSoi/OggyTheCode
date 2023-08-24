@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, ComponentType, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
-import { SlashCommandBuilderWithData } from "../../index";
+import { SlashCommandBuilderWithData } from "../../lib/index";
 import option from "../../database/option";
 import { status } from 'minecraft-server-util'
 import ms from 'ms'

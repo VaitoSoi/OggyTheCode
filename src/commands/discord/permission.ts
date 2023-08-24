@@ -1,5 +1,5 @@
 import { PermissionFlagsBits as Flags } from "discord.js";
-import { SlashCommandBuilder } from "../..";
+import { SlashCommandBuilder } from "../../lib";
 import option from "../../database/option";
 
 export default new SlashCommandBuilder()

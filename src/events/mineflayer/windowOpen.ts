@@ -1,4 +1,4 @@
-import { EventBuilder, MineflayerEvents } from '../../index'
+import { EventBuilder, MineflayerEvents } from '../../lib/index'
 import * as Window from 'prismarine-windows'
 import { consoleEmbed, sendMessage } from '../../modules/message'
 

@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { EventBuilder, DiscordEventHandlerOption, MineflayerEventHandlerOption } from '../index'
+import { EventBuilder, DiscordEventHandlerOption, MineflayerEventHandlerOption } from '../lib/index'
 
 export async function DiscordEventsHandler(config: DiscordEventHandlerOption) {
     let listenedEvents: string[] = [];

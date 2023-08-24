@@ -1,4 +1,4 @@
-import { Oggy } from "../index";
+import { Oggy } from "../lib/index";
 import Discord from 'discord.js';
 import option from '../database/option'
 import _package from '../../package.json';

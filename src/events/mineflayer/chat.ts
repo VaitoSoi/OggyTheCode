@@ -1,4 +1,4 @@
-import { EventBuilder, MineflayerEvents } from "../..";
+import { EventBuilder, MineflayerEvents } from "../../lib";
 
 export default new EventBuilder()
     .setName(MineflayerEvents.Chat)

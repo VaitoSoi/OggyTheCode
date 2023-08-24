@@ -1,7 +1,7 @@
 import * as Mineflayer from 'mineflayer';
 import { sendMessage, consoleEmbed } from '../../modules/message'
 import { ColorResolvable, Colors, EmbedBuilder } from 'discord.js'
-import { Oggy } from '../..';
+import { Oggy } from '../../lib';
 
 export default function (bot: Mineflayer.Bot | any, oggy: Oggy): void {
     bot.msg = {}

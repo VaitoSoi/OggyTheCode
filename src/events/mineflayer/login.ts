@@ -1,4 +1,4 @@
-import { Cluster, EventBuilder, MineflayerEvents } from "../../index";
+import { Cluster, EventBuilder, MineflayerEvents } from "../../lib/index";
 import { consoleEmbed, sendMessage } from "../../modules/message";
 
 export default new EventBuilder()

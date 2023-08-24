@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ComponentType, EmbedBuilder, Guild, PermissionFlagsBits, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, PermissionFlagsBits as Flags, ChannelSelectMenuBuilder, ChannelType, ButtonBuilder, ButtonStyle } from "discord.js";
-import { SlashCommandBuilder } from "../..";
+import { SlashCommandBuilder } from "../../lib";
 import _package from '../../../package.json'
 import option from '../../database/option'
 import { status } from 'minecraft-server-util'

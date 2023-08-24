@@ -1,5 +1,5 @@
 import { EmbedBuilder } from 'discord.js'
-import { SlashCommandBuilder } from "../../index";
+import { SlashCommandBuilder } from "../../lib/index";
 import { status } from 'minecraft-server-util'
 
 export default new SlashCommandBuilder()

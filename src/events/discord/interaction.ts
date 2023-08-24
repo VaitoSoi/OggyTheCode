@@ -1,5 +1,5 @@
 import { Interaction, Events, InteractionType, ChannelType, EmbedBuilder, ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js'
-import { EventBuilder } from '../../index'
+import { EventBuilder } from '../../lib/index'
 import { status, JavaStatusOptions } from 'minecraft-server-util'
 
 export default new EventBuilder()

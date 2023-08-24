@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "../..";
+import { SlashCommandBuilder } from "../../lib/index";
 import _package from '../../../package.json'
 import ms from 'ms'
 import { Guild, TextBasedChannel, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ComponentType } from "discord.js"

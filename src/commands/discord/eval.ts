@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "../../index";
+import { SlashCommandBuilder } from "../../lib/index";
 import util from 'node:util'
 import Discord from 'discord.js'
 import option from '../../database/option'

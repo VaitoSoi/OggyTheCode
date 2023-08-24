@@ -1,6 +1,6 @@
 import express, { Express } from 'express'
 import rateLimit from 'express-rate-limit'
-import { Oggy } from '..';
+import { Oggy } from '../lib/index';
 
 export default class {
     express: Express;

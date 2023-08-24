@@ -1,5 +1,5 @@
 import { EmbedBuilder } from 'discord.js'
-import { EventBuilder, MineflayerEvents } from '../../index'
+import { EventBuilder, MineflayerEvents } from '../../lib/index'
 import { consoleEmbed, sendMessage } from '../../modules/message'
 import { setTimeout as wait } from 'node:timers/promises'
 

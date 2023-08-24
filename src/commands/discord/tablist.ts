@@ -1,5 +1,5 @@
 import { EmbedBuilder } from "discord.js";
-import { SlashCommandBuilder } from "../..";
+import { SlashCommandBuilder } from "../../lib";
 import ascii from 'ascii-table3'
 
 export default new SlashCommandBuilder()
